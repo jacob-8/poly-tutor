@@ -10,7 +10,7 @@
   $: ({ content, user, getCaptions, getSummary, deleteContent, deleteSummary } = data)
 
   let playbackRate = 1
-  let currentTimeMs: number
+  let currentTimeMs = 0
   let playerState: YT.PlayerState
 
   let youtubeComponent: Youtube
@@ -24,6 +24,10 @@
   function setPlaybackRate(rate: number) {
     playbackRate = rate
     youtubeComponent.setPlaybackRate(rate)
+  }
+  function setTime(ms: number) {
+    youtubeComponent.seekToMs(ms)
+    youtubeComponent.play()
   }
 
   let currentStudySentence: Sentence
@@ -41,7 +45,6 @@
       {readCurrentTime}
       {setPlaybackRate}
       {playbackRate} />
-    {playbackRate}, {currentTimeMs}, {playerState}
 
     <div class="my-2">
       {#if $content.paragraphs}
@@ -70,6 +73,8 @@
       {getSummary}
       {deleteSummary}
       {deleteContent}
+      {currentTimeMs}
+      {setTime}
       content={$content} email={$user?.session.user.email} {studySentence} />
   </div>
 </div>
