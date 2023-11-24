@@ -27,10 +27,14 @@ export async function get_captions_from_youtube(video_id: string): Promise<Sente
 }
 
 async function getTracks(videoId: string): Promise<YoutubeCaptionTrack[]> {
-  const response = await fetch(
-    `${CAPTIONS_URL}?v=${videoId}&type=list`
-  )
-  return await response.json()
+  try {
+    const url = `${CAPTIONS_URL}?v=${videoId}&type=list`
+    const response = await fetch(url)
+    return await response.json()
+  } catch (err) {
+    console.warn({err})
+    throw new Error('Error getting caption tracks')
+  }
 }
 
 async function getCaptions(videoId: string, language_code: string): Promise<YoutubeCaption[]> {

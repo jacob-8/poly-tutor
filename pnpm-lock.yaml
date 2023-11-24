@@ -11,6 +11,9 @@ devDependencies:
   '@google-cloud/translate':
     specifier: ^8.0.2
     version: 8.0.2
+  '@iconify/json':
+    specifier: ^2.2.87
+    version: 2.2.146
   '@playwright/test':
     specifier: 1.39.0
     version: 1.39.0
@@ -780,6 +783,13 @@ packages:
 
   /@humanwhocodes/object-schema@2.0.1:
     resolution: {integrity: sha512-dvuCeX5fC9dXgJn9t+X5atfmgQAzUOWqS1254Gh0m6i8wKd10ebXkfNKiRK+1GWi/yTvvLDHpoxLr0xxxeslWw==}
+    dev: true
+
+  /@iconify/json@2.2.146:
+    resolution: {integrity: sha512-Z+kOCjsQSivgphCsaHM7Qg/vjGAzY1QXNREv2JllTh3Wn68LcDS4cie+nox2pfrnF/41B4UM6OI2CrZ00AU2Sg==}
+    dependencies:
+      '@iconify/types': 2.0.0
+      pathe: 1.1.1
     dev: true
 
   /@iconify/types@2.0.0:

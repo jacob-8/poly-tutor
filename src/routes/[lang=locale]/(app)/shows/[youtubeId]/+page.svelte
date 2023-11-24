@@ -74,7 +74,7 @@
   </div>
   <div class="w-1/2 pl-2 text-3xl">
     {#await data.streamed.cedict}
-      Loading dictionary...
+      ...
     {:then entries}
       <Content
         {entries}

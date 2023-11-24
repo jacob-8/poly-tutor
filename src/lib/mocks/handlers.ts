@@ -4,6 +4,11 @@ import { CAPTIONS_URL } from '$env/static/private'
 // import streamResponses from './data/stream_penguin.json'
 import lpyKfNjTZi8_getTracks from './data/get-tracks-lpyKfNjTZi8.json'
 import lpyKfNjTZi8_getCaptions from './data/get-captions-zh-TW-lpyKfNjTZi8.json'
+import HRenI3LURNk_getTracks from './data/get-tracks-HRenI3LURNk.json'
+import HRenI3LURNk_getCaptions from './data/get-captions-zh-TW-HRenI3LURNk.json'
+import Ukr40eBfeyg_getTracks from './data/get-tracks-Ukr40eBfeyg.json'
+import Ukr40eBfeyg_getCaptions from './data/get-captions-zh-TW-Ukr40eBfeyg.json'
+import _9OkddyYQBec_getCaptions from './data/get-captions-zh-TW-9OkddyYQBec.json'
 
 function createChunkEncoder() {
   const encoder = new TextEncoder()
@@ -14,14 +19,28 @@ function createChunkEncoder() {
 
 export const handlers = [
   http.get(CAPTIONS_URL, ({request: { url }}) => {
-    if (!url.includes('v=lpyKfNjTZi8'))
-      return passthrough()
+    if (url.includes('v=HRenI3LURNk') && url.includes('type=list'))
+      return HttpResponse.json(HRenI3LURNk_getTracks)
 
-    if (url.includes('type=list'))
+    if (url.includes('v=HRenI3LURNk') && url.includes('fmt=srv3'))
+      return HttpResponse.json(HRenI3LURNk_getCaptions)
+
+    if (url.includes('v=lpyKfNjTZi8') && url.includes('type=list'))
       return HttpResponse.json(lpyKfNjTZi8_getTracks)
 
-    if (url.includes('fmt=srv3'))
+    if (url.includes('v=lpyKfNjTZi8') && url.includes('fmt=srv3'))
       return HttpResponse.json(lpyKfNjTZi8_getCaptions)
+
+    if ((url.includes('v=Ukr40eBfeyg') || url.includes('v=9OkddyYQBec')) && url.includes('type=list'))
+      return HttpResponse.json(Ukr40eBfeyg_getTracks)
+
+    if (url.includes('v=Ukr40eBfeyg') && url.includes('fmt=srv3'))
+      return HttpResponse.json(Ukr40eBfeyg_getCaptions)
+
+    if (url.includes('v=9OkddyYQBec') && url.includes('fmt=srv3'))
+      return HttpResponse.json(_9OkddyYQBec_getCaptions)
+
+    return passthrough()
   }),
 
   http.get('https://example.com/stream', () => {

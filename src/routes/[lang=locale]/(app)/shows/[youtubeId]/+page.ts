@@ -15,6 +15,7 @@ export const load = (({ params: { youtubeId } }) => {
 
   async function getCaptions() {
     const response = await apiFetch<YtCaptionsRequestBody>('/api/yt_captions', { youtubeId })
+    if (!response.ok) return
     const sentences = await response.json() as Sentence[]
     content.set({ paragraphs: [{ sentences }] })
   }

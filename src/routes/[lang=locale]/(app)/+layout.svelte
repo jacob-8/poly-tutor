@@ -12,7 +12,7 @@
 </script>
 
 <div class="flex items-center space-x-1 py-1 pl-1" data-sveltekit-preload-data="tap" title={$page.url.pathname}>
-  <a href="/" class="text-lg font-semibold">{$page.data.t.layout.tutor}</a>
+  <a href="/{$page.data.locale}/shows" class="text-lg font-semibold">{$page.data.t.layout.tutor}</a>
   <div class="grow-1"></div>
   <button type="button" on:click={() => changeLocale('en')} class:text-blue={$page.data.locale === 'en'}>EN</button>
   <button type="button" on:click={() => changeLocale('zh-TW')} class:text-blue={$page.data.locale === 'zh-TW'}>繁體</button>

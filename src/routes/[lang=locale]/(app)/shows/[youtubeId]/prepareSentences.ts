@@ -28,7 +28,7 @@ export function prepareSentences(sentences: Sentence[], dictionary: Record<strin
 
 function prepareWord(text: string, dictionary: Record<string, CEDictEntry>): Sentence['words'][0] {
   const isChinese = is中文(text)
-  const ninetySevenPercentChance = Math.random() < 0.93
+  const highChance = Math.random() < 0.90
   let pronunciation = ''
   if (isChinese) {
     if (dictionary[text])
@@ -38,7 +38,7 @@ function prepareWord(text: string, dictionary: Record<string, CEDictEntry>): Sen
   }
   return {
     text,
-    known: !isChinese || ninetySevenPercentChance,
+    known: !isChinese || highChance,
     language: isChinese ? 'zh' : 'other',
     pronunciation,
   }
