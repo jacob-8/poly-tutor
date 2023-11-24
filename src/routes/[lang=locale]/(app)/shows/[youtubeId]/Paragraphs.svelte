@@ -49,7 +49,7 @@
     {#each sentence.words as {text, known, pronunciation}}
       <div class="flex flex-col" class:text-green-500={!known}>
         <div class="text-xs text-center text-gray h-10px group-hover:opacity-100" class:opacity-0={known}>
-          {pronunciation}
+          {pronunciation.replace(' ', '')}
         </div>
         <div class="whitespace-nowrap">
           {text}

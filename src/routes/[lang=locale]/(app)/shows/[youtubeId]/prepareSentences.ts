@@ -1,3 +1,4 @@
+import { myKnown } from '$lib/mocks/knownWords'
 import type { CEDictEntry, Sentence } from '$lib/types'
 
 function is中文(text: string): boolean {
@@ -28,7 +29,7 @@ export function prepareSentences(sentences: Sentence[], dictionary: Record<strin
 
 function prepareWord(text: string, dictionary: Record<string, CEDictEntry>): Sentence['words'][0] {
   const isChinese = is中文(text)
-  const highChance = Math.random() < 0.90
+  // const highChance = Math.random() < 0.90
   let pronunciation = ''
   if (isChinese) {
     if (dictionary[text])
@@ -38,7 +39,7 @@ function prepareWord(text: string, dictionary: Record<string, CEDictEntry>): Sen
   }
   return {
     text,
-    known: !isChinese || highChance,
+    known: !isChinese || myKnown.has(text),
     language: isChinese ? 'zh' : 'other',
     pronunciation,
   }
