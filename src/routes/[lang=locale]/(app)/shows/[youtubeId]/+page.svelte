@@ -88,7 +88,11 @@
         <Paragraphs {studySentence} paragraphs={$content.paragraphs} />
         <Button size="sm" form="simple" color="red" onclick={data.deleteContent}>Delete All</Button>
       {:else if $user}
-        <Button size="sm" onclick={data.getCaptions}>{$page.data.t.shows.get_captions}</Button>
+        {#if $user.session.user.email === 'jacob@polylingual.dev'}
+          <Button size="sm" onclick={data.getCaptions}>{$page.data.t.shows.get_captions}</Button>
+        {:else}
+          Sorry, the tool is not ready yet. Thank you for your interest. I will use your email address to notify you when it is ready.
+        {/if}
       {:else}
         {$page.data.t.layout.sign_in}
       {/if}

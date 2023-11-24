@@ -6,27 +6,27 @@
     PAUSED: 2,
     BUFFERING: 3,
     CUED: 5,
-  };
+  }
 
-  let iframeApiReady = false;
+  let iframeApiReady = false
 
   if (typeof window !== 'undefined') {
-    const script = document.createElement('script');
-    script.src = 'https://www.youtube.com/iframe_api';
-    document.head.appendChild(script);
+    const script = document.createElement('script')
+    script.src = 'https://www.youtube.com/iframe_api'
+    document.head.appendChild(script)
 
     //@ts-ignore
     window.onYouTubeIframeAPIReady = () => {
-      window.dispatchEvent(new Event('iframeApiReady'));
-      iframeApiReady = true;
-    };
+      window.dispatchEvent(new Event('iframeApiReady'))
+      iframeApiReady = true
+    }
   }
 </script>
 
 <script lang="ts">
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-  export let videoId: string;
-  let player: YT.Player;
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte'
+  export let videoId: string
+  let player: YT.Player
 
   const dispatch = createEventDispatcher<{
     ready: YT.Player;
@@ -34,11 +34,11 @@
     stateChange: YT.OnStateChangeEvent;
     playbackRateChange: YT.OnPlaybackRateChangeEvent;
     playbackQualityChange: YT.OnPlaybackQualityChangeEvent;
-  }>();
+  }>()
 
   onMount(() =>
     iframeApiReady ? initPlayer() : window.addEventListener('iframeApiReady', initPlayer)
-  );
+  )
 
   function initPlayer() {
     player = new YT.Player('player', {
@@ -50,43 +50,43 @@
       },
       events: {
         onReady: (e) => {
-          state = e.target.getPlayerState();
-          playbackRate = e.target.getPlaybackRate();
-          playbackQuality = e.target.getPlaybackQuality();
-          readyPlayer = e.target;
-          dispatch('ready', e.target);
+          state = e.target.getPlayerState()
+          playbackRate = e.target.getPlaybackRate()
+          playbackQuality = e.target.getPlaybackQuality()
+          readyPlayer = e.target
+          dispatch('ready', e.target)
         },
         onError: (e) => {
-          error = e.data;
+          error = e.data
           errorExplanation = Object.keys(YT.PlayerError).find(
             (key) => YT.PlayerError[key] === error
-          );
-          dispatch('error', e);
+          )
+          dispatch('error', e)
         },
         onStateChange: (e) => {
-          state = e.data;
-          dispatch('stateChange', e);
+          state = e.data
+          dispatch('stateChange', e)
         },
         onPlaybackRateChange: (e) => {
-          playbackRate = e.data;
-          dispatch('playbackRateChange', e);
+          playbackRate = e.data
+          dispatch('playbackRateChange', e)
         },
         onPlaybackQualityChange: (e) => {
-          playbackQuality = e.data;
-          dispatch('playbackQualityChange', e);
+          playbackQuality = e.data
+          dispatch('playbackQualityChange', e)
         },
       },
-    });
+    })
   }
 
-  let error: YT.PlayerError;
-  let errorExplanation: string;
-  let state: YT.PlayerState;
-  let playbackRate: number;
-  let playbackQuality: string;
-  let readyPlayer: YT.Player;
+  let error: YT.PlayerError
+  let errorExplanation: string
+  let state: YT.PlayerState
+  let playbackRate: number
+  let playbackQuality: string
+  let readyPlayer: YT.Player
 
-  onDestroy(() => player && player.destroy());
+  onDestroy(() => player && player.destroy())
 </script>
 
 <div class="responsive">

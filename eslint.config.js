@@ -20,6 +20,7 @@ const universal = {
   rules: {
     ...jsEslintPlugin.configs.recommended.rules,
     'indent': ['error', 2],
+    'no-undef': 'off',
   },
 }
 

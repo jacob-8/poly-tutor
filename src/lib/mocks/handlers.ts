@@ -1,7 +1,7 @@
 import { http, HttpResponse, passthrough } from 'msw'
-import type { ChatRequestBody } from '$lib/types'
+// import type { ChatRequestBody } from '$lib/types'
 import { CAPTIONS_URL } from '$env/static/private'
-import streamResponses from './data/stream_penguin.json'
+// import streamResponses from './data/stream_penguin.json'
 import lpyKfNjTZi8_getTracks from './data/get-tracks-lpyKfNjTZi8.json'
 import lpyKfNjTZi8_getCaptions from './data/get-captions-zh-TW-lpyKfNjTZi8.json'
 

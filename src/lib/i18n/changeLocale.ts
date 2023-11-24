@@ -7,7 +7,6 @@ export function changeLocale(locale: LocaleCode) {
   const { data: { locale: currentLocale }, url } = get(page)
   setLocaleCookie(locale)
   const newUrl = url.href.replace(url.origin, '').replace(currentLocale, locale)
-  console.log({newUrl})
   goto(newUrl, { invalidateAll: true }) // SvelteKit method - invalidateAll required to force layout loads to re-run if using switches from language A to B and back to A
 }
 

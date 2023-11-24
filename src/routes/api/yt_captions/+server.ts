@@ -11,7 +11,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
     throw error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
   if (!dev && session_data.user.email !== 'jacob@polylingual.dev')
-    throw error(ResponseCodes.UNAUTHORIZED, { message: 'Unauthorized' })
+    throw error(ResponseCodes.UNAUTHORIZED, { message: 'Sorry, the tool is not ready yet. Thank you for your interest. I will use your email address to notify you when it is ready.' })
 
   try {
     const { youtubeId } = await request.json() as YtCaptionsRequestBody
