@@ -24,21 +24,28 @@
 </script>
 
 <script lang="ts">
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte'
+  import { onMount } from 'svelte'
+
   export let videoId: string
+  export let playbackRate: number
+  export let readState: (state: YT.PlayerState) => void
+  export let readCurrentTime: (ms: number) => void
+
   let player: YT.Player
+  let error: YT.PlayerError
+  let errorExplanation: string
+  let state: YT.PlayerState
 
-  const dispatch = createEventDispatcher<{
-    ready: YT.Player;
-    error: YT.OnErrorEvent;
-    stateChange: YT.OnStateChangeEvent;
-    playbackRateChange: YT.OnPlaybackRateChangeEvent;
-    playbackQualityChange: YT.OnPlaybackQualityChangeEvent;
-  }>()
+  const MILLISECONDS_BETWEEN_TIME_CHECKS = 20
+  let interval: number
 
-  onMount(() =>
+  onMount(() => {
     iframeApiReady ? initPlayer() : window.addEventListener('iframeApiReady', initPlayer)
-  )
+    return () => {
+      player?.destroy()
+      interval && clearInterval(interval)
+    }
+  })
 
   function initPlayer() {
     player = new YT.Player('player', {
@@ -51,42 +58,41 @@
       events: {
         onReady: (e) => {
           state = e.target.getPlayerState()
+          readState(state)
           playbackRate = e.target.getPlaybackRate()
-          playbackQuality = e.target.getPlaybackQuality()
-          readyPlayer = e.target
-          dispatch('ready', e.target)
+          interval = window.setInterval(() => {
+            readCurrentTime(player.getCurrentTime() * 1000)
+          }, MILLISECONDS_BETWEEN_TIME_CHECKS)
         },
         onError: (e) => {
           error = e.data
           errorExplanation = Object.keys(YT.PlayerError).find(
             (key) => YT.PlayerError[key] === error
           )
-          dispatch('error', e)
         },
         onStateChange: (e) => {
           state = e.data
-          dispatch('stateChange', e)
-        },
-        onPlaybackRateChange: (e) => {
-          playbackRate = e.data
-          dispatch('playbackRateChange', e)
-        },
-        onPlaybackQualityChange: (e) => {
-          playbackQuality = e.data
-          dispatch('playbackQualityChange', e)
+          readState(state)
         },
       },
     })
   }
 
-  let error: YT.PlayerError
-  let errorExplanation: string
-  let state: YT.PlayerState
-  let playbackRate: number
-  let playbackQuality: string
-  let readyPlayer: YT.Player
+  export function setPlaybackRate(rate: number) {
+    player.setPlaybackRate(rate)
+  }
 
-  onDestroy(() => player && player.destroy())
+  export function seekToMs(ms: number) {
+    player.seekTo(ms / 1000, true)
+  }
+
+  export function play() {
+    player.playVideo()
+  }
+
+  export function pause() {
+    player.pauseVideo()
+  }
 </script>
 
 <div class="responsive">
@@ -98,10 +104,6 @@
     </div>
   {/if}
 </div>
-
-{#if readyPlayer}
-  <slot {player} {state} {playbackRate} {playbackQuality} />
-{/if}
 
 <style>
   .responsive {

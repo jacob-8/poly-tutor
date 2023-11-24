@@ -8,27 +8,24 @@
 
   export let data
   $: ({ content, user } = data)
-  // eslint-disable-next-line no-undef, @typescript-eslint/no-unused-vars
-  let state: YT.PlayerState
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let playbackRate = 1
-  // eslint-disable-next-line no-undef
-  let player: YT.Player
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let interval: number
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let currentTime: number
+  let currentTimeMs: number
+  let playerState: YT.PlayerState
 
-  const MILLISECONDS_BETWEEN_TIME_CHECKS = 20
+  let youtubeComponent: Youtube
 
-  // eslint-disable-next-line no-undef
-  function onReady(e: CustomEvent<YT.Player>) {
-    player = e.detail
-    interval = window.setInterval(() => {
-      currentTime = player.getCurrentTime()
-    }, MILLISECONDS_BETWEEN_TIME_CHECKS)
+  function readState(state: YT.PlayerState) {
+    playerState = state
   }
+  function readCurrentTime(ms: number) {
+    currentTimeMs = ms
+  }
+  function setPlaybackRate(rate: number) {
+    playbackRate = rate
+    youtubeComponent.setPlaybackRate(rate)
+  }
+
 
   let currentStudySentence: Sentence
   function studySentence(sentence: Sentence) {
@@ -43,10 +40,14 @@
 <div class="px-3 flex items-start">
   <div class="w-1/2 sticky z-1 top-0">
     <Youtube
+      bind:this={youtubeComponent}
       videoId={$page.params.youtubeId}
-      on:ready={onReady}
-      on:playbackRateChange={({ detail: { data } }) => (playbackRate = data)}
-      on:stateChange={({ detail: { data } }) => (state = data)} />
+      {readState}
+      {readCurrentTime}
+      {setPlaybackRate}
+      {playbackRate} />
+    {playbackRate}, {currentTimeMs}, {playerState}
+
     <div class="my-2">
       {#if $content.paragraphs}
         {#if !$content?.paragraphs?.[0].sentences?.[0]?.syntax}
