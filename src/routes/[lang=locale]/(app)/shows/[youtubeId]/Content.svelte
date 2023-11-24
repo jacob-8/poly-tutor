@@ -1,11 +1,13 @@
 <script lang="ts">
-  import type { Content, Sentence } from '$lib/types'
+  import type { CEDictEntry, Content, Sentence } from '$lib/types'
   import Paragraphs from './Paragraphs.svelte'
   import Summary from './Summary.svelte'
   import { page } from '$app/stores'
   import { Button } from 'svelte-pieces'
 
+  export let entries: Record<string, CEDictEntry>
   export let content: Content
+  export let summary: Content
   export let email: string
   export let studySentence: (sentence: Sentence) => void
   export let getCaptions: () => Promise<void>
@@ -26,9 +28,9 @@
     <div class="text-xs text-gray mb-2">
       {$page.data.t.shows.summary}
     </div>
-    {#if content.summary}
-      <Summary {studySentence} paragraphs={content.summary} />
-      <Button size="sm" form="simple" color="red" onclick={deleteSummary}>delete</Button>
+    {#if summary.summary}
+      <Summary {studySentence} paragraphs={summary.summary} />
+      <Button size="sm" form="simple" color="red" onclick={deleteSummary}>Delete Summary</Button>
     {:else}
       <Button onclick={getSummary}>{$page.data.t.shows.summarize}</Button>
     {/if}
@@ -38,8 +40,8 @@
 <div>
   {#if content.paragraphs}
     <div class="text-xs text-gray">({captionsLength} characters)</div>
-    <Paragraphs {setTime} {currentTimeMs} {studySentence} paragraphs={content.paragraphs} />
-    <Button size="sm" form="simple" color="red" onclick={deleteContent}>Delete All</Button>
+    <Paragraphs {entries} {setTime} {currentTimeMs} {studySentence} paragraphs={content.paragraphs} />
+    <Button size="sm" form="simple" color="red" onclick={deleteContent}>Delete Captions</Button>
   {:else if email}
     {#if email === 'jacob@polylingual.dev'}
       <Button size="sm" onclick={getCaptions}>{$page.data.t.shows.get_captions}</Button>

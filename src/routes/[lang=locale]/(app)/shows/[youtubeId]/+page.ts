@@ -11,6 +11,7 @@ import { getCEDict } from './getCEDict'
 
 export const load = (({ params: { youtubeId } }) => {
   const content = createPersistedStore<Content>(`content_${youtubeId}`, {}, true)
+  const summary = createPersistedStore<Content>(`summary_${youtubeId}`, {}, true)
 
   async function getCaptions() {
     const response = await apiFetch<YtCaptionsRequestBody>('/api/yt_captions', { youtubeId })
@@ -30,17 +31,17 @@ export const load = (({ params: { youtubeId } }) => {
         { role: 'user', content: `Transcript: ${transcript}` },
       ]
 
-      const eventSource = fetchSSE<ChatRequestBody>('/api/chat', { messages: messagesToSend, model: 'gpt-4-1106-preview', max_tokens: 600 })
+      const eventSource = fetchSSE<ChatRequestBody>('/api/chat', { messages: messagesToSend, model: 'gpt-3.5-turbo-1106', max_tokens: 600 })
       eventSource.addEventListener('message', handle_message)
       eventSource.addEventListener('error', (e) => console.error(e))
       eventSource.stream()
 
-      let summary = ''
+      let streamingInSummary = ''
       async function handle_message({detail}: CustomEvent<string>) {
         if (detail === '[DONE]') {
-          const response = await apiFetch<TranslateRequestBody>('/api/translate', { text: summary, sourceLanguageCode: 'zh', targetLanguageCode: 'en' })
+          const response = await apiFetch<TranslateRequestBody>('/api/translate', { text: streamingInSummary, sourceLanguageCode: 'zh', targetLanguageCode: 'en' })
           const translatedSummary = await response.json() as string
-          content.set({ ...currentContent, summary: [{ sentences: [{text: summary, machine_translation: { en: translatedSummary}}] }] })
+          summary.set({ summary: [{ sentences: [{text: streamingInSummary, machine_translation: { en: translatedSummary}}] }] })
           resolve()
           return
         }
@@ -48,20 +49,19 @@ export const load = (({ params: { youtubeId } }) => {
         const { choices: [ { delta }] } = JSON.parse(detail) as OpenAiChatStreamResponse
 
         if (delta.content) {
-          summary += delta.content
-          content.set({ ...currentContent, summary: [{ sentences: [{text: summary}] }] })
+          streamingInSummary += delta.content
+          summary.set({ summary: [{ sentences: [{text: streamingInSummary}] }] })
         }
       }
     })
   }
 
-  function deleteSummary() {
-    const currentContent = get(content)
-    content.set({ ...currentContent, summary: undefined })
-  }
-
   function deleteContent() {
     content.set({})
+  }
+
+  function deleteSummary() {
+    summary.set({})
   }
 
   async function analyze_syntax() {
@@ -90,6 +90,7 @@ export const load = (({ params: { youtubeId } }) => {
 
   return {
     content,
+    summary,
     getCaptions,
     getSummary,
     deleteSummary,

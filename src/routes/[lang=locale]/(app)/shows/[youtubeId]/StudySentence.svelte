@@ -5,35 +5,51 @@
   export let sentence: Sentence
   export let onmouseenter: () => void
   export let onmouseleave: () => void
+  export let playing = false
 
-  function is中文(text: string): boolean {
-    const 中文 = /[\u4E00-\u9FA5]+/
-    return 中文.test(text)
-  }
+  $: knownWords = sentence.words?.filter(({ known, language }) => known && language === 'zh') || []
+  $: unKnownWords = sentence.words?.filter(({ known }) => !known) || []
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="opacity-100 hover:opacity-100" on:mouseenter={onmouseenter} on:mouseleave={onmouseleave}>
+<div class:opacity-15={playing} class="h-full" on:mouseenter={onmouseenter} on:mouseleave={onmouseleave}>
   <div class="text-xl">
-    {#each sentence.syntax.tokens as { text: {content} }}
-      {content}
-    {/each}
+    {#if sentence.words}
+      {#each sentence.words as { text }}
+        {text}
+      {/each}
+    {:else}
+      {sentence.text}
+    {/if}
   </div>
   {#if sentence.machine_translation}
     {sentence.machine_translation?.en}
   {/if}
   <div class="border-b border-gray-300 pb-2 mb-2"></div>
 
-  {#if sentence.syntax}
-    <table>
-      {#each sentence.syntax.tokens as { text: {content}, partOfSpeech: {tag} }}
-        {#if is中文(content)}
-          <tr>
-            <td class="v-top text-xl whitespace-nowrap">{content}</td>
-            <td class="v-top pb-4">{entries[content]?.definitionsArray.join(', ') || ''} <span class="text-sm text-gray">({tag})</span></td>
-          </tr>
-        {/if}
-      {/each}
-    </table>
-  {/if}
+  <table class="border-b border-gray-300 pb-2 mb-2 w-full">
+    {#each unKnownWords as { text, partOfSpeechTag }}
+      <tr>
+        <td class="v-top text-xl whitespace-nowrap text-green-500">{text}</td>
+        <td class="v-top pb-4">{entries[text]?.definitionsArray.join(', ') || ''}
+          {#if partOfSpeechTag}
+            <span class="text-sm text-gray">({partOfSpeechTag})</span>
+          {/if}
+        </td>
+      </tr>
+    {/each}
+  </table>
+
+  <table>
+    {#each knownWords as { text, partOfSpeechTag }}
+      <tr>
+        <td class="v-top text-xl whitespace-nowrap">{text}</td>
+        <td class="v-top pb-4">{entries[text]?.definitionsArray.join(', ') || ''}
+          {#if partOfSpeechTag}
+            <span class="text-sm text-gray">({partOfSpeechTag})</span>
+          {/if}
+        </td>
+      </tr>
+    {/each}
+  </table>
 </div>

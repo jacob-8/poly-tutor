@@ -11,8 +11,8 @@ export interface Paragraph {
 
 export interface Sentence {
   text: string
-  words?: Word[]
   syntax?: google.cloud.language.v1.IAnalyzeSyntaxResponse
+  words?: Word[]
   start_ms?: number
   end_ms?: number
   machine_translation?: Translation
@@ -20,6 +20,9 @@ export interface Sentence {
 
 interface Word {
   text: string
+  language: 'other' | 'zh'
+  known: boolean
+  partOfSpeechTag?: string
   pronunciation?: string
   tones?: string
 }
