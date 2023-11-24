@@ -22,14 +22,14 @@
   }).join('\n\n').length
 </script>
 
-<div>
+<div class="pb-20">
   {#if content.paragraphs}
     <div class="text-xs text-gray">({captionsLength} characters)</div>
     <Paragraphs {youtubeComponent} {playerState} {entries} {setTime} {currentTimeMs} {studySentence} paragraphs={content.paragraphs} />
     <Button size="sm" form="simple" color="red" onclick={deleteContent}>Delete Captions</Button>
   {:else if email}
     {#if email === 'jacob@polylingual.dev'}
-      <Button size="sm" onclick={getCaptions}>{$page.data.t.shows.get_captions}</Button>
+      <Button size="lg" class="mt-2" onclick={getCaptions}>{$page.data.t.shows.get_captions}</Button>
     {:else}
       Sorry, the tool is not ready yet. Thank you for your interest. I will use your email address to notify you when it is ready.
     {/if}

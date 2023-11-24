@@ -5,7 +5,7 @@
 
   export let getSummary: () => Promise<void>
   export let deleteSummary: () => void
-  export let paragraphs: Paragraph[] = []
+  export let paragraphs: Paragraph[]
   export let studySentence: (sentence: Sentence) => void
 </script>
 
