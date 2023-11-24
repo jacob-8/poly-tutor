@@ -1,0 +1,17 @@
+{
+  "layout": {
+    "tutor": "導師",
+    "sign_in": "登录",
+    "sign_out": "退出",
+    "email_address": "电子邮件",
+    "send_code": "发送验证码"
+  },
+  "shows": {
+    "paste_youtube_url": "粘贴 YouTube 视频网址",
+    "summary": "摘要",
+    "summarize": "摘要",
+    "get_captions": "取得字幕",
+    "analyze": "分析",
+    "translate": "翻译"
+  }
+}

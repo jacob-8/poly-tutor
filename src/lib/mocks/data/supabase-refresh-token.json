@@ -1,0 +1,44 @@
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImJQYU9ISi9CZ3F1Y2VOZDciLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzAwNjY2NDI5LCJpYXQiOjE3MDA2NjI4MjksImlzcyI6Imh0dHBzOi8vemZ4dnlvZHF3dmlneGFyb3Jnanguc3VwYWJhc2UuY28vYXV0aC92MSIsInN1YiI6IjAzOThlYjMwLTQ4MzItNGRkNS1iYjNkLWE0MGM4M2I2MTI0OCIsImVtYWlsIjoiamFjb2JAcG9seWxpbmd1YWwuZGV2IiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6e30sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoib3RwIiwidGltZXN0YW1wIjoxNzAwNjU2NDMxfV0sInNlc3Npb25faWQiOiJlNDYzMjI4YS1jNTllLTRhZDEtYmQxOS05NjJmYmExM2U4Y2EifQ.EuDpAr4YScrRePWUYHIRUEFKYFDWnW1s7Mi_-2M6bIk",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "expires_at": 1700666429,
+  "refresh_token": "_6TXSVTfq-o5h4VOzNic3Q",
+  "user": {
+    "id": "0398eb30-4832-4dd5-bb3d-a40c83b61248",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "jacob@polylingual.dev",
+    "email_confirmed_at": "2023-11-13T01:57:09.724664Z",
+    "phone": "",
+    "confirmation_sent_at": "2023-11-13T01:56:53.563196Z",
+    "confirmed_at": "2023-11-13T01:57:09.724664Z",
+    "recovery_sent_at": "2023-11-22T12:33:28.010548Z",
+    "last_sign_in_at": "2023-11-22T12:33:51.527396Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {},
+    "identities": [
+      {
+        "id": "0398eb30-4832-4dd5-bb3d-a40c83b61248",
+        "user_id": "0398eb30-4832-4dd5-bb3d-a40c83b61248",
+        "identity_data": {
+          "email": "jacob@polylingual.dev",
+          "email_verified": false,
+          "phone_verified": false,
+          "sub": "0398eb30-4832-4dd5-bb3d-a40c83b61248"
+        },
+        "provider": "email",
+        "last_sign_in_at": "2023-11-13T01:56:53.561793Z",
+        "created_at": "2023-11-13T01:56:53.561845Z",
+        "updated_at": "2023-11-13T01:56:53.561845Z"
+      }
+    ],
+    "created_at": "2023-11-13T01:56:53.559168Z",
+    "updated_at": "2023-11-22T14:20:29.092653Z"
+  }
+}

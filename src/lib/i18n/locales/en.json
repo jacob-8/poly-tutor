@@ -1,0 +1,17 @@
+{
+  "layout": {
+    "tutor": "Tutor",
+    "sign_in": "Sign in",
+    "sign_out": "Sign out",
+    "email_address": "Email address",
+    "send_code": "Send 6-Digit Code"
+  },
+  "shows": {
+    "paste_youtube_url": "Paste YouTube URL",
+    "summary": "Summary",
+    "summarize": "Summarize",
+    "get_captions": "Get Captions",
+    "analyze": "Analyze",
+    "translate": "Translate"
+  }
+}

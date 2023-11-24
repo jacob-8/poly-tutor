@@ -1,0 +1,66 @@
+:root {
+  --c-bg: #fff;
+  --c-scrollbar: #eee;
+  --c-scrollbar-hover: #bbb;
+}
+
+html {
+  background-color: var(--c-bg);
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+html.dark {
+  --c-bg: #050505;
+  --c-scrollbar: #111;
+  --c-scrollbar-hover: #222;
+}
+
+body {
+  /* --at-apply: font-sans */
+  --at-apply: flex flex-col min-h-100vh text-gray-700 dark:text-gray-200;
+  font-family: 'biao_kaiti_windows', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+::selection {
+  background: #8884;
+}
+
+* {
+  scrollbar-color: var(--c-scrollbar) var(--c-bg);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar:horizontal {
+  height: 6px;
+}
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {
+  background: var(--c-bg);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-scrollbar);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-scrollbar-hover);
+}
+
+@font-face {
+  font-family: 'biao_kaiti_windows';
+  src: url('/fonts/biao_kaiti_windows.ttf') format('truetype');
+  unicode-range: U+4E00-9FFF; /* Go to 9FA5 for most common Chinese characters, go to 9FFF for more expansive coverage of more rare characters */
+}
+
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+.blink-cursor:after {
+  animation: blink 1s steps(5, start) infinite;
+  content: '▋';
+}

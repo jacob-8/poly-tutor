@@ -1,0 +1,727 @@
+[
+  {
+    "duration": 11,
+    "start": 0,
+    "text": "(字幕製作:阿神)"
+  },
+  {
+    "duration": 1.8,
+    "start": 11,
+    "text": "哈囉各位觀眾朋友大家好"
+  },
+  {
+    "duration": 1.54,
+    "start": 12.8,
+    "text": "這裡是程式員Alpha的頻道"
+  },
+  {
+    "duration": 2.3,
+    "start": 14.34,
+    "text": "首先很開心大家點擊我這支影片"
+  },
+  {
+    "duration": 3.84,
+    "start": 16.64,
+    "text": "我的影片主要是介紹一些使用的手機App軟體還有網站工具"
+  },
+  {
+    "duration": 1.8,
+    "start": 20.48,
+    "text": "然後在這個平台分享給大家"
+  },
+  {
+    "duration": 3.32,
+    "start": 22.28,
+    "text": "好前幾個禮拜呢Meta就是Facebook"
+  },
+  {
+    "duration": 5.76,
+    "start": 25.6,
+    "text": "他有發布了一個叫做LAMA2針對於生成式AI上面的一個開源軟體"
+  },
+  {
+    "duration": 4.16,
+    "start": 31.36,
+    "text": "跟ChadGPT一樣可以通過對話呢跟他做一個對答"
+  },
+  {
+    "duration": 3.52,
+    "start": 35.52,
+    "text": "然後他發表的裡面的內容呢他總共有三個模型"
+  },
+  {
+    "duration": 2.88,
+    "start": 39.04,
+    "text": "一個是7B一個是13B然後再來是70B"
+  },
+  {
+    "duration": 2.8,
+    "start": 41.92,
+    "text": "好如果說要直接在網路上做使用的話"
+  },
+  {
+    "duration": 4.48,
+    "start": 44.72,
+    "text": "在這個網站呢你可以選說你要使用哪一個權重"
+  },
+  {
+    "duration": 2.4,
+    "start": 49.2,
+    "text": "然後他是免費的然後你也不需要做登錄"
+  },
+  {
+    "duration": 1.44,
+    "start": 51.6,
+    "text": "你就可以直接聊天"
+  },
+  {
+    "duration": 4.16,
+    "start": 53.04,
+    "text": "他原始的權重他沒有花那麼多的訓練是在中文上面"
+  },
+  {
+    "duration": 2.88,
+    "start": 57.2,
+    "text": "不像ChadGPT他中文是非常好理解的"
+  },
+  {
+    "duration": 3.2,
+    "start": 60.08,
+    "text": "好所以說如果你要玩這個網站的話"
+  },
+  {
+    "duration": 1.68,
+    "start": 63.28,
+    "text": "最好是用英文跟他做對答"
+  },
+  {
+    "duration": 2.16,
+    "start": 64.96,
+    "text": "那我今天呢是想要分享就是"
+  },
+  {
+    "duration": 4.32,
+    "start": 67.12,
+    "text": "如何讓你在你的電腦裡面可以使用LAMA2"
+  },
+  {
+    "duration": 1.44,
+    "start": 71.44,
+    "text": "可以用中文去跟他做對答"
+  },
+  {
+    "duration": 2.16,
+    "start": 72.88,
+    "text": "那首先呢我先介紹這個開源軟體"
+  },
+  {
+    "duration": 2.8,
+    "start": 75.04,
+    "text": "他叫做Text Generation Web UI"
+  },
+  {
+    "duration": 2.56,
+    "start": 77.84,
+    "text": "好然後他這個非常簡單就是下面呢"
+  },
+  {
+    "duration": 2.56,
+    "start": 80.4,
+    "text": "他有一個一鍵安裝的程式"
+  },
+  {
+    "duration": 2.56,
+    "start": 82.96,
+    "text": "這邊就是有Windows的然後有Mac系統"
+  },
+  {
+    "duration": 1.68,
+    "start": 85.52,
+    "text": "好那我就是下載這個Windows"
+  },
+  {
+    "duration": 2.8,
+    "start": 87.2,
+    "text": "因為我這個現在做示範的呢是Windows"
+  },
+  {
+    "duration": 2.32,
+    "start": 90,
+    "text": "然後我有搭載NVIDIA的顯示卡"
+  },
+  {
+    "duration": 2.24,
+    "start": 92.32,
+    "text": "然後你把他下載下來就是這個檔案"
+  },
+  {
+    "duration": 2.24,
+    "start": 94.56,
+    "text": "這個ZIP檔我們就直接做解壓縮"
+  },
+  {
+    "duration": 2.64,
+    "start": 96.8,
+    "text": "點進去之後這邊有一個叫做Start Windows"
+  },
+  {
+    "duration": 3.28,
+    "start": 99.44,
+    "text": "這邊你就直接點兩下讓他自行的安裝"
+  },
+  {
+    "duration": 2.24,
+    "start": 102.72,
+    "text": "這邊呢會有一個ABCD的選項"
+  },
+  {
+    "duration": 3.28,
+    "start": 104.96,
+    "text": "如果你是要使用NVIDIA的系統的話"
+  },
+  {
+    "duration": 2.88,
+    "start": 108.24,
+    "text": "那你就是選A打上A然後按Enter"
+  },
+  {
+    "duration": 1.12,
+    "start": 111.12,
+    "text": "然後或是直接按D"
+  },
+  {
+    "duration": 2.56,
+    "start": 112.24,
+    "text": "直接運行CPU在你的電腦裡面"
+  },
+  {
+    "duration": 1.28,
+    "start": 114.8,
+    "text": "我這個安裝蠻久的"
+  },
+  {
+    "duration": 1.92,
+    "start": 116.08,
+    "text": "他當然因為他又安裝很多的套件"
+  },
+  {
+    "duration": 3.12,
+    "start": 118,
+    "text": "所以我大概裝了可能有15 20分鐘"
+  },
+  {
+    "duration": 3.84,
+    "start": 121.12,
+    "text": "安裝完之後呢也會看到一樣是這個檔案"
+  },
+  {
+    "duration": 4.24,
+    "start": 124.96,
+    "text": "裡面呢他會多出現這個叫做Text Generation Web UI"
+  },
+  {
+    "duration": 2.48,
+    "start": 129.2,
+    "text": "正常來講他會直接跳出一個網址"
+  },
+  {
+    "duration": 1.28,
+    "start": 131.68,
+    "text": "打上這個網址之後呢"
+  },
+  {
+    "duration": 1.92,
+    "start": 132.96,
+    "text": "他就會進到那個Web UI的畫面"
+  },
+  {
+    "duration": 2.96,
+    "start": 134.88,
+    "text": "如果你是要重新在就是你全部都關掉之後"
+  },
+  {
+    "duration": 1.2,
+    "start": 137.84,
+    "text": "你要重新啟動的話"
+  },
+  {
+    "duration": 1.68,
+    "start": 139.04,
+    "text": "那你就直接點進這個資料夾"
+  },
+  {
+    "duration": 1.52,
+    "start": 140.72,
+    "text": "裡面有一個叫做Start Windows"
+  },
+  {
+    "duration": 2.24,
+    "start": 142.24,
+    "text": "就是一模一樣你就是點兩下"
+  },
+  {
+    "duration": 2,
+    "start": 144.48,
+    "text": "他一樣會跳出這個視窗"
+  },
+  {
+    "duration": 1.36,
+    "start": 146.48,
+    "text": "因為你東西都安裝好了"
+  },
+  {
+    "duration": 1.44,
+    "start": 147.84,
+    "text": "他就不會重新再安裝一遍"
+  },
+  {
+    "duration": 0.8,
+    "start": 149.28,
+    "text": "好就是這個"
+  },
+  {
+    "duration": 2,
+    "start": 150.08,
+    "text": "然後這邊呢你就把它複製下來"
+  },
+  {
+    "duration": 2.08,
+    "start": 152.08,
+    "text": "好然後就在你的網址這裡貼上"
+  },
+  {
+    "duration": 1.28,
+    "start": 154.16,
+    "text": "好然後他這個介面呢"
+  },
+  {
+    "duration": 1.84,
+    "start": 155.44,
+    "text": "就是Input A問題的地方"
+  },
+  {
+    "duration": 2.32,
+    "start": 157.28,
+    "text": "按Enter或者是選擇這個Generate"
+  },
+  {
+    "duration": 1.12,
+    "start": 159.6,
+    "text": "他就會跟你做對話"
+  },
+  {
+    "duration": 2.32,
+    "start": 160.72,
+    "text": "我們在下面呢我們會選這個Chat模式"
+  },
+  {
+    "duration": 1.6,
+    "start": 163.04,
+    "text": "那再來就是模型的部分"
+  },
+  {
+    "duration": 2.88,
+    "start": 164.64,
+    "text": "Togging Face這邊有一個免費的模型"
+  },
+  {
+    "duration": 3.04,
+    "start": 167.52,
+    "text": "他是針對LAMA 2的7B的模型"
+  },
+  {
+    "duration": 1.28,
+    "start": 170.56,
+    "text": "然後他去做優化"
+  },
+  {
+    "duration": 2.24,
+    "start": 171.84,
+    "text": "然後就是可以用中文去跟他做對話"
+  },
+  {
+    "duration": 0.72,
+    "start": 174.08,
+    "text": "點進去"
+  },
+  {
+    "duration": 1.28,
+    "start": 174.8,
+    "text": "進來這個Hogging Face這邊"
+  },
+  {
+    "duration": 1.04,
+    "start": 176.08,
+    "text": "你要下載模型的話"
+  },
+  {
+    "duration": 1.84,
+    "start": 177.12,
+    "text": "基本上都是會看到這個File"
+  },
+  {
+    "duration": 2.48,
+    "start": 178.96,
+    "text": "點進來然後他這邊有好幾個模型"
+  },
+  {
+    "duration": 1.84,
+    "start": 181.44,
+    "text": "然後你就可以直接在這邊做下載"
+  },
+  {
+    "duration": 2.8,
+    "start": 183.28,
+    "text": "差別就是在於說你從上到下"
+  },
+  {
+    "duration": 1.12,
+    "start": 186.08,
+    "text": "越下面的模型呢"
+  },
+  {
+    "duration": 2.64,
+    "start": 187.2,
+    "text": "他會越吃你的記憶體"
+  },
+  {
+    "duration": 2.88,
+    "start": 189.84,
+    "text": "所以呢越下面的模型他會檔案越大"
+  },
+  {
+    "duration": 3.04,
+    "start": 192.72,
+    "text": "然後他會跑的會相對比較慢一點"
+  },
+  {
+    "duration": 1.28,
+    "start": 195.76,
+    "text": "但是他相對精準"
+  },
+  {
+    "duration": 1.28,
+    "start": 197.04,
+    "text": "他誤差比較不會這麼大"
+  },
+  {
+    "duration": 3.76,
+    "start": 198.32,
+    "text": "如果說你的電腦沒有那麼大的運算力的話"
+  },
+  {
+    "duration": 1.36,
+    "start": 202.08,
+    "text": "那其實可以下載這個"
+  },
+  {
+    "duration": 1.12,
+    "start": 203.44,
+    "text": "然後把他下載下來"
+  },
+  {
+    "duration": 1.28,
+    "start": 204.56,
+    "text": "下載下來之後"
+  },
+  {
+    "duration": 3.12,
+    "start": 205.84,
+    "text": "你就進到Text Generation這邊這個檔案進去"
+  },
+  {
+    "duration": 2.56,
+    "start": 208.96,
+    "text": "裡面下面有個叫做Models的檔案夾"
+  },
+  {
+    "duration": 2.48,
+    "start": 211.52,
+    "text": "然後你就把你剛剛下載下來的模型呢"
+  },
+  {
+    "duration": 0.96,
+    "start": 214,
+    "text": "把他放進來"
+  },
+  {
+    "duration": 1.6,
+    "start": 214.96,
+    "text": "然後我們要載入模型呢"
+  },
+  {
+    "duration": 1.6,
+    "start": 216.56,
+    "text": "我們就是按這個Model"
+  },
+  {
+    "duration": 1.36,
+    "start": 218.16,
+    "text": "如果你沒有看到模型的話"
+  },
+  {
+    "duration": 2.24,
+    "start": 219.52,
+    "text": "那你就是可以先重新整理一下"
+  },
+  {
+    "duration": 1.68,
+    "start": 221.76,
+    "text": "然後再點這個模型"
+  },
+  {
+    "duration": 2.48,
+    "start": 223.44,
+    "text": "然後選擇剛剛我們下載的模型"
+  },
+  {
+    "duration": 0.64,
+    "start": 225.92,
+    "text": "點進去"
+  },
+  {
+    "duration": 1.52,
+    "start": 226.56,
+    "text": "然後再按Load"
+  },
+  {
+    "duration": 1.36,
+    "start": 228.08,
+    "text": "載入模型之後"
+  },
+  {
+    "duration": 1.84,
+    "start": 229.44,
+    "text": "再回到這個第一個選項"
+  },
+  {
+    "duration": 1.52,
+    "start": 231.28,
+    "text": "然後這時候你就可以問他"
+  },
+  {
+    "duration": 2.48,
+    "start": 232.8,
+    "text": "然後他這樣的話就是一個正常的速度"
+  },
+  {
+    "duration": 1.36,
+    "start": 235.28,
+    "text": "你要讓他回答中文的話"
+  },
+  {
+    "duration": 1.04,
+    "start": 236.64,
+    "text": "就是要告訴他說"
+  },
+  {
+    "duration": 2.96,
+    "start": 237.68,
+    "text": "你用麻煩他用中文去回答我們的問題"
+  },
+  {
+    "duration": 0.96,
+    "start": 240.64,
+    "text": "這個Web UI"
+  },
+  {
+    "duration": 2.72,
+    "start": 241.6,
+    "text": "他有一個好處是你可以直接下載模型"
+  },
+  {
+    "duration": 1.52,
+    "start": 244.32,
+    "text": "然後他在Hugging Face裡面"
+  },
+  {
+    "duration": 1.76,
+    "start": 245.84,
+    "text": "就點你要的模型"
+  },
+  {
+    "duration": 0.88,
+    "start": 247.6,
+    "text": "在這邊呢"
+  },
+  {
+    "duration": 1.44,
+    "start": 248.48,
+    "text": "把他複製下來"
+  },
+  {
+    "duration": 1.52,
+    "start": 249.92,
+    "text": "然後進到這個網站"
+  },
+  {
+    "duration": 2.96,
+    "start": 251.44,
+    "text": "在這個地方download模型這地方的複製貼上"
+  },
+  {
+    "duration": 0.88,
+    "start": 254.4,
+    "text": "然後按download"
+  },
+  {
+    "duration": 2.56,
+    "start": 255.28,
+    "text": "他就會自動的幫你把這個模型給下載下來"
+  },
+  {
+    "duration": 2.88,
+    "start": 257.84,
+    "text": "下載完之後我們就是在這邊按Fresh"
+  },
+  {
+    "duration": 1.36,
+    "start": 260.72,
+    "text": "然後我們點進去"
+  },
+  {
+    "duration": 2.56,
+    "start": 262.08,
+    "text": "選擇我們剛剛下載的模型"
+  },
+  {
+    "duration": 0.8,
+    "start": 264.64,
+    "text": "我們點進去"
+  },
+  {
+    "duration": 2.16,
+    "start": 265.44,
+    "text": "他會自動的偵測就是"
+  },
+  {
+    "duration": 2.48,
+    "start": 267.6,
+    "text": "你這是什麼樣的模型的檔案"
+  },
+  {
+    "duration": 2.32,
+    "start": 270.08,
+    "text": "像我們剛剛是Lama.cpp"
+  },
+  {
+    "duration": 2.64,
+    "start": 272.4,
+    "text": "然後這個是直接轉成Transformers"
+  },
+  {
+    "duration": 1.44,
+    "start": 275.04,
+    "text": "那我們這邊就按Load"
+  },
+  {
+    "duration": 2.32,
+    "start": 276.48,
+    "text": "然後我們再進到第一個選項"
+  },
+  {
+    "duration": 1.52,
+    "start": 278.8,
+    "text": "然後我們把這個地方清空的話"
+  },
+  {
+    "duration": 1.12,
+    "start": 280.32,
+    "text": "那就是選這個"
+  },
+  {
+    "duration": 2.56,
+    "start": 281.44,
+    "text": "Clear點進去按Confirm"
+  },
+  {
+    "duration": 1.6,
+    "start": 284,
+    "text": "他就會幫你清空了"
+  },
+  {
+    "duration": 1.84,
+    "start": 285.6,
+    "text": "總之X Generation"
+  },
+  {
+    "duration": 2.64,
+    "start": 287.44,
+    "text": "他就是集結不同的模型"
+  },
+  {
+    "duration": 2.56,
+    "start": 290.08,
+    "text": "然後你可以安裝這個程式之後"
+  },
+  {
+    "duration": 2.48,
+    "start": 292.64,
+    "text": "你就可以直接透過他這個Web UI"
+  },
+  {
+    "duration": 2.32,
+    "start": 295.12,
+    "text": "可以去下載各式各樣的模型"
+  },
+  {
+    "duration": 1.2,
+    "start": 297.44,
+    "text": "然後直接在裡面"
+  },
+  {
+    "duration": 1.92,
+    "start": 298.64,
+    "text": "在你的本地端直接做測試"
+  },
+  {
+    "duration": 1.44,
+    "start": 300.56,
+    "text": "好那我今天就分享"
+  },
+  {
+    "duration": 2.4,
+    "start": 302,
+    "text": "如何在你的電腦上面"
+  },
+  {
+    "duration": 3.52,
+    "start": 304.4,
+    "text": "使用這個Lama 2.7b中文版的一個模型"
+  },
+  {
+    "duration": 2.64,
+    "start": 307.92,
+    "text": "直接在Web UI上面去做操作"
+  },
+  {
+    "duration": 1.04,
+    "start": 310.56,
+    "text": "今天就介紹到這邊"
+  },
+  {
+    "duration": 1.36,
+    "start": 311.6,
+    "text": "如果大家喜歡我的影片"
+  },
+  {
+    "duration": 0.96,
+    "start": 312.96,
+    "text": "歡迎訂閱我的頻道"
+  },
+  {
+    "duration": 1.44,
+    "start": 313.92,
+    "text": "然後旁邊有個小鈴鐺把它打開來"
+  },
+  {
+    "duration": 1.92,
+    "start": 315.36,
+    "text": "這樣我上傳影片第一時間通知給你"
+  },
+  {
+    "duration": 0.88,
+    "start": 317.28,
+    "text": "再次謝謝各位"
+  }
+]

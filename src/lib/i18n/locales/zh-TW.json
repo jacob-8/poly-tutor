@@ -1,0 +1,17 @@
+{
+  "layout": {
+    "tutor": "导师",
+    "sign_in": "登入",
+    "sign_out": "退出",
+    "email_address": "電子郵件",
+    "send_code": "發送驗證碼"
+  },
+  "shows": {
+    "paste_youtube_url": "貼上 YouTube 影片網址",
+    "summary": "摘要",
+    "summarize": "摘要",
+    "get_captions": "取得字幕",
+    "analyze": "分析",
+    "translate": "翻譯"
+  }
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		
+		<title>Language Tutor Web App</title>
+		<meta name="description" content="Learn a new language with your personal language tutor!" />
+
+		<meta name='theme-color' content='#2563eb'>
+		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest">
+		<link rel="apple-touch-icon" sizes="180x180" href="%sveltekit.assets%/icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="%sveltekit.assets%/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="%sveltekit.assets%/icons/favicon-16x16.png">
+
+		<!-- <script>
+			(function () {
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        const setting = localStorage.getItem('color-scheme') || 'auto'
+        if (setting === 'dark' || (prefersDark && setting !== 'light'))
+          document.documentElement.classList.toggle('dark', true)
+      })()
+		</script> -->
+
+		%unocss-svelte-scoped.global%
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>
