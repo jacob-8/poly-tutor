@@ -1,28 +1,44 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import type { Paragraph, Sentence } from '$lib/types'
+  import { Button } from 'svelte-pieces'
 
+  export let getSummary: () => Promise<void>
+  export let deleteSummary: () => void
   export let paragraphs: Paragraph[] = []
   export let studySentence: (sentence: Sentence) => void
 </script>
 
-{#each paragraphs as paragraph}
-  {#each paragraph.sentences as sentence}
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-    <div
-      on:mouseover={() => studySentence(sentence)}
-      on:click={() => studySentence(sentence)}>
-      {#if sentence.syntax?.tokens?.length}
-        {#each sentence.syntax.tokens as {text}}
-          {text.content}
-        {/each}
-      {:else if sentence.words}
-        {#each sentence.words as word}
-          {word.text}
-        {/each}
-      {:else}
-        {sentence.text}
-      {/if}
-    </div>
-  {/each}
-{/each}
+<div class="border-b pb-2 my-2">
+  <div class="text-xs text-gray mb-2">
+    {$page.data.t.shows.summary}
+  </div>
+  {#if paragraphs}
+    {#each paragraphs as paragraph}
+      {#each paragraph.sentences as sentence}
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+        <div
+          on:mouseover={() => studySentence(sentence)}
+          on:click={() => studySentence(sentence)}>
+          {#if sentence.syntax?.tokens?.length}
+            {#each sentence.syntax.tokens as {text}}
+              {text.content}
+            {/each}
+          {:else if sentence.words}
+            {#each sentence.words as word}
+              {word.text}
+            {/each}
+          {:else}
+            {sentence.text}
+          {/if}
+        </div>
+      {/each}
+    {/each}
+    <Button size="sm" form="simple" color="red" onclick={deleteSummary}>Delete Summary</Button>
+  {:else}
+    <Button onclick={getSummary}>{$page.data.t.shows.summarize}</Button>
+  {/if}
+</div>
+
+

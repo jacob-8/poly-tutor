@@ -5,6 +5,7 @@
   import StudySentence from './StudySentence.svelte'
   import { Button } from 'svelte-pieces'
   import Content from './Content.svelte'
+  import Summary from './Summary.svelte'
 
   export let data
   $: ({ content, summary, user, getCaptions, getSummary, deleteContent, deleteSummary } = data)
@@ -76,16 +77,20 @@
     {#await data.streamed.cedict}
       ...
     {:then entries}
+      {#if $content.paragraphs}
+        <Summary {getSummary}
+          {deleteSummary} {studySentence} paragraphs={$summary.summary} />
+      {/if}
+
       <Content
         {entries}
         {getCaptions}
-        {getSummary}
-        {deleteSummary}
+        {youtubeComponent}
+        {playerState}
         {deleteContent}
         {currentTimeMs}
         {setTime}
         content={$content}
-        summary={$summary}
         email={$user?.session.user.email}
         {studySentence} />
     {:catch error}
