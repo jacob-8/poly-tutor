@@ -1,10 +1,10 @@
-import type { Variants } from 'kitbook'
+import type { Variant } from 'kitbook'
 import type Layout from './+layout.svelte'
 import { readable, type Readable } from 'svelte/store'
 import type { BaseUser } from '$lib/supabase/user'
 import { mockLayoutData } from '$lib/mocks/data/page'
 
-export const variants: Variants<Layout> = [
+export const variants: Variant<Layout>[] = [
   {
     name: 'Signed Out',
     props: {

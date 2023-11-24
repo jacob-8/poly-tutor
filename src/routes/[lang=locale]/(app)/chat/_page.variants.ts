@@ -1,8 +1,8 @@
-import type { Variants } from 'kitbook'
+import type { Variant } from 'kitbook'
 import type Page from './+page.svelte'
 import { mockLayoutData } from '$lib/mocks/data/page'
 
-export const variants: Variants<Page> = [
+export const variants: Variant<Page>[] = [
   {
     viewports: [
       {

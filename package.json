@@ -14,7 +14,10 @@
 		"test:e2e:update": "playwright test --update-snapshots",
 		"test:e2e:ui": "playwright test --config playwright.dev.config.ts --ui",
 		"test:components": "playwright test --config playwright.dev.config.ts kitbook",
-		"test:components:update": "playwright test --config playwright.dev.config.ts kitbook --update-snapshots"
+		"test:components:update": "playwright test --config playwright.dev.config.ts kitbook --update-snapshots",
+		"lint": "eslint . --cache",
+    "lint:fix": "eslint . --cache --fix",
+    "check-packages": "pnpm update --interactive --recursive --latest"
 	},
 	"devDependencies": {
 		"@google-cloud/language": "^6.1.1",
@@ -26,7 +29,13 @@
 		"@sveltejs/kit": "^1.27.5",
 		"@sveltejs/vite-plugin-svelte": "^2.5.2",
 		"@types/youtube": "^0.0.50",
+		"@typescript-eslint/eslint-plugin": "6.10.0",
+    "@typescript-eslint/parser": "6.10.0",
 		"@unocss/svelte-scoped": "^0.57.3",
+		"eslint": "^8.53.0",
+    "eslint-define-config": "^1.24.1",
+    "eslint-plugin-svelte": "^2.35.0",
+    "globals": "^13.23.0",
 		"kitbook": "1.0.0-beta.10",
 		"msw": "2.0.8",
 		"openai-edge": "^1.1.1",

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import Youtube, { PlayerState } from 'svelte-pieces/media/Youtube.svelte'
+  import Youtube from 'svelte-pieces/media/Youtube.svelte'
   import Paragraphs from './Paragraphs.svelte'
   import type { Sentence } from '$lib/types'
   import StudySentence from './StudySentence.svelte'
@@ -8,13 +8,16 @@
 
   export let data
   $: ({ content, user } = data)
-  // eslint-disable-next-line no-undef
+  // eslint-disable-next-line no-undef, @typescript-eslint/no-unused-vars
   let state: YT.PlayerState
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let playbackRate = 1
   // eslint-disable-next-line no-undef
   let player: YT.Player
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let interval: number
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let currentTime: number
 
   const MILLISECONDS_BETWEEN_TIME_CHECKS = 20

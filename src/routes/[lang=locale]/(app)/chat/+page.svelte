@@ -33,7 +33,7 @@
       ...messages,
     ]
 
-    const eventSource = fetchSSE<ChatRequestBody>('/api/chat', { messages: messagesToSend, model: 'gpt-4-1106-preview' })
+    const eventSource = fetchSSE<ChatRequestBody>('/api/chat', { messages: messagesToSend, model: 'gpt-4-1106-preview', max_tokens: 1000, })
     eventSource.addEventListener('message', handle_message)
     eventSource.addEventListener('error', handleError)
     eventSource.stream()
@@ -72,20 +72,20 @@
   </div>
 
   {#each messages as {content, role}}
-  <div class="border-b" class:bg-gray-100={role === 'assistant'}>
-    <div class="max-w-5xl mx-auto p-2">
-      {content}
+    <div class="border-b" class:bg-gray-100={role === 'assistant'}>
+      <div class="max-w-5xl mx-auto p-2">
+        {content}
+      </div>
     </div>
-  </div>
   {/each}
 
   {#if asking}
-  <div class="border-b">
-    <div class="max-w-5xl mx-auto p-2">
-      {answer}
-      <span class="blink-cursor" />
+    <div class="border-b">
+      <div class="max-w-5xl mx-auto p-2">
+        {answer}
+        <span class="blink-cursor" />
+      </div>
     </div>
-  </div>
   {/if}
 
   <form class="flex p-3" on:submit={submit}>
@@ -94,10 +94,10 @@
   </form>
 
   {#if error}
-  <div class="text-red p-3">{error}</div>
+    <div class="text-red p-3">{error}</div>
   {/if}
 {:else}
-<div class="p-3">
-  Please login
-</div>
+  <div class="p-3">
+    Please login
+  </div>
 {/if}

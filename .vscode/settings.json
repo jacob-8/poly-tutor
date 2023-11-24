@@ -1,0 +1,25 @@
+{
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "prettier.enable": false,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "html",
+    "markdown",
+    "svelte"
+  ],
+  "eslint.experimental.useFlatConfig": true,
+  "foam.edit.linkReferenceDefinitions": "withExtensions",
+  "foam.files.ignore": [
+    "**/node_modules/**/*",
+    "**/package/**/*",
+  ],
+  "foam.completion.label": "identifier",
+  "svelte.plugin.svelte.compilerWarnings": {
+    "a11y-click-events-have-key-events": "ignore",
+  },
+}

@@ -2,7 +2,7 @@ import { afterAll, afterEach, beforeAll } from 'vitest'
 import { server } from '../../../../lib/mocks/server'
 import { createChunkDecoder } from '../../../../lib/client/chunkDecoder'
 import { apiFetch } from '../../../../lib/client/apiFetch'
-import type { ChatRequestBody } from '../../../api/chat/chat.interface'
+import type { ChatRequestBody } from '../../../../lib/types'
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
 afterAll(() => server.close())
@@ -19,6 +19,7 @@ async function getStream(url: string, lastMessage: string) {
       content: lastMessage
     }],
     model: 'gpt-4-1106-preview',
+    max_tokens: 1000,
   })
   const reader = response.body.getReader()
   const decoder = createChunkDecoder()

@@ -7,7 +7,7 @@ export default defineProject({
   test: {
     alias: {
       // $lib: resolve(projectDir, './src/lib'),
-      // $lib: new URL('./src/lib', import.meta.url).pathname,
+      $lib: new URL('./src/lib', import.meta.url).pathname,
     },
     name: 'unit',
     globals: true,
