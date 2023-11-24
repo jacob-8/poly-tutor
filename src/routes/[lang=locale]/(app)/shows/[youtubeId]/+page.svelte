@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import Youtube from 'svelte-pieces/media/Youtube.svelte'
+  import Youtube from './Youtube.svelte'
   import Paragraphs from './Paragraphs.svelte'
   import type { Sentence } from '$lib/types'
   import StudySentence from './StudySentence.svelte'
