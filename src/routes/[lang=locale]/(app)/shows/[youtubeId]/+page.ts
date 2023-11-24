@@ -7,6 +7,7 @@ import { fetchSSE } from '$lib/client/fetchSSE'
 import type { ChatCompletionRequestMessage } from 'openai-edge'
 import { merge_translations } from './merge_translations'
 import { merge_syntax } from './merge_syntax'
+import { getCEDict } from './getCEDict'
 
 export const load = (({ params: { youtubeId } }) => {
   const content = createPersistedStore<Content>(`content_${youtubeId}`, {}, true)
@@ -87,5 +88,16 @@ export const load = (({ params: { youtubeId } }) => {
     content.set({ ...currentContent, paragraphs: [{ sentences: sentencesWithTranslation }] })
   }
 
-  return { content, getCaptions, getSummary, deleteSummary, deleteContent, analyze_syntax, translate }
+  return {
+    content,
+    getCaptions,
+    getSummary,
+    deleteSummary,
+    deleteContent,
+    analyze_syntax,
+    translate,
+    streamed: {
+      cedict: getCEDict(),
+    }
+  }
 }) satisfies PageLoad

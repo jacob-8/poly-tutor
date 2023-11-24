@@ -56,7 +56,13 @@
 
         {#if $content?.paragraphs?.[0]?.sentences?.[0]?.machine_translation?.en}
           {#if currentStudySentence}
-            <StudySentence onmouseenter={() => youtubeComponent.pause()} onmouseleave={() => youtubeComponent.play()} sentence={currentStudySentence} />
+            {#await data.streamed.cedict}
+              Loading dictionary...
+            {:then entries}
+              <StudySentence {entries} onmouseenter={() => youtubeComponent.pause()} onmouseleave={() => youtubeComponent.play()} sentence={currentStudySentence} />
+            {:catch error}
+              Loading dictionary error: {error.message}
+            {/await}
           {:else}
             Hover/click on sentence to study.
           {/if}

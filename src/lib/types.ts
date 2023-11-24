@@ -29,6 +29,28 @@ interface Translation {
   [bcp: string]: string;
 }
 
+export interface CEDictEntry {
+  hsk?: string
+  hskId?: string
+  traditional?: string
+  simplified?: string
+  pinyin?: string
+  zhuyin?: string
+  definitions?: string
+  weight?: string
+  length?: string
+  example?: string
+  exampleTranslation?: string
+  order?: string
+
+  noDefinition?: string // returned if no matching entry found
+  not中文?: string
+
+  // augments
+  definitionsArray?: string[]
+  adjustedWeight?: number
+}
+
 // API
 
 export interface YtCaptionsRequestBody {
@@ -63,3 +85,4 @@ export interface OpenAiChatStreamResponse extends Omit<CreateChatCompletionRespo
     finish_reason: string | null;
   }[];
 }
+
