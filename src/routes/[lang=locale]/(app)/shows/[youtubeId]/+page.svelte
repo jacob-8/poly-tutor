@@ -1,13 +1,13 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import Youtube from './Youtube.svelte'
-  import Paragraphs from './Paragraphs.svelte'
   import type { Sentence } from '$lib/types'
   import StudySentence from './StudySentence.svelte'
   import { Button } from 'svelte-pieces'
+  import Content from './Content.svelte'
 
   export let data
-  $: ({ content, user } = data)
+  $: ({ content, user, getCaptions, getSummary, deleteContent, deleteSummary } = data)
 
   let playbackRate = 1
   let currentTimeMs: number
@@ -26,15 +26,10 @@
     youtubeComponent.setPlaybackRate(rate)
   }
 
-
   let currentStudySentence: Sentence
   function studySentence(sentence: Sentence) {
     currentStudySentence = sentence
   }
-
-  $: captionsLength = $content.paragraphs?.map(paragraph => {
-    return paragraph.sentences?.map(sentence => sentence.text).join('\n')
-  }).join('\n\n').length
 </script>
 
 <div class="px-3 flex items-start">
@@ -70,33 +65,11 @@
     </div>
   </div>
   <div class="w-1/2 pl-2 text-3xl">
-    {#if $content.paragraphs}
-      <div class="border-b pb-2 mb-2">
-        <div class="text-xs text-gray mb-2">
-          {$page.data.t.shows.summary}
-        </div>
-        {#if $content.summary}
-          <Paragraphs {studySentence} paragraphs={$content.summary} />
-          <Button size="sm" form="simple" color="red" onclick={data.deleteSummary}>delete</Button>
-        {:else}
-          <Button onclick={data.getSummary}>{$page.data.t.shows.summarize}</Button>
-        {/if}
-      </div>
-    {/if}
-    <div>
-      {#if $content.paragraphs}
-        <div class="text-xs text-gray">({captionsLength} characters)</div>
-        <Paragraphs {studySentence} paragraphs={$content.paragraphs} />
-        <Button size="sm" form="simple" color="red" onclick={data.deleteContent}>Delete All</Button>
-      {:else if $user}
-        {#if $user.session.user.email === 'jacob@polylingual.dev'}
-          <Button size="sm" onclick={data.getCaptions}>{$page.data.t.shows.get_captions}</Button>
-        {:else}
-          Sorry, the tool is not ready yet. Thank you for your interest. I will use your email address to notify you when it is ready.
-        {/if}
-      {:else}
-        {$page.data.t.layout.sign_in}
-      {/if}
-    </div>
+    <Content
+      {getCaptions}
+      {getSummary}
+      {deleteSummary}
+      {deleteContent}
+      content={$content} email={$user?.session.user.email} {studySentence} />
   </div>
 </div>

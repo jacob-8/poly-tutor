@@ -17,7 +17,7 @@ export const load = (({ params: { youtubeId } }) => {
     content.set({ paragraphs: [{ sentences }] })
   }
 
-  function getSummary() {
+  function getSummary(): Promise<void> {
     return new Promise((resolve) => {
       const currentContent = get(content)
       const transcript = currentContent.paragraphs.map(paragraph => {
@@ -40,7 +40,7 @@ export const load = (({ params: { youtubeId } }) => {
           const response = await apiFetch<TranslateRequestBody>('/api/translate', { text: summary, sourceLanguageCode: 'zh', targetLanguageCode: 'en' })
           const translatedSummary = await response.json() as string
           content.set({ ...currentContent, summary: [{ sentences: [{text: summary, machine_translation: { en: translatedSummary}}] }] })
-          resolve(summary)
+          resolve()
           return
         }
 
