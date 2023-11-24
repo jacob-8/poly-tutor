@@ -7,13 +7,14 @@
   export let setTime: (ms: number) => void
 
   $: sentences = paragraphs.flatMap(paragraph => paragraph.sentences)
-
   let current_caption_index = 0
 
   $: {
     const index = find_caption_index_by_time(currentTimeMs)
-    if (index > -1)
+    if (index > -1) {
+      studySentence(sentences[index])
       current_caption_index = index
+    }
   }
 
   function find_caption_index_by_time(current_milliseconds: number) {

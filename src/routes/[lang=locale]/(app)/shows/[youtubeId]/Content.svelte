@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Content, Sentence } from '$lib/types'
   import Paragraphs from './Paragraphs.svelte'
+  import Summary from './Summary.svelte'
   import { page } from '$app/stores'
   import { Button } from 'svelte-pieces'
 
@@ -21,12 +22,12 @@
 </script>
 
 {#if content.paragraphs}
-  <div class="border-b pb-2 mb-2">
+  <div class="border-b pb-2 my-2">
     <div class="text-xs text-gray mb-2">
       {$page.data.t.shows.summary}
     </div>
     {#if content.summary}
-      <!-- <Paragraphs {studySentence} paragraphs={content.summary} /> -->
+      <Summary {studySentence} paragraphs={content.summary} />
       <Button size="sm" form="simple" color="red" onclick={deleteSummary}>delete</Button>
     {:else}
       <Button onclick={getSummary}>{$page.data.t.shows.summarize}</Button>

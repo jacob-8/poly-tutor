@@ -2,19 +2,31 @@
   import type { Sentence } from '$lib/types'
 
   export let sentence: Sentence
+  export let onmouseenter: () => void
+  export let onmouseleave: () => void
 </script>
 
-{#if sentence.machine_translation}
-  {sentence.machine_translation?.en}
-{/if}
-
-{#if sentence.syntax}
-  <div class="flex flex-wrap">
-    {#each sentence.syntax.tokens as { text: {content}, partOfSpeech: {tag} }}
-      <div class="flex flex-col items-center pr-2">
-        <div>{content}</div>
-        <div class="text-xs">{tag}</div>
-      </div>
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div class="opacity-10 hover:opacity-100" on:mouseenter={onmouseenter} on:mouseleave={onmouseleave}>
+  <div class="text-xl">
+    {#each sentence.syntax.tokens as { text: {content} }}
+      {content}
     {/each}
   </div>
-{/if}
+  {#if sentence.machine_translation}
+    {sentence.machine_translation?.en}
+  {/if}
+  <div class="mt-3"></div>
+
+  {#if sentence.syntax}
+    <table>
+      {#each sentence.syntax.tokens as { text: {content}, partOfSpeech: {tag} }}
+        <tr>
+          <td>{content}</td>
+          <td class="text-xs">{tag}</td>
+          <td>definition</td>
+        </tr>
+      {/each}
+    </table>
+  {/if}
+</div>

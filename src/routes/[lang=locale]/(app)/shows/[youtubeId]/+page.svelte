@@ -37,7 +37,7 @@
 </script>
 
 <div class="px-3 flex items-start">
-  <div class="w-1/2 sticky z-1 top-0">
+  <div class="w-1/2 sticky z-1 top-0 h-100vh flex flex-col py-2">
     <Youtube
       bind:this={youtubeComponent}
       videoId={$page.params.youtubeId}
@@ -46,7 +46,7 @@
       {setPlaybackRate}
       {playbackRate} />
 
-    <div class="my-2">
+    <div class="mt-2 bg-gray-100 p-3 rounded overflow-y-auto grow-1">
       {#if $content.paragraphs}
         {#if !$content?.paragraphs?.[0].sentences?.[0]?.syntax}
           <div>
@@ -56,7 +56,7 @@
 
         {#if $content?.paragraphs?.[0]?.sentences?.[0]?.machine_translation?.en}
           {#if currentStudySentence}
-            <StudySentence sentence={currentStudySentence} />
+            <StudySentence onmouseenter={() => youtubeComponent.pause()} onmouseleave={() => youtubeComponent.play()} sentence={currentStudySentence} />
           {:else}
             Hover/click on sentence to study.
           {/if}
