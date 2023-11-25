@@ -25,7 +25,7 @@
     <button class="text-xs" type="button" on:click={() => url = 'https://www.youtube.com/watch?v=HRenI3LURNk'}>南橫公路全線通車</button>
     <a href="https://jia-you.vercel.app/shows/HRenI3LURNk" target="_blank" class="text-xs">old version</a>
     <br />
-    <button class="text-xs" type="button" on:click={() => url = 'https://www.youtube.com/watch?v=lpyKfNjTZi8'}>Llama2</button>
+    <button class="text-xs" type="button" on:click={() => url = 'https://www.youtube.com/watch?v=lpyKfNjTZi8'}>Llama2 - hi friends</button>
   </div>
 </div>
 
