@@ -8,7 +8,7 @@
 
 - `pnpm install`
 - `pnpm dev`
-- Install [Svelte Extension for VSCode](vscode:extension/svelte.svelte-vscode)
+- Install [Svelte Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
 
 ### Tips
 - Hold `Ctrl+Shift` and click on a component to jump to edit it in the code.
