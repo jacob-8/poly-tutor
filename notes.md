@@ -1,3 +1,7 @@
+- If you are using chat completions OpenAi or Google APIs you will need to create a `.env.local` file with the following variables:
+  - `OPENAI_API_KEY=sk-...`
+  - `GOOGLE_TRANSLATE_NLP_CREDENTIALS={"type":"service_account","project_id":"...","private_key_id":"...","private_key":"-----BEGIN PRIVATE KEY-----\n...`
+
 ## Components
 
 - personal notes
