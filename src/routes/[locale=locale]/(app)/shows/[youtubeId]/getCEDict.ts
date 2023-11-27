@@ -7,7 +7,7 @@ export async function getCEDict() {
   const url = '/dictionaries/cedict_hsk_zhuyin_examples.csv'
   const response = await fetch(url)
   const csv = await response.text()
-  const downloaded_entries = csvParse(csv) as CEDictEntry[]
+  const downloaded_entries = csvParse(csv) as unknown as CEDictEntry[]
   for (const entry of downloaded_entries)
     entries[entry.traditional] = augmentEntry(entry)
   return entries

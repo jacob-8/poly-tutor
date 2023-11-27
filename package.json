@@ -2,9 +2,10 @@
 	"name": "poly-tutor",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev --open",
 		"build": "vite build",
 		"preview": "pnpm build && vite preview",
+		"postinstall": "simple-git-hooks",
 		"sync": "svelte-kit sync",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -15,8 +16,8 @@
 		"test:e2e:ui": "playwright test --config playwright.dev.config.ts --ui",
 		"test:components": "playwright test --config playwright.dev.config.ts kitbook",
 		"test:components:update": "playwright test --config playwright.dev.config.ts kitbook --update-snapshots",
-		"lint": "eslint . --cache",
-		"lint:fix": "eslint . --cache --fix",
+		"lint": "eslint --cache",
+		"lint:fix": "eslint --cache --fix",
 		"check-packages": "pnpm update --interactive --recursive --latest"
 	},
 	"devDependencies": {
@@ -24,27 +25,28 @@
 		"@google-cloud/translate": "^8.0.2",
 		"@iconify/json": "^2.2.87",
 		"@playwright/test": "1.39.0",
-		"@supabase/supabase-js": "^2.38.4",
+		"@supabase/supabase-js": "^2.38.5",
 		"@sveltejs/adapter-auto": "^2.1.1",
 		"@sveltejs/adapter-vercel": "^3.0.3",
 		"@sveltejs/kit": "^1.27.5",
-		"@sveltejs/vite-plugin-svelte": "^2.5.2",
+		"@sveltejs/vite-plugin-svelte": "^3.0.1",
 		"@types/d3-dsv": "^3.0.7",
 		"@types/youtube": "^0.0.50",
-		"@typescript-eslint/eslint-plugin": "6.10.0",
-		"@typescript-eslint/parser": "6.10.0",
+		"@typescript-eslint/eslint-plugin": "6.12.0",
+		"@typescript-eslint/parser": "6.12.0",
 		"@unocss/svelte-scoped": "^0.57.3",
 		"d3-dsv": "^3.0.1",
 		"eslint": "^8.53.0",
-		"eslint-define-config": "^1.24.1",
+		"eslint-define-config": "^2.0.0",
 		"eslint-plugin-svelte": "^2.35.0",
 		"globals": "^13.23.0",
-		"kitbook": "1.0.0-beta.10",
-		"msw": "2.0.8",
+		"kitbook": "1.0.0-beta.11",
+		"msw": "2.0.9",
 		"openai-edge": "^1.1.1",
+		"simple-git-hooks": "^2.9.0",
 		"svelte": "^4.2.3",
-		"svelte-check": "^3.6.0",
-		"svelte-pieces": "^1.0.57",
+		"svelte-check": "^3.6.2",
+		"svelte-pieces": "2.0.0-next.4",
 		"tslib": "^2.6.2",
 		"typescript": "^5.2.2",
 		"unocss": "^0.57.3",
@@ -54,5 +56,13 @@
 	"type": "module",
 	"msw": {
 		"workerDirectory": "static"
+	},
+	"simple-git-hooks": {
+		"pre-commit": "npx lint-staged"
+	},
+	"lint-staged": {
+		"*.{js,ts,svelte}": [
+			"eslint --cache --fix"
+		]
 	}
 }

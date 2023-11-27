@@ -1,4 +1,4 @@
-import type { LayoutData } from '../../../routes/[lang=locale]/(app)/$types'
+import type { LayoutData } from '../../../routes/[locale=locale]/(app)/$types'
 
 export const mockLayoutData: LayoutData = {
   supabase: null,

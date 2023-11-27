@@ -33,7 +33,7 @@
       ...messages,
     ]
 
-    const eventSource = fetchSSE<ChatRequestBody>('/api/chat', { messages: messagesToSend, model: 'gpt-4-1106-preview', max_tokens: 1000, })
+    const eventSource = fetchSSE<ChatRequestBody>('/api/chat', { messages: messagesToSend, model: 'gpt-4-1106-preview', max_tokens: 1000 })
     eventSource.addEventListener('message', handle_message)
     eventSource.addEventListener('error', handleError)
     eventSource.stream()

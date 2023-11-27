@@ -6,6 +6,5 @@ export enum ResponseCodes {
   UNAUTHORIZED = 401,
   MOVED_PERMANENTLY = 301,
   TEMPORARY_REDIRECT = 307,
-  // 200
   OK = 200,
 }
