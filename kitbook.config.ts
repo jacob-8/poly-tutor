@@ -29,7 +29,7 @@ export default defineConfig({
       code: 'zh-CN',
     }
   ],
-  addLanguageToUrl: ({ code, url }) => url.replace(/^.[^\/]+/, `/${code}`),
+  addLanguageToUrl: ({ code, url }) => url.replace(/^.[^/]+/, `/${code}`),
   kitbookRoute: '/[locale=locale]/kitbook',
   githubURL: 'https://github.com/jacob-8/poly-tutor',
   expandTree: true,
