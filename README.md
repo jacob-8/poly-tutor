@@ -9,6 +9,8 @@
 - `pnpm install`
 - `pnpm dev`
 - Install [Svelte Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
+- Make changes and commit
+- Your edits will automatically be linted when you try to commit. If you find your commit fails, check the output, or run `pnpm lint` to fix the errors and try to commit again.
 
 ### Tips
 - Hold `Ctrl+Shift` and click on a component to jump to edit it in the code.
