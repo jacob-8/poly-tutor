@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+
 /* eslint-disable no-console */
 
 // To learn about this service worker:
