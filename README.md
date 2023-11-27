@@ -1,5 +1,10 @@
 # Poly Tutor - A Language Tutor, 語言導師
 
+Steps needed before you can try out the initial tool yourself
+
+- add input to use your own OpenAI API key
+- add input to use your own Google Translate API key
+
 ## Contributing 貢獻
 
 [![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/jacob-8/poly-tutor)
