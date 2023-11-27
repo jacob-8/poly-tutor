@@ -3,7 +3,7 @@ import type { ChatCompletionRequestMessage } from 'openai-edge'
 import type { EntryGenerator } from './$types'
 
 export const entries = (() => {
-  return Object.keys(Locales).map(lang => ({ lang }))
+  return Object.keys(Locales).map(locale => ({ locale }))
 }) satisfies EntryGenerator
 
 export const prerender = true
