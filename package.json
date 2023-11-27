@@ -5,6 +5,7 @@
 		"dev": "vite dev --open",
 		"build": "vite build",
 		"preview": "pnpm build && vite preview",
+		"postinstall": "pnpx simple-git-hooks",
 		"sync": "svelte-kit sync",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -15,8 +16,8 @@
 		"test:e2e:ui": "playwright test --config playwright.dev.config.ts --ui",
 		"test:components": "playwright test --config playwright.dev.config.ts kitbook",
 		"test:components:update": "playwright test --config playwright.dev.config.ts kitbook --update-snapshots",
-		"lint": "eslint . --cache",
-		"lint:fix": "eslint . --cache --fix",
+		"lint": "eslint --cache",
+		"lint:fix": "eslint --cache --fix",
 		"check-packages": "pnpm update --interactive --recursive --latest"
 	},
 	"devDependencies": {
@@ -54,5 +55,13 @@
 	"type": "module",
 	"msw": {
 		"workerDirectory": "static"
-	}
+	},
+	"simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,ts,svelte}": [
+      "eslint --cache --fix"
+    ]
+  }
 }

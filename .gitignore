@@ -11,4 +11,6 @@ playwright/.cache
 playwright-report
 test-results
 
+.eslintcache
+
 *win32.png
