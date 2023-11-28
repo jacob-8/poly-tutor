@@ -7,7 +7,7 @@ Poly Tutor is a personal assistant for language learners who would like to live 
 If all you want to do is to read, listen, and speak in a new language, there are already a lot of good options for you to choose from.
 
 - [LingQ](https://www.lingq.com/) for reading and listening to content you choose with a built-in dictionary and flashcard system that tracks known words
-- [yourteacher.ai](https://yourteacher.ai/) for speaking practice with AI conversation partners
+- [Speak](https://www.speak.com/), [yourteacher.ai](https://yourteacher.ai/), [TalkPal](https://talkpal.ai/) for speaking practice with AI conversation partners
 - [VoiceTube](https://www.voicetube.com/) for watching videos with transcriptions, definitions, pronunciation practice and vocab review
 - [YouGlish](https://youglish.com/) to hear many varied uses of a particular word in context.
 - [Duolingo](https://www.duolingo.com/) for gamified language learning using interactive exercises to walk you along a learning path
