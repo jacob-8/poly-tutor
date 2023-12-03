@@ -3,7 +3,6 @@ import type { CreateChatCompletionRequest } from 'openai-edge'
 import { OPENAI_API_KEY } from '$env/static/private'
 import { error } from '@sveltejs/kit'
 import type { Config } from '@sveltejs/adapter-vercel'
-import { dev } from '$app/environment'
 import { ResponseCodes } from '$lib/responseCodes'
 import type { ChatRequestBody } from '$lib/types'
 // import { createChunkDecoder } from '$lib/client/chunkDecoder'
@@ -13,17 +12,20 @@ export const config: Config = {
 }
 
 export const POST = (async ({ locals: { getSession }, request }) => {
-  if (!OPENAI_API_KEY) throw error(ResponseCodes.INTERNAL_SERVER_ERROR, 'OPENAI_API_KEY env variable not configured')
 
   const { data: session_data, error: _error } = await getSession()
   if (_error || !session_data?.user)
     throw error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
-  if (!dev && session_data.user.email !== 'jacob@polylingual.dev')
-    throw error(ResponseCodes.UNAUTHORIZED, { message: 'Sorry, the tool is not ready yet. Thank you for your interest. I will use your email address to notify you when it is ready.' })
-
   try {
-    const { messages, model, max_tokens } = await request.json() as ChatRequestBody
+    const { messages, model, max_tokens, open_ai_api_key } = await request.json() as ChatRequestBody
+
+    let api_key = open_ai_api_key
+
+    if (!api_key && session_data.user.email === 'jacob@polylingual.dev')
+      api_key = OPENAI_API_KEY
+
+    if (!api_key) throw error(ResponseCodes.BAD_REQUEST, 'No OPENAI_API_KEY found')
 
     const completionRequest: CreateChatCompletionRequest = {
       model,
@@ -37,7 +39,7 @@ export const POST = (async ({ locals: { getSession }, request }) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${api_key}`,
       },
       body: JSON.stringify(completionRequest),
     })

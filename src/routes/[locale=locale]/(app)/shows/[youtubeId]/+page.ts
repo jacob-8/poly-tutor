@@ -13,14 +13,14 @@ export const load = (({ params: { youtubeId } }) => {
   const content = createPersistedStore<Content>(`content_${youtubeId}`, {}, true)
   const summary = createPersistedStore<Content>(`summary_${youtubeId}`, {}, true)
 
-  async function getCaptions() {
-    const response = await apiFetch<YtCaptionsRequestBody>('/api/yt_captions', { youtubeId })
+  async function getCaptions(open_ai_api_key: string) {
+    const response = await apiFetch<YtCaptionsRequestBody>('/api/yt_captions', { youtubeId, open_ai_api_key })
     if (!response.ok) return
     const sentences = await response.json() as Sentence[]
     content.set({ paragraphs: [{ sentences }] })
   }
 
-  function getSummary(): Promise<void> {
+  function getSummary(open_ai_api_key: string): Promise<void> {
     return new Promise((resolve) => {
       const currentContent = get(content)
       const transcript = currentContent.paragraphs.map(paragraph => {
@@ -32,7 +32,12 @@ export const load = (({ params: { youtubeId } }) => {
         { role: 'user', content: `Transcript: ${transcript}` },
       ]
 
-      const eventSource = fetchSSE<ChatRequestBody>('/api/chat', { messages: messagesToSend, model: 'gpt-3.5-turbo-1106', max_tokens: 600 })
+      const eventSource = fetchSSE<ChatRequestBody>('/api/chat', {
+        messages: messagesToSend,
+        model: 'gpt-3.5-turbo-1106',
+        max_tokens: 600,
+        open_ai_api_key
+      })
       eventSource.addEventListener('message', handle_message)
       eventSource.addEventListener('error', (e) => console.error(e))
       eventSource.stream()
