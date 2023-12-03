@@ -1,6 +1,6 @@
 {
   "layout": {
-    "tutor": "導師",
+    "tutor": "导师",
     "sign_in": "登录",
     "sign_out": "退出",
     "email_address": "电子邮件",
@@ -13,5 +13,9 @@
     "get_captions": "取得字幕",
     "analyze": "分析",
     "translate": "翻译"
+  },
+  "home": {
+    "chat": "闲聊",
+    "watch": "观看"
   }
 }
