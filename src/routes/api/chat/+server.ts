@@ -11,22 +11,21 @@ export const config: Config = {
   runtime: 'edge',
 }
 
-export const POST = (async ({ locals: { getSession }, request }) => {
-
+export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
   const { data: session_data, error: _error } = await getSession()
   if (_error || !session_data?.user)
     throw error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
+  const { messages, model, max_tokens, openai_api_key } = await request.json() as ChatRequestBody
+
+  let api_key = openai_api_key
+
+  if (!api_key && session_data.user.email === 'jacob@polylingual.dev')
+    api_key = OPENAI_API_KEY
+
+  if (!api_key) throw error(ResponseCodes.BAD_REQUEST, 'No OPENAI_API_KEY found')
+
   try {
-    const { messages, model, max_tokens, open_ai_api_key } = await request.json() as ChatRequestBody
-
-    let api_key = open_ai_api_key
-
-    if (!api_key && session_data.user.email === 'jacob@polylingual.dev')
-      api_key = OPENAI_API_KEY
-
-    if (!api_key) throw error(ResponseCodes.BAD_REQUEST, 'No OPENAI_API_KEY found')
-
     const completionRequest: CreateChatCompletionRequest = {
       model,
       messages,
@@ -61,5 +60,4 @@ export const POST = (async ({ locals: { getSession }, request }) => {
     console.error(err.message)
     throw error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
   }
-}) satisfies RequestHandler
-
+}

@@ -20,6 +20,7 @@ async function getStream(url: string, lastMessage: string) {
     }],
     model: 'gpt-4-1106-preview',
     max_tokens: 1000,
+    openai_api_key: 'non needed in mock'
   })
   const reader = response.body.getReader()
   const decoder = createChunkDecoder()

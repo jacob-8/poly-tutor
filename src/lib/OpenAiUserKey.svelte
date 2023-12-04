@@ -1,14 +1,14 @@
 <script lang="ts">
   import { Button, Modal, ShowHide, createPersistedStore } from 'svelte-pieces'
 
-  const open_ai_api_key = createPersistedStore<string>(
-    'open_ai_api_key',
+  const openai_api_key = createPersistedStore<string>(
+    'openai_api_key',
     '',
     true,
   )
 </script>
 
-{#if $open_ai_api_key}
+{#if $openai_api_key}
   <ShowHide let:show let:toggle>
     <Button onclick={toggle}>
       <span class="i-simple-icons-openai" />
@@ -25,19 +25,19 @@
           class="inline text-green-700 bg-gray-100 p-1"
           on:click={() =>
             navigator.clipboard.writeText(
-              $open_ai_api_key,
-            )}>sk-...{$open_ai_api_key.slice(-4)}</pre>
+              $openai_api_key,
+            )}>sk-...{$openai_api_key.slice(-4)}</pre>
         <Button
           size="sm"
           color="red"
           form="simple"
-          onclick={() => ($open_ai_api_key = '')}
+          onclick={() => ($openai_api_key = '')}
           title="delete">Delete <span class="i-carbon-trash-can mb-1" /></Button
         >
       </Modal>
     {/if}
   </ShowHide>
-  <slot open_ai_api_key={$open_ai_api_key} />
+  <slot openai_api_key={$openai_api_key} />
 {:else}
   <div>
     <p class="mb-2">
@@ -65,7 +65,7 @@
         // @ts-expect-error
         const {value} = e.target
         if (value.startsWith('sk-') && value.length > 20)
-          $open_ai_api_key = value
+          $openai_api_key = value
       }}
     />
     <div class="mt-2 text-red">

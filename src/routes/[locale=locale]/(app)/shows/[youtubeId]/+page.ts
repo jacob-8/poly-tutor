@@ -1,6 +1,6 @@
 import { createPersistedStore } from 'svelte-pieces'
 import type { PageLoad } from './$types'
-import type { AnalyzeSyntaxRequestBody, ChatRequestBody, Content, OpenAiChatStreamResponse, Sentence, TranslateRequestBody, YtCaptionsRequestBody } from '$lib/types'
+import type { AnalyzeSyntaxRequestBody, ChatRequestBody, Content, OpenAiChatStreamResponse, Sentence, TranslateRequestBody, YtCaptionsRequestBody, YtTranscribeRequestBody } from '$lib/types'
 import { get } from 'svelte/store'
 import { apiFetch } from '$lib/client/apiFetch'
 import { fetchSSE } from '$lib/client/fetchSSE'
@@ -9,18 +9,29 @@ import { merge_translations } from './merge_translations'
 import { merge_syntax } from './merge_syntax'
 import { getCEDict } from './getCEDict'
 
-export const load = (({ params: { youtubeId } }) => {
+export const load = (async ({ params: { youtubeId }, fetch }) => {
   const content = createPersistedStore<Content>(`content_${youtubeId}`, {}, true)
   const summary = createPersistedStore<Content>(`summary_${youtubeId}`, {}, true)
 
-  async function getCaptions(open_ai_api_key: string) {
-    const response = await apiFetch<YtCaptionsRequestBody>('/api/yt_captions', { youtubeId, open_ai_api_key })
+  const currentContent = get(content)
+  if (!currentContent.paragraphs?.length)
+    await getCaptions()
+
+  async function getCaptions() {
+    const response = await apiFetch<YtCaptionsRequestBody>('/api/yt_captions', { youtube_id: youtubeId }, fetch)
     if (!response.ok) return
     const sentences = await response.json() as Sentence[]
     content.set({ paragraphs: [{ sentences }] })
   }
 
-  function getSummary(open_ai_api_key: string): Promise<void> {
+  async function transcribeCaptions(openai_api_key: string) {
+    const response = await apiFetch<YtTranscribeRequestBody>('/api/yt_transcribe', { youtube_id: youtubeId, openai_api_key, language_code: 'zh', duration_seconds: 600 }, fetch)
+    if (!response.ok) return
+    const sentences = await response.json() as Sentence[]
+    content.set({ paragraphs: [{ sentences }] })
+  }
+
+  function getSummary(openai_api_key: string): Promise<void> {
     return new Promise((resolve) => {
       const currentContent = get(content)
       const transcript = currentContent.paragraphs.map(paragraph => {
@@ -36,7 +47,7 @@ export const load = (({ params: { youtubeId } }) => {
         messages: messagesToSend,
         model: 'gpt-3.5-turbo-1106',
         max_tokens: 600,
-        open_ai_api_key
+        openai_api_key
       })
       eventSource.addEventListener('message', handle_message)
       eventSource.addEventListener('error', (e) => console.error(e))
@@ -97,7 +108,7 @@ export const load = (({ params: { youtubeId } }) => {
   return {
     content,
     summary,
-    getCaptions,
+    transcribeCaptions,
     getSummary,
     deleteSummary,
     deleteContent,

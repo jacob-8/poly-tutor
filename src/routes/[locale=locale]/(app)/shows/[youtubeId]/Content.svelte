@@ -4,12 +4,13 @@
   import { page } from '$app/stores'
   import { Button } from 'svelte-pieces'
   import type Youtube from './Youtube.svelte'
+  import OpenAiUserKey from '$lib/OpenAiUserKey.svelte'
 
   export let entries: Record<string, CEDictEntry>
   export let content: Content
   export let email: string
   export let studySentence: (sentence: Sentence) => void
-  export let getCaptions: () => Promise<void>
+  export let transcribeCaptions: (openai_api_key: string) => Promise<void>
   export let deleteContent: () => void
 
   export let currentTimeMs: number
@@ -28,11 +29,11 @@
     <Paragraphs {youtubeComponent} {playerState} {entries} {setTime} {currentTimeMs} {studySentence} paragraphs={content.paragraphs} />
     <Button size="sm" form="simple" color="red" onclick={deleteContent}>Delete Captions</Button>
   {:else if email}
-    {#if email === 'jacob@polylingual.dev'}
-      <Button size="lg" class="mt-2" onclick={getCaptions}>{$page.data.t.shows.get_captions}</Button>
-    {:else}
-      Sorry, the tool is not ready yet. Thank you for your interest. I will use your email address to notify you when it is ready.
-    {/if}
+    <div class="text-base">
+      <OpenAiUserKey let:openai_api_key>
+        <Button size="lg" class="mt-2" onclick={() => transcribeCaptions(openai_api_key)}>{$page.data.t.shows.get_captions} (show price)</Button>
+      </OpenAiUserKey>
+    </div>
   {:else}
     {$page.data.t.layout.sign_in}
   {/if}

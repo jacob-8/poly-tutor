@@ -11,7 +11,6 @@
   $: unKnownWords = sentence.words?.filter(({ known }) => !known) || []
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class:opacity-15={playing} class="h-full" on:mouseenter={onmouseenter} on:mouseleave={onmouseleave}>
   <div class="text-xl">
     {#if sentence.words}
