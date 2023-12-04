@@ -57,7 +57,14 @@ export interface CEDictEntry {
 // API
 
 export interface YtCaptionsRequestBody {
-  youtubeId: string
+  youtube_id: string
+}
+
+export interface YtTranscribeRequestBody {
+  youtube_id: string
+  openai_api_key: string
+  language_code: 'en' | 'zh'
+  duration_seconds: number
 }
 
 export interface TranslateRequestBody {
@@ -77,6 +84,7 @@ export interface ChatRequestBody {
   messages: ChatCompletionRequestMessage[]
   model: 'gpt-4-1106-preview' | 'gpt-3.5-turbo-1106'
   max_tokens: number
+  openai_api_key: string
 }
 
 export interface OpenAiChatStreamResponse extends Omit<CreateChatCompletionResponse, 'usage'> {

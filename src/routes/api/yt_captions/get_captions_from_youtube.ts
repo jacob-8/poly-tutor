@@ -18,18 +18,18 @@ export interface YoutubeCaption {
 
 const code_preference = ['zh-Hant', 'zh-TW', 'zh', 'zh-CN', 'zh-Hans']
 
-export async function get_captions_from_youtube(video_id: string): Promise<Sentence[]> {
-  const tracks = await getTracks(video_id)
+export async function get_captions_from_youtube({ youtube_id }: { youtube_id: string }): Promise<Sentence[]> {
+  const tracks = await getTracks(youtube_id)
   if (!tracks.length) throw new Error('No caption tracks found')
 
   const track = find_track_by_order_preference(tracks, code_preference)
-  const captions_from_youtube = await getCaptions(video_id, track.language_code)
+  const captions_from_youtube = await getCaptions(youtube_id, track.language_code)
   return convert_to_db_captions_format(captions_from_youtube)
 }
 
-async function getTracks(videoId: string): Promise<YoutubeCaptionTrack[]> {
+async function getTracks(youtube_id: string): Promise<YoutubeCaptionTrack[]> {
   try {
-    const url = `${CAPTIONS_URL}?v=${videoId}&type=list`
+    const url = `${CAPTIONS_URL}?v=${youtube_id}&type=list`
     const response = await fetch(url)
     return await response.json()
   } catch (err) {
@@ -38,15 +38,15 @@ async function getTracks(videoId: string): Promise<YoutubeCaptionTrack[]> {
   }
 }
 
-async function getCaptions(videoId: string, language_code: string): Promise<YoutubeCaption[]> {
+async function getCaptions(youtube_id: string, language_code: string): Promise<YoutubeCaption[]> {
   if (!CAPTIONS_URL) throw new Error('CAPTIONS_URL not configured')
-  const url = `${CAPTIONS_URL}?v=${videoId}&lang=${language_code}&fmt=srv3`
+  const url = `${CAPTIONS_URL}?v=${youtube_id}&lang=${language_code}&fmt=srv3`
   const response = await fetch(url)
   return await response.json() as YoutubeCaption[]
 }
 
-function find_track_by_order_preference(tracks: YoutubeCaptionTrack[], langCodes: string[]): YoutubeCaptionTrack {
-  for (const code of langCodes) {
+function find_track_by_order_preference(tracks: YoutubeCaptionTrack[], language_codes: string[]): YoutubeCaptionTrack {
+  for (const code of language_codes) {
     const preferredTrack = tracks.find(({ language_code }) => language_code === code)
     if (preferredTrack)
       return preferredTrack

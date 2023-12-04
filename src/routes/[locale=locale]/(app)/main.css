@@ -50,7 +50,7 @@ body {
 
 @font-face {
   font-family: 'biao_kaiti_windows';
-  src: url('/fonts/biao_kaiti_windows.ttf') format('truetype');
+  src: url('/fonts/biao_kaiti_windows.ttf') format('truetype'); /* also check Microsoft zhengheiti */
   unicode-range: U+4E00-9FFF; /* Go to 9FA5 for most common Chinese characters, go to 9FFF for more expansive coverage of more rare characters */
 }
 

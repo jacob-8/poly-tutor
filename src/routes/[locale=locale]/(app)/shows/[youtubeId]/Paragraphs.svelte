@@ -140,8 +140,6 @@
 
 {#each captions as sentence, index}
   {@const active = index === current_caption_index}
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <!-- svelte-ignore a11y-mouse-events-have-key-events -->
   <div
     id="caption_{index}"
     class="p-1 flex flex-wrap relative hover:bg-gray-100 rounded relative group"

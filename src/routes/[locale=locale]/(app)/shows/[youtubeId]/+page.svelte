@@ -8,7 +8,7 @@
   import Summary from './Summary.svelte'
 
   export let data
-  $: ({ content, summary, user, getCaptions, getSummary, deleteContent, deleteSummary } = data)
+  $: ({ content, summary, user, transcribeCaptions, getSummary, deleteContent, deleteSummary } = data)
 
   let playbackRate = 1
   let currentTimeMs = 0
@@ -84,7 +84,7 @@
 
       <Content
         {entries}
-        {getCaptions}
+        {transcribeCaptions}
         {youtubeComponent}
         {playerState}
         {deleteContent}
