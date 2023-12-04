@@ -7,7 +7,7 @@
 		"preview": "pnpm build && vite preview",
 		"postinstall": "simple-git-hooks",
 		"sync": "svelte-kit sync",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --threshold error",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "vitest",
 		"test:service-worker": "vitest --config ./vitest.service-worker.config.ts",

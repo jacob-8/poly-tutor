@@ -1,13 +1,8 @@
 # Poly Tutor - A Language Tutor, 語言導師
 
-Steps needed before you can try out the initial tool yourself
-
-- add input to use your own OpenAI API key
-- add input to use your own Google Translate API key
+[![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/jacob-8/poly-tutor)
 
 ## Contributing 貢獻
-
-[![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/jacob-8/poly-tutor)
 
 ### Get Started Locally
 
@@ -15,7 +10,8 @@ Steps needed before you can try out the initial tool yourself
 - `pnpm dev`
 - Install [Svelte Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
 - Make changes and commit
-- Your edits will automatically be linted when you try to commit. If you find your commit fails, check the output, or run `pnpm lint` to fix the errors and try to commit again.
+- Your edits will automatically be linted when you try to commit. If you find your commit fails, check the output, or run `pnpm lint`, fix the lint errors and try to commit again.
+
 
 ### Tips
 - Hold `Ctrl+Shift` and click on a component to jump to edit it in the code.
