@@ -13,5 +13,9 @@
     "get_captions": "Get Captions",
     "analyze": "Analyze",
     "translate": "Translate"
+  },
+  "home": {
+    "chat": "Chat",
+    "watch": "Watch"
   }
 }
