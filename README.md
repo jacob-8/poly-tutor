@@ -21,6 +21,8 @@
 
 ## Roadmap
 
+- Kitbook
+- All tests running in CI
 - Add initial features to homepage
 - Identify whether user is learning English or Mandarin, store in user metadata
 - Save user known words
