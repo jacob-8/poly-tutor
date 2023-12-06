@@ -1,8 +1,8 @@
 import { afterAll, afterEach, beforeAll } from 'vitest'
-import { server } from '../../../../lib/mocks/server'
-import { createChunkDecoder } from '../../../../lib/client/chunkDecoder'
-import { apiFetch } from '../../../../lib/client/apiFetch'
-import type { ChatRequestBody } from '../../../../lib/types'
+import { server } from '../../../../../lib/mocks/server'
+import { createChunkDecoder } from '../../../../../lib/client/chunkDecoder'
+import { apiFetch } from '../../../../../lib/client/apiFetch'
+import type { ChatRequestBody } from '../../../../../lib/types'
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
 afterAll(() => server.close())

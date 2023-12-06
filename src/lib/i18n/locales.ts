@@ -1,5 +1,7 @@
 export const DEFAULT_LOCALE = 'en'
 
+export type LocaleCookieKey = 'mother-locale' | 'learning-locale'
+
 export enum Locales {
   'en' = 'English',
   'zh-TW' = '繁體中文',

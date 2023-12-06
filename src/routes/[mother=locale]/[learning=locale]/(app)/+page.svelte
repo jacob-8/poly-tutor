@@ -3,6 +3,6 @@
 </script>
 
 <div class="p-2">
-  <a href="/{$page.data.locale}/chat">{$page.data.t.home.chat}</a>
-  <a href="/{$page.data.locale}/shows">{$page.data.t.home.watch}</a>
+  <a href="/{$page.data.mother}/{$page.data.learning}/chat">{$page.data.t.home.chat}</a>
+  <a href="/{$page.data.mother}/{$page.data.learning}/shows">{$page.data.t.home.watch}</a>
 </div>

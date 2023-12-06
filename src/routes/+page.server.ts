@@ -7,7 +7,7 @@ export const load = (({ cookies, request }) => {
   const acceptedLanguage = findSupportedLocaleFromAcceptedLanguages(request.headers.get('accept-language'))
   const motherLocale = getSupportedLocale(chosenMotherLocale || acceptedLanguage) || DEFAULT_LOCALE
   const chosenLearningLocale = cookies.get('learning-locale')
-  const learningLocale = chosenLearningLocale || motherLocale === 'en' ? 'zh-TW' : 'en'
+  const learningLocale = chosenLearningLocale || (motherLocale === 'en' ? 'zh-TW' : 'en')
 
   throw redirect(ResponseCodes.TEMPORARY_REDIRECT, `/${motherLocale}/${learningLocale}`)
 })
