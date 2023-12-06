@@ -32,3 +32,39 @@ https://jakearchibald.com/2014/offline-cookbook/#cache--network-race
 [Supabase Dashboard](https://supabase.com/dashboard/project/zfxvyodqwvigxarorgjx)
 [Learn more about Supabase](https://github.com/vercel/nextjs-subscription-payments)
 - https://sveltekit-ai-chatbot.vercel.app/
+
+## Saving Seen and Known Words
+
+### Known words
+
+<!-- -- create enum word_status as ('unknown', 'meaning-known', 'pronunciation-known', 'known'); -- meaning-known and pronunciation-known are just for Chinese, not English -->
+```sql
+create enum word_status as ('u', 'm', 'p', 'k');
+
+create table word_status_updates (
+  id uuid primary key default not null,
+  user_id uuid references auth.users not null,
+  word text not null,
+  "status" word_status not null,
+  "timestamp" timestamptz not null default now()
+);
+```
+
+1K users * 50 word status updates every day * 268 days ~= 1 GB in PostGRES
+
+### Seen words
+
+```sql
+create table seen_words (
+  id uuid references auth.users not null,
+  word text not null,
+  primary key (id, word),
+  count int not null default 1
+);
+```
+
+1K users * 20K words ~= 1.04 GB PostGRES
+
+## Video captions space estimate
+
+143K ten-minute videos' worth of captions ~= 1GB PostGRES (*2 for translations)

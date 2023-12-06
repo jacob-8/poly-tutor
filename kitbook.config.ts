@@ -17,20 +17,27 @@ export default defineConfig({
   ],
   languages: [
     {
-      name: 'English',
-      code: 'en',
+      name: 'English:繁體中文',
+      code: 'en:zh-TW',
     },
     {
-      name: '繁體中文',
-      code: 'zh-TW',
+      name: 'English:简体中文',
+      code: 'en:zh-CN',
     },
     {
-      name: '简体中文',
-      code: 'zh-CN',
+      name: '繁體中文:English',
+      code: 'zh-TW:en',
+    },
+    {
+      name: '简体中文:English',
+      code: 'zh-CN:en',
     }
   ],
-  addLanguageToUrl: ({ code, url }) => url.replace(/^.[^/]+/, `/${code}`),
-  kitbookRoute: '/[locale=locale]/kitbook',
+  addLanguageToUrl: ({ code, url }) => {
+    const [mother, learning] = code.split(':')
+    return url.replace(/^.[^/]+.[^/]+/, `/${mother}/${learning}`)
+  }, // replaces "/mother/learning" - using a period for any character to avoid parsing issues with slashes
+  kitbookRoute: '/[mother=locale]/[learning=locale]/kitbook',
   githubURL: 'https://github.com/jacob-8/poly-tutor',
   expandTree: true,
 })

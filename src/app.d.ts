@@ -15,7 +15,8 @@ declare global {
 			user: Readable<BaseUser>
 			authResponse: AuthResponse
 			t: Awaited<ReturnType<typeof import('$lib/i18n').getTranslator>>;
-      locale: import('$lib/i18n/locales').LocaleCode;
+      mother: import('$lib/i18n/locales').LocaleCode;
+      learning: import('$lib/i18n/locales').LocaleCode;
     }
 		// interface Error {}
 		// interface Platform {}

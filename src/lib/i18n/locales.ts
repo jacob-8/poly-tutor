@@ -1,21 +1,46 @@
 export const DEFAULT_LOCALE = 'en'
+
+export type LocaleCookieKey = 'mother-locale' | 'learning-locale'
+
 export enum Locales {
-  en = 'English',
+  'en' = 'English',
   'zh-TW' = '繁體中文',
   'zh-CN' = '简体中文',
 }
 
 export type LocaleCode = keyof typeof Locales
 
-export function getSupportedLocale({ chosenLocale, acceptedLanguage }: { chosenLocale?: string | null, acceptedLanguage?: string | null }) {
-  return isSupportedLocale(chosenLocale)
-    || isSupportedLocale(acceptedLanguage)
-    || DEFAULT_LOCALE
+export function findSupportedLocaleFromAcceptedLanguages(acceptedLanguageHeader: string | null) {
+  const locales = acceptedLanguageHeader
+    ?.split(',')
+    ?.map(lang => lang.split(';')[0].trim()) ?? []
+  for (const locale of locales) {
+    const supportedLocale = getSupportedLocale(locale)
+    if (supportedLocale)
+      return supportedLocale
+  }
 }
 
-function isSupportedLocale(locale: string | null | undefined) {
-  if (!locale) return false
-  if (Object.keys(Locales).includes(locale)) return locale
+if (import.meta.vitest) {
+  describe(findSupportedLocaleFromAcceptedLanguages, () => {
+    it('return shortened (acceptable) form of dialect', () => {
+      const acceptedLanguageHeader = 'en-US,en;q=0.9,zh-TW;q=0.8,zh;q=0.7'
+      expect(findSupportedLocaleFromAcceptedLanguages(acceptedLanguageHeader)).toEqual('en')
+    })
+
+    it('returns 2nd accepted if 1st not supported', () => {
+      expect(findSupportedLocaleFromAcceptedLanguages('foo,en-GB')).toEqual('en')
+    })
+
+    it('handles null header', () => {
+      expect(findSupportedLocaleFromAcceptedLanguages(null)).toEqual(undefined)
+    })
+  })
+}
+
+export function getSupportedLocale(locale: string | null | undefined): LocaleCode | undefined {
+  if (!locale) return
+  if (Object.keys(Locales).includes(locale)) return locale as LocaleCode
 
   if (['en-US', 'en-GB'].includes(locale)) return 'en'
   if (['zh', 'zh-Hant', 'zh-HK', 'zh-MO'].includes(locale)) return 'zh-TW'
@@ -24,24 +49,20 @@ function isSupportedLocale(locale: string | null | undefined) {
 
 if (import.meta.vitest) {
   describe(getSupportedLocale, () => {
-    test('returns supported chosen locales', () => {
-      expect(getSupportedLocale({chosenLocale: 'en'})).toEqual('en')
-      expect(getSupportedLocale({chosenLocale: 'zh-CN'})).toEqual('zh-CN')
+    test('returns supported locales', () => {
+      expect(getSupportedLocale('en')).toEqual('en')
+      expect(getSupportedLocale('zh-CN')).toEqual('zh-CN')
     })
 
     test('maps accepted-language to logical match', () => {
-      expect(getSupportedLocale({acceptedLanguage: 'en-GB'})).toEqual('en')
-      expect(getSupportedLocale({acceptedLanguage: 'zh'})).toEqual('zh-TW')
-      expect(getSupportedLocale({acceptedLanguage: 'zh-Hant'})).toEqual('zh-TW')
-      expect(getSupportedLocale({acceptedLanguage: 'zh-Hans'})).toEqual('zh-CN')
+      expect(getSupportedLocale('en-GB')).toEqual('en')
+      expect(getSupportedLocale('zh')).toEqual('zh-TW')
+      expect(getSupportedLocale('zh-Hant')).toEqual('zh-TW')
+      expect(getSupportedLocale('zh-Hans')).toEqual('zh-CN')
     })
 
-    test('unsupported returns en', () => {
-      expect(getSupportedLocale({acceptedLanguage: 'de'})).toEqual('en')
-    })
-
-    test('chosen wins out over accepted', () => {
-      expect(getSupportedLocale({chosenLocale: 'zh-TW', acceptedLanguage: 'en'})).toEqual('zh-TW')
+    test('returns undefined for unsupported locale', () => {
+      expect(getSupportedLocale('xx')).toBe(undefined)
     })
   })
 }
