@@ -6,10 +6,6 @@
   import SelectLanguage from '$lib/i18n/SelectLanguage.svelte'
 
   export let data
-
-// function toggleColorScheme() {
-  // // save 'light' or 'dark' to 'color-scheme'
-  // }
 </script>
 
 <div class="flex items-center space-x-1 py-1 pl-1" data-sveltekit-preload-data="tap" title={$page.url.pathname}>
@@ -21,10 +17,8 @@
       <SelectLanguage on:close={toggle} />
     {/if}
   </ShowHide>
-  <!-- <button type="button" class="btn-rose" on:click={() => ({})}>
-    <span class="i-ri-sun-line dark:i-ri-moon-line" />
-  </button> -->
-  <User user={data.user} />
+  <!-- <span class="i-ri-sun-line dark:i-ri-moon-line" /> -->
+  <User user={data.user} signOut={async () => await data.supabase?.auth.signOut()} />
 </div>
 
 <slot />

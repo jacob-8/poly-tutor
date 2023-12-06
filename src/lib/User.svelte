@@ -3,11 +3,11 @@
   import { ShowHide, Slideover, portal } from 'svelte-pieces'
   import type { BaseUser } from './supabase/user'
   import type { Readable } from 'svelte/store'
+  import type { AuthError } from '@supabase/supabase-js'
 
   export let user: Readable<BaseUser>
+  export let signOut: () => Promise<{ error: AuthError; }>
   $: email = $user?.session?.user?.email
-
-// async () => await $page.data.supabase?.auth.signOut()
 </script>
 
 {#if $user}
@@ -25,7 +25,7 @@
           <span slot="title">
             {email}
           </span>
-          <button class="slideover-btn" type="button" on:click={async () => await $page.data.supabase?.auth.signOut()}>
+          <button class="slideover-btn" type="button" on:click={signOut}>
             <span class="i-material-symbols-logout-rounded vertical--3px" />
             {$page.data.t.layout.sign_out}
           </button>

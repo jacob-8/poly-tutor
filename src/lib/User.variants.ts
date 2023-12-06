@@ -12,12 +12,15 @@ export const variants: Variant<Component>[] = [
     name: 'Signed Out',
     props: {
       user: null,
+      signOut: null,
     },
   },
   {
     name: 'Signed In',
     props: {
       user: readable({session: {user: {email: 'bob@gmail.com'}}}) as Readable<BaseUser>,
+      // @ts-expect-error
+      signOut: () => alert('signed out')
     },
   },
 ]
