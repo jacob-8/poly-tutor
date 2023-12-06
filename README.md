@@ -21,9 +21,10 @@
 
 ## Roadmap
 
-- Kitbook
+- refactor app into frontend folder
 - All tests running in CI
-- Add initial features to homepage
-- Identify whether user is learning English or Mandarin, store in user metadata
+- Use GPT3.5 to clean up transcripts into sentences
+- Add ability to listen to YouTube in chunks with translation
 - Save user known words
 - Save user seen words
+- Store users learning language in metadata so when they log in on a 2nd device, it remembers (low priority because browser default language will most likely predict the language they know well, and thus the language they want to learn)
