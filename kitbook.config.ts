@@ -35,8 +35,8 @@ export default defineConfig({
   ],
   addLanguageToUrl: ({ code, url }) => {
     const [mother, learning] = code.split(':')
-    return url.replace(/^\/\[mother=locale\]\/\[learning=locale\]/, `/${mother}/${learning}`)
-  },
+    return url.replace(/^.[^/]+.[^/]+/, `/${mother}/${learning}`)
+  }, // replaces "/mother/learning" - using a period for any character to avoid parsing issues with slashes
   kitbookRoute: '/[mother=locale]/[learning=locale]/kitbook',
   githubURL: 'https://github.com/jacob-8/poly-tutor',
   expandTree: true,
