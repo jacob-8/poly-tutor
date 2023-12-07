@@ -9,10 +9,8 @@ import { svelte } from './lint/svelte.js'
 const ignore = {
   ignores: [
     '**/node_modules/**',
-    '**/dist/**',
     '.git/**',
     '**/.svelte-kit**',
-    'packages/prepare-docs-for-search/docs/**',
   ]
 }
 
