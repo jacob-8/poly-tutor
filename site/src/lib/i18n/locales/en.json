@@ -4,7 +4,9 @@
     "sign_in": "Sign in",
     "sign_out": "Sign out",
     "email_address": "Email address",
-    "send_code": "Send 6-Digit Code"
+    "send_code": "Send 6-Digit Code",
+    "enter_6_digit_code": "Enter 6-digit code",
+    "sent_code": "Sent code"
   },
   "shows": {
     "paste_youtube_url": "Paste YouTube URL",
@@ -18,6 +20,13 @@
     "chat": "Chat",
     "watch": "Watch",
     "watch_shows": "Watch Shows",
-    "read_texts": "Read Texts"
+    "read_texts": "Read Texts",
+    "read_websites": "Read Websites",
+    "word_lists": "Word Lists",
+    "realtime_transcription": "Realtime Transcription",
+    "my_words": "My Words",
+    "dictionary": "Dictionary",
+    "youtube_description": "You can choose any show on YouTube, Tutor will provide the transcripts.",
+    "tagline": "Learn Chinese using real content with help from an AI tutor that makes sure you understand what you hearing and reading."
   }
 }

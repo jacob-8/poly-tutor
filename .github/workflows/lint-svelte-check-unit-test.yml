@@ -44,6 +44,8 @@ jobs:
 
       - name: Run Vitest Unit Tests
         run: pnpm test
+      
+      # - run: pnpm -F site test:service-worker-build
 
       # - name: Slack E2E Results Notification
       #   uses: 8398a7/action-slack@v3 # https://action-slack.netlify.app/

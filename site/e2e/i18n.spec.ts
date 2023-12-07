@@ -1,20 +1,21 @@
 import { expect, test } from '@playwright/test'
 
 test.describe('i18n reroutes /', () => {
-  test('to /en by default', async ({ page, baseURL }) => {
+  test('to /en/zh-TW by default', async ({ page, baseURL }) => {
     await page.goto('/')
-    expect(page.url()).toBe(`${baseURL}/en`)
-    await expect(page.getByRole('link', { name: 'Tutor' })).toBeVisible()
+    expect(page.url()).toBe(`${baseURL}/en/zh-TW`)
+    await expect(page.getByRole('heading', { name: 'Poly Tutor' })).toBeVisible()
   })
 
-  test('to /zh-TW if previously set (using cookie) by user', async ({ page, baseURL, context }) => {
-    await context.addCookies([{ name: 'locale', value: 'zh-TW', url: baseURL }])
+  test('to /zh-TW/en if previously set by user (uses cookies)', async ({ page, baseURL, context }) => {
+    await context.addCookies([{ name: 'mother-locale', value: 'zh-TW', url: baseURL }])
+    await context.addCookies([{ name: 'learning-locale', value: 'en', url: baseURL }])
     await page.goto('/')
-    expect(page.url()).toBe(`${baseURL}/zh-TW`)
-    await expect(page.getByRole('link', { name: '小老師' })).toBeVisible()
+    expect(page.url()).toBe(`${baseURL}/zh-TW/en`)
+    await expect(page.getByRole('heading', { name: 'Poly 導師' })).toBeVisible()
   })
 
-  test(' to /zh-CN if accept-language is set to zh-Hans', async ({ page, baseURL, context }) => {
+  test(' to /zh-CN/en if accept-language is set to zh-Hans', async ({ page, baseURL, context }) => {
     await context.route('/', (route, request) => {
       route.continue({
         headers: {
@@ -24,8 +25,8 @@ test.describe('i18n reroutes /', () => {
       })
     })
     await page.goto('/')
-    expect(page.url()).toBe(`${baseURL}/zh-CN`)
-    await expect(page.getByRole('link', { name: '小老师' })).toBeVisible()
+    expect(page.url()).toBe(`${baseURL}/zh-CN/en`)
+    await expect(page.getByRole('heading', { name: 'Poly 导师' })).toBeVisible()
   })
 })
 

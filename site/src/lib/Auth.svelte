@@ -13,7 +13,7 @@
     const { data, error } = await $page.data.supabase.auth.signInWithOtp({ email })
     console.info({ data, error })
     if (error) return toast(error.message, TEN_SECONDS)
-    toast(`Sent code to ${email}`, FOUR_SECONDS)
+    toast(`{$page.data.t.layout.sent_code}: ${email}`, FOUR_SECONDS)
     sixDigitCodeSent = true
   }
 
@@ -50,7 +50,7 @@
     <Form let:loading onsubmit={handleOTP}>
       <input
         type="text"
-        placeholder="Enter 6-digit code sent to {email}"
+        placeholder="{$page.data.t.layout.enter_6_digit_code} ({email})"
         class="border border-gray-400 p-2 rounded w-full"
         pattern={sixDigitCodePattern}
         required

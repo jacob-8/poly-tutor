@@ -1,0 +1,18 @@
+# Reference: https://github.com/lokalise/i18n-ally/wiki/Custom-Framework
+
+languageIds:
+  - javascript
+  - typescript
+  - svelte
+
+# An array of RegExes to find the key usage. **The key should be captured in the first match group**.
+# You should unescape RegEx strings in order to fit in the YAML file
+# To help with this, you can use https://www.freeformatter.com/json-escape.html
+usageMatchRegex:
+  # - "[^\\w\\d]t\\(['\"`]({key})['\"`]" # i18n-ally's default example of how to detect `t("your.i18n.keys")` - the `{key}` will be placed by a proper keypath matching regex, you can ignore it and use your own matching rules as well
+  - "[^\\w\\d]t\\.(.+?)[^\\w\\.]" # $page.data.t.hello.world
+
+refactorTemplates:
+  - "{$page.data.t.$1}"
+
+monopoly: true

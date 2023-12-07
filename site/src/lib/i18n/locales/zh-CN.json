@@ -4,7 +4,9 @@
     "sign_in": "登录",
     "sign_out": "退出",
     "email_address": "电子邮件",
-    "send_code": "发送验证码"
+    "send_code": "发送验证码",
+    "enter_6_digit_code": "输入 6 位数字代码",
+    "sent_code": "发送代码"
   },
   "shows": {
     "paste_youtube_url": "粘贴 YouTube 视频网址",
@@ -18,6 +20,13 @@
     "chat": "闲聊",
     "watch": "观看",
     "watch_shows": "观看节目",
-    "read_texts": "阅读文本"
+    "read_texts": "阅读文本",
+    "read_websites": "阅读网站",
+    "word_lists": "单词表",
+    "realtime_transcription": "实时转录",
+    "my_words": "我的话",
+    "dictionary": "字典",
+    "tagline": "在人工智能导师的帮助下，使用真实内容学习中文，确保您理解所听到和读到的内容。",
+    "youtube_description": "你可以选择 YouTube 上的任何节目，导师将提供成绩单。"
   }
 }

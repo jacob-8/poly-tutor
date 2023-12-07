@@ -4,7 +4,9 @@
     "sign_in": "登入",
     "sign_out": "退出",
     "email_address": "電子郵件",
-    "send_code": "發送驗證碼"
+    "send_code": "發送驗證碼",
+    "enter_6_digit_code": "輸入 6 位數字代碼",
+    "sent_code": "傳送代碼"
   },
   "shows": {
     "paste_youtube_url": "貼上 YouTube 影片網址",
@@ -18,6 +20,13 @@
     "chat": "聊天",
     "watch": "觀看",
     "watch_shows": "觀看節目",
-    "read_texts": "閱讀文章"
+    "read_texts": "閱讀文章",
+    "read_websites": "閱讀網站",
+    "word_lists": "單字表",
+    "realtime_transcription": "即時轉錄",
+    "my_words": "我的話",
+    "dictionary": "字典",
+    "tagline": "在人工智慧導師的幫助下，使用真實內容學習中文，確保您理解所聽到和讀到的內容。",
+    "youtube_description": "你可以選擇 YouTube 上的任何節目，導師將提供成績單。"
   }
 }

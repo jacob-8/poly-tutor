@@ -14,14 +14,16 @@ describe('service worker', async () => {
     expect(swContent).toContain('"/manifest.webmanifest"')
   })
 
-  test('prerendered home routes (/en, /zh-TW, /zh-CN) are precached', () => {
-    expect(swContent).toContain('"/en"')
-    expect(swContent).toContain('"/zh-TW"')
-    expect(swContent).toContain('"/zh-CN"')
-  })
+  // since we want to have quick resume shortcuts on a user's home screen, not sure yet if want to pre-render home routes
+  // test('prerendered home routes (/en/zh-TW, /zh-CN/en, ...) are precached', () => {
+  //   expect(swContent).toContain('"/en/zh-TW"')
+  //   expect(swContent).toContain('"/en/zh-CN"')
+  //   expect(swContent).toContain('"/zh-TW/en"')
+  //   expect(swContent).toContain('"/zh-CN/en"')
+  // })
 
   test('/en/about is not precached because it is not prerendered', () => {
-    expect(swContent).not.toContain('"/en/about"')
+    expect(swContent).not.toContain('"/en/zh-TW/shows"')
   })
 
   test('process.env.VITE_COMMAND replaced with "build"', () => {
