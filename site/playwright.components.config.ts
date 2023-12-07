@@ -22,4 +22,5 @@ export default defineConfig({
     port: 5173,
     reuseExistingServer: true,
   },
+  testMatch: 'kitbook.snapshots.ts',
 })

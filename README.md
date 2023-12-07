@@ -21,10 +21,6 @@
 
 ## Roadmap
 
-- All tests running in CI
-  - Vitest
-  - Playwright
-  - Component snapshots - copy across key
 - Use GPT3.5 to clean up transcripts into sentences
 - Add ability to listen to YouTube in chunks with translation
 - Save user known words

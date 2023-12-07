@@ -2,9 +2,8 @@ import { defineConfig, devices } from '@playwright/test'
 
 const localDev = defineConfig({
   webServer: {
-    command: 'pnpm run dev',
-    port: 5173,
-    reuseExistingServer: true,
+    command: 'pnpm run build && pnpm run preview', // to allow service worker testing
+    port: 4173
   },
 })
 
@@ -18,7 +17,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4173',
     trace: 'on-first-retry',
   },
   projects: [

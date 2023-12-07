@@ -8,11 +8,12 @@
 		"sync": "svelte-kit sync",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --threshold error",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test:service-worker": "vitest --config ./vitest.service-worker.config.ts",
 		"test:e2e": "playwright test",
-		"test:e2e:update": "playwright test --update-snapshots",
-		"test:components": "playwright test --config playwright.components.config.ts kitbook",
-		"test:components:update": "playwright test --config playwright.components.config.ts kitbook --update-snapshots"
+		"test:e2e:ui": "playwright test --ui",
+		"test:components:update": "playwright test --config playwright.components.config.ts --update-snapshots",
+		"test:components": "playwright test --config playwright.components.config.ts",
+		"test:service-worker-build": "vitest --config ./vitest.service-worker.config.ts",
+		"test:e2e-service-worker": "playwright test --config playwright.sw.config.ts"
 	},
 	"devDependencies": {
 		"@google-cloud/language": "^6.1.1",
