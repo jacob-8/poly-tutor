@@ -12,9 +12,7 @@ env:
 jobs:
   lighthouse_tutor:
     name: Lighthouse Audit Tutor
-    if: github.event.deployment_status.state == 'success' && (github.event.deployment_status.environment == 'Production – tutor' || github.event.deployment_status.environment == 'Preview – tutor')
-    # Preview – polylingual-dev
-    # Production – polylingual-dev
+    if: github.event.deployment_status.state == 'success' && (github.event.deployment_status.environment == 'Production' || github.event.deployment_status.environment == 'Preview')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -25,29 +23,29 @@ jobs:
         with:
           urls: |
             ${{ github.event.deployment_status.target_url }}
-            ${{ github.event.deployment_status.target_url }}/en
-            ${{ github.event.deployment_status.target_url }}/zh-TW
+            ${{ github.event.deployment_status.target_url }}/en/zh-TW
+            ${{ github.event.deployment_status.target_url }}/zh-TW/en
           # budgetPath: './.github/lighthouse-budget.json'
           configPath: './.github/lighthouserc.cjs' # https://github.com/GoogleChrome/lighthouse-ci/blob/main/docs/getting-started.md https://github.com/GoogleChrome/lighthouse-ci/blob/main/docs/configuration.md#assert
           uploadArtifacts: true
           temporaryPublicStorage: true
 
-      - name: Format Lighthouse Score For Slack
-        if: always()
-        id: format_lighthouse_score_for_slack
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const lighthouseCommentFormatter = require('./.github/workflows/lighthouse-comment-formatter.cjs');
+      # - name: Format Lighthouse Score For Slack
+      #   if: always()
+      #   id: format_lighthouse_score_for_slack
+      #   uses: actions/github-script@v6
+      #   with:
+      #     github-token: ${{secrets.GITHUB_TOKEN}}
+      #     script: |
+      #       const lighthouseCommentFormatter = require('./.github/workflows/lighthouse-comment-formatter.cjs');
 
-            const lighthouseOutputs = {
-              manifest: ${{ steps.lighthouse_audit.outputs.manifest }},
-              links: ${{ steps.lighthouse_audit.outputs.links }},
-            };
+      #       const lighthouseOutputs = {
+      #         manifest: ${{ steps.lighthouse_audit.outputs.manifest }},
+      #         links: ${{ steps.lighthouse_audit.outputs.links }},
+      #       };
 
-            const comment = lighthouseCommentFormatter({ lighthouseOutputs, targetPlatform: 'slack' });
-            core.setOutput("comment", comment);
+      #       const comment = lighthouseCommentFormatter({ lighthouseOutputs, targetPlatform: 'slack' });
+      #       core.setOutput("comment", comment);
 
       # - name: Send Lighthouse Score to Slack
       #   if: always()
