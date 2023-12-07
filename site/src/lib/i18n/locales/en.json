@@ -16,6 +16,8 @@
   },
   "home": {
     "chat": "Chat",
-    "watch": "Watch"
+    "watch": "Watch",
+    "watch_shows": "Watch Shows",
+    "read_texts": "Read Texts"
   }
 }

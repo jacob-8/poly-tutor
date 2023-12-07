@@ -16,6 +16,8 @@
   },
   "home": {
     "chat": "闲聊",
-    "watch": "观看"
+    "watch": "观看",
+    "watch_shows": "观看节目",
+    "read_texts": "阅读文本"
   }
 }

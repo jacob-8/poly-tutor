@@ -11,9 +11,8 @@
 		"test:service-worker": "vitest --config ./vitest.service-worker.config.ts",
 		"test:e2e": "playwright test",
 		"test:e2e:update": "playwright test --update-snapshots",
-		"test:e2e:ui": "playwright test --config playwright.dev.config.ts --ui",
-		"test:components": "playwright test --config playwright.dev.config.ts kitbook",
-		"test:components:update": "playwright test --config playwright.dev.config.ts kitbook --update-snapshots"
+		"test:components": "playwright test --config playwright.components.config.ts kitbook",
+		"test:components:update": "playwright test --config playwright.components.config.ts kitbook --update-snapshots"
 	},
 	"devDependencies": {
 		"@google-cloud/language": "^6.1.1",

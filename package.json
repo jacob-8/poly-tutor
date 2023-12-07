@@ -9,7 +9,7 @@
 		"check": "pnpm -F site check",
 		"check:watch": "pnpm -F site check-watch",
 		"test": "vitest",
-		"lint": "eslint --cache",
+		"lint": "eslint --cache --quiet",
 		"lint:fix": "eslint --cache --fix",
 		"check-packages": "pnpm update --interactive --recursive --latest"
 	},

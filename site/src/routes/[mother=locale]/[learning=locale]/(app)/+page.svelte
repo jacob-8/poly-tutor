@@ -18,13 +18,13 @@
       </span>
       <span class="text-sm my-1">You can choose any show on YouTube, {$page.data.t.layout.tutor} will provide the transcripts.</span>
       <span class="text-sm font-semibold">
-        {$page.data.t.home.watch} Shows
+        {$page.data.t.home.watch_shows}
         <span class="i-material-symbols-arrow-right-alt vertical--3px transform group-hover:translate-x-1 transition-all duration-600" />
       </span>
     </a>
 
     {#if dev}
-      <a class="box">Read Texts</a>
+      <a class="box">{$page.data.t.home.read_texts}</a>
       <a class="box" href="/{$page.data.mother}/{$page.data.learning}/chat">{$page.data.t.home.chat}</a>
       <a class="box">Read Websites</a>
       <a class="box">Word Lists</a>

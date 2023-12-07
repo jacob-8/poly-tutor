@@ -10,7 +10,7 @@
   $: email = $user?.session?.user?.email
 </script>
 
-{#if $user}
+{#if email}
   <ShowHide let:show let:toggle>
     <button class="header-btn" type="button" title={JSON.stringify($user, null, 1)} on:click={toggle}>
       <div

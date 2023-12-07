@@ -9,7 +9,16 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		// "strict": true,
-		"types": ["youtube", "vitest/globals", "vitest/importMeta"]
+		"types": ["youtube", "vitest/globals", "vitest/importMeta"],
+		"paths": {
+      "$lib": [
+        "./src/lib"
+      ],
+      "$lib/*": [
+        "./src/lib/*"
+      ]
+    },
+    "baseUrl": "."
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//
