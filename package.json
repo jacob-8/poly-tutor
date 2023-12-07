@@ -14,17 +14,17 @@
 		"check-packages": "pnpm update --interactive --recursive --latest"
 	},
 	"devDependencies": {
-		"@typescript-eslint/eslint-plugin": "6.12.0",
-		"@typescript-eslint/parser": "6.12.0",
-		"eslint": "^8.53.0",
+		"@typescript-eslint/eslint-plugin": "6.13.2",
+		"@typescript-eslint/parser": "6.13.2",
+		"eslint": "^8.55.0",
 		"eslint-define-config": "^2.0.0",
 		"eslint-plugin-svelte": "^2.35.0",
 		"globals": "^13.23.0",
 		"simple-git-hooks": "^2.9.0",
-		"svelte": "^4.2.3",
+		"svelte": "^4.2.8",
 		"tslib": "^2.6.2",
-		"typescript": "^5.2.2",
-		"vitest": "^0.34.6"
+		"typescript": "^5.3.3",
+		"vitest": "^1.0.1"
 	},
 	"type": "module",
 	"simple-git-hooks": {
