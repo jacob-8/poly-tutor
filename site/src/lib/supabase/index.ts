@@ -1,10 +1,8 @@
-import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_API_URL } from '$env/static/public'
+import { PUBLIC_STUDIO_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_API_URL } from '$env/static/public'
 import { createClient, type SupabaseClient, type AuthResponse } from '@supabase/supabase-js'
 
 // import type { Database } from '../DatabaseDefinitions' // https://supabase.com/docs/reference/javascript/typescript-support
 
-const [origin] = PUBLIC_SUPABASE_API_URL.split('.')
-const [, supabaseId] = origin.split('//')
 const browser = typeof window !== 'undefined'
 let supabase: SupabaseClient | undefined
 
@@ -13,7 +11,7 @@ let supabase: SupabaseClient | undefined
 // runs in +layout.ts for isomorphic use in pages
 // the result is that on the server, two clients are created with the same auth - it's not a race condition issue but it's not ideal, however we can't just do it once because we can't pass it to +layout.ts from +layout.server.ts
 export function getSupabase() {
-  console.info(`creating Supabase client: https://supabase.com/dashboard/project/${supabaseId}`)
+  console.info(`creating Supabase client: ${PUBLIC_STUDIO_URL}`)
 
   if (browser && supabase)
     return supabase
