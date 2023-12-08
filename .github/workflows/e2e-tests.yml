@@ -37,8 +37,7 @@ jobs:
         with:
           version: latest
       
-      - run: supabase init
-      - run: supabase start
+      - run: supabase start --debug
 
       - name: Run Playwright e2e tests (vite dev)
         run: pnpm -F site test:e2e
