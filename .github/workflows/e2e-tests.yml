@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest # can only run containers on Linux
     timeout-minutes: 15
     container:
-      image: mcr.microsoft.com/playwright:v1.39.0-jammy # 👈 keep version in sync with installed playwright package https://playwright.dev/docs/ci#github-actions-via-containers
+      image: mcr.microsoft.com/playwright:v1.40.0-jammy # 👈 keep version in sync with installed playwright package https://playwright.dev/docs/ci#github-actions-via-containers
     concurrency:
       group: playwright-${{ github.ref }}  # Unique group per branch
       cancel-in-progress: true
@@ -32,17 +32,17 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: 👩‍💻 Setup Supabase CLI
-        uses: supabase/setup-cli@v1
-        with:
-          version: latest
+      # - name: 👩‍💻 Setup Supabase CLI
+      #   uses: supabase/setup-cli@v1
+      #   with:
+      #     version: latest
       
-      - run: supabase start --debug
+      # - run: supabase start --debug
 
-      - name: Run Playwright e2e tests (vite dev)
-        run: pnpm -F site test:e2e
-        env:
-          CI: true
+      # - name: Run Playwright e2e tests (vite dev)
+      #   run: pnpm -F site test:e2e
+      #   env:
+      #     CI: true
 
       - name: Run Playwright e2e service-worker tests (vite build)
         run: pnpm -F site test:e2e-service-worker

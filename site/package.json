@@ -19,7 +19,7 @@
 		"@google-cloud/language": "^6.1.1",
 		"@google-cloud/translate": "^8.0.2",
 		"@iconify/json": "^2.2.87",
-		"@playwright/test": "1.39.0",
+		"@playwright/test": "1.40.1",
 		"@supabase/supabase-js": "^2.38.5",
 		"@sveltejs/adapter-auto": "^2.1.1",
 		"@sveltejs/adapter-vercel": "^3.0.3",
