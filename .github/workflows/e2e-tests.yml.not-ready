@@ -32,17 +32,17 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      # - name: 👩‍💻 Setup Supabase CLI
-      #   uses: supabase/setup-cli@v1
-      #   with:
-      #     version: latest
+      - name: 👩‍💻 Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
       
-      # - run: supabase start --debug
+      - run: supabase start --debug
 
-      # - name: Run Playwright e2e tests (vite dev)
-      #   run: pnpm -F site test:e2e
-      #   env:
-      #     CI: true
+      - name: Run Playwright e2e tests (vite dev)
+        run: pnpm -F site test:e2e
+        env:
+          CI: true
 
       - name: Run Playwright e2e service-worker tests (vite build)
         run: pnpm -F site test:e2e-service-worker

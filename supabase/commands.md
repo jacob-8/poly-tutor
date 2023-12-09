@@ -11,8 +11,8 @@ https://supabase.com/docs/guides/cli
 
 ## Types
 
-- `pnpx supabase gen types typescript --local --schema public > site/src/lib/supabase/types.ts`
-- `pnpx supabase gen types typescript --project-id=zfxvyodqwvigxarorgjx --schema public > packages/site/src/lib/supabase/types.ts`
+- `pnpx supabase gen types typescript --local --schema public > site/src/lib/supabase/generated.types.ts`
+- `pnpx supabase gen types typescript --project-id=zfxvyodqwvigxarorgjx --schema public > packages/site/src/lib/supabase/generated.types.ts`
 
 ## Push changes to cloud project
 

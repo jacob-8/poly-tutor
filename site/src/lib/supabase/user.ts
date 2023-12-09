@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 import type { AuthResponse, Session, SupabaseClient } from '@supabase/supabase-js'
-import { setCookie } from '$lib/cookies'
+import { setCookie } from '$lib/utils/cookies'
 import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from './constants'
 const browser = typeof window !== 'undefined'
 
