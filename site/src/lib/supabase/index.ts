@@ -1,11 +1,12 @@
 import { PUBLIC_STUDIO_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_API_URL } from '$env/static/public'
-import { createClient, type SupabaseClient, type AuthResponse } from '@supabase/supabase-js'
+import { createClient, type AuthResponse } from '@supabase/supabase-js'
+import type { Supabase } from './database.types'
 import type { Database } from './generated.types'
 
 // https://supabase.com/docs/reference/javascript/typescript-support
 
 const browser = typeof window !== 'undefined'
-let supabase: SupabaseClient<Database> | undefined
+let supabase: Supabase | undefined
 
 // return a unique instance on server, but a shared instance on client
 // runs in hooks for easy use in api and server data fetching
@@ -33,7 +34,7 @@ const NULL_RESPONSE = {
   error: { message: 'no session' },
 } as AuthResponse
 
-export async function getSession({ supabase, access_token, refresh_token }: { supabase: SupabaseClient<Database>, access_token: string, refresh_token: string }) {
+export async function getSession({ supabase, access_token, refresh_token }: { supabase: Supabase, access_token: string, refresh_token: string }) {
   if (!access_token || !refresh_token)
     return NULL_RESPONSE
 

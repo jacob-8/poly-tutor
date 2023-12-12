@@ -1,17 +1,17 @@
-import type { YouTube } from '$lib/supabase/database.types'
+import type { Channel, YouTube } from '$lib/supabase/database.types'
 
-export const natureShow: YouTube = {
+export const natureShow: YouTube & { channel: Partial<Channel>} = {
   id: '-CTlz5PJRZs',
   title: '4K Nature Treasures of Hawaii Botanical Garden - Jungle Forest Cinematic Virtual Walk (Slow Motion)',
+  description: 'hello',
   duration_seconds: 122.521 * 60,
-  channel_thumbnail_url: 'https://fakeimg.pl/300x300/',
   channel_id: 'RelaxationChannel',
-  channel_title: '4K Relaxation Channel',
-  thumbnail_url: 'https://i.ytimg.com/vi/-CTlz5PJRZs/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAWklBWvg29P9ck23BaocqYQRndjg',
   created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-  created_by: '1',
   language: 'en',
-  summaries: null,
-  transcripts: null,
+  channel: {
+    id: 'UC8butISFwT-Wl7EV0hUK0BQ',
+    title: 'freeCodeCamp.org',
+    // description: 'hello',
+    thumbnail_id: 'APkrFKav44IZWeQMQttWjk2AsDi8oLkP1Mnf6zgIVu8s',
+  }
 }

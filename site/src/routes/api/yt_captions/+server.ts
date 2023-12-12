@@ -13,7 +13,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
     const { youtube_id } = await request.json() as YtCaptionsRequestBody
 
     if (!youtube_id)
-      throw error(ResponseCodes.BAD_REQUEST, 'No youtube id found in request body')
+      throw error(ResponseCodes.BAD_REQUEST, 'No youtube_id found in request body')
 
     const sentences = await get_captions_from_youtube({youtube_id})
     return json(sentences)

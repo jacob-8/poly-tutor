@@ -28,4 +28,19 @@ export const variants: Variant<Component>[] = [
       }
     },
   },
+  {
+    props: {
+      data: {
+        youtubes: [
+          natureShow,
+        ],
+        mother: undefined,
+        learning: undefined,
+        t: undefined,
+        supabase: undefined,
+        authResponse: undefined,
+        user: undefined
+      }
+    },
+  },
 ]

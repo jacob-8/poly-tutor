@@ -1,7 +1,7 @@
 import { afterAll, afterEach, beforeAll } from 'vitest'
 import { server } from '../../../../../lib/mocks/server'
 import { createChunkDecoder } from '../../../../../lib/client/chunkDecoder'
-import { apiFetch } from '../../../../../lib/client/apiFetch'
+import { apiFetch } from '../../../../../lib/utils/apiFetch'
 import type { ChatRequestBody } from '../../../../../lib/types'
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))

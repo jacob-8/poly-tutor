@@ -6,9 +6,16 @@
   import { Button } from 'svelte-pieces'
   import Content from './Content.svelte'
   import Summary from './Summary.svelte'
+  import { browser } from '$app/environment'
 
   export let data
-  $: ({ content, summary, user, transcribeCaptions, getSummary, deleteContent, deleteSummary } = data)
+  $: ({ youtube_id, youtube, check_is_in_my_videos, remove_from_my_videos, content, summary, user, transcribeCaptions, getSummary, deleteContent, deleteSummary, supabase } = data)
+
+  let checked_for_video = false
+  $: if (browser && $user && !checked_for_video) {
+    checked_for_video = true
+    check_is_in_my_videos(youtube_id, supabase)
+  }
 
   let playbackRate = 1
   let currentTimeMs = 0
@@ -41,20 +48,22 @@
   <div class="w-1/2 sticky z-1 top-0 h-100vh flex flex-col py-2">
     <Youtube
       bind:this={youtubeComponent}
-      videoId={$page.params.youtubeId}
+      {youtube}
       {readState}
       {readCurrentTime}
       {setPlaybackRate}
       {playbackRate} />
 
+    <button type="button" class="text-red p-1" on:click={() => remove_from_my_videos(youtube_id, supabase)}>Remove from my videos</button>
     <div class="mt-2 bg-gray-100 p-3 rounded overflow-y-auto grow-1 flex flex-col">
-      {#if $content.paragraphs}
+      {youtube.description}
+      {#if $content?.paragraphs}
         <div class="mb-1">
-          {#if !$content?.paragraphs?.[0].sentences?.[0]?.syntax}
+          {#if !$content.paragraphs?.[0].sentences?.[0]?.syntax}
             <Button onclick={data.analyze_syntax}>{$page.data.t.shows.analyze}</Button>
           {/if}
 
-          {#if !$content?.paragraphs?.[0]?.sentences?.[0]?.machine_translation?.en}
+          {#if !$content.paragraphs?.[0]?.sentences?.[0]?.machine_translation?.en}
             <Button onclick={data.translate}>{$page.data.t.shows.translate}</Button>
           {/if}
         </div>

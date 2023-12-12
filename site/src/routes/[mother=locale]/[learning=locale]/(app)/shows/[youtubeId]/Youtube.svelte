@@ -24,9 +24,11 @@
 </script>
 
 <script lang="ts">
+  import type { YouTube } from '$lib/supabase/database.types'
   import { onMount } from 'svelte'
+  import { fade } from 'svelte/transition'
 
-  export let videoId: string
+  export let youtube: YouTube
   export let playbackRate: number
   export let readState: (state: YT.PlayerState) => void
   export let readCurrentTime: (ms: number) => void
@@ -49,7 +51,7 @@
 
   function initPlayer() {
     player = new YT.Player('player', {
-      videoId,
+      videoId: youtube.id,
       playerVars: {
         modestbranding: 1,
         playsinline: 1,
@@ -95,12 +97,15 @@
   }
 </script>
 
-<div class="responsive">
+<div class="responsive" style="view-transition-name: yt-thumbnail-{youtube.id}">
   {#if !error}
-    <div id="player" />
+    {#if !player}
+      <div out:fade={{delay: 500, duration: 500}} class="bg-no-repeat absolute inset-0 bg-cover z-1" style="background-image: url(https://i.ytimg.com/vi/{youtube.id}/sddefault.jpg); background-position: center;" />
+    {/if}
+    <div id="player" class="bg-black" />
   {:else}
     <div style="text-align: center; margin-top: 20px;">
-      Playback Error {error}: {errorExplanation}
+      YouTube Playback Error {error}: {errorExplanation}
     </div>
   {/if}
 </div>

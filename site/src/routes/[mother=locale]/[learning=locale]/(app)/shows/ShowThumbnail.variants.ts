@@ -11,6 +11,7 @@ export const variants: Variant<Component>[] = [
   {
     props: {
       youtube: natureShow,
+      channel: natureShow.channel,
     },
   },
 ]

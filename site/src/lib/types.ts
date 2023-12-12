@@ -56,6 +56,10 @@ export interface CEDictEntry {
 
 // API
 
+export interface YtAddRequestBody {
+  youtube_id: string
+}
+
 export interface YtCaptionsRequestBody {
   youtube_id: string
 }

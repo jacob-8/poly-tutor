@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invalidateAll } from '$app/navigation'
   import { page } from '$app/stores'
   import { Button, Form, Modal } from 'svelte-pieces'
   import { toast } from 'svelte-pieces/ui/Toasts.svelte'
@@ -13,7 +14,7 @@
     const { data, error } = await $page.data.supabase.auth.signInWithOtp({ email })
     console.info({ data, error })
     if (error) return toast(error.message, TEN_SECONDS)
-    toast(`{$page.data.t.layout.sent_code}: ${email}`, FOUR_SECONDS)
+    toast(`${$page.data.t.layout.sent_code}: ${email}`, FOUR_SECONDS)
     sixDigitCodeSent = true
   }
 
@@ -26,9 +27,14 @@
     console.info({ data, error })
     if (error) return toast(error.message, TEN_SECONDS)
     toast(`Signed in with ${email}`, FOUR_SECONDS)
+    invalidateAll()
   }
 
   const sixDigitCodePattern = '[0-9]{6}'
+
+  function autofocus(node: HTMLInputElement) {
+    setTimeout(() => node.focus(), 15)
+  }
 </script>
 
 <Modal on:close>
@@ -37,6 +43,7 @@
     <Form let:loading onsubmit={sendCode}>
       <input
         type="email"
+        use:autofocus
         placeholder={$page.data.t.layout.email_address}
         class="border border-gray-400 p-2 rounded w-full"
         required

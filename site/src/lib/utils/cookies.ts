@@ -22,8 +22,6 @@ function formatCookie(name: string, value: string, options: CookieOptions = {}) 
     ...options,
   }
 
-  console.info('updated cookie: ', { [name]: updatedCookie })
-
   const cookie = Object.entries(updatedCookie)
     .filter(([key]) => key !== 'secure')
     .map((kv) => kv.join('='))

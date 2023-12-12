@@ -1,31 +1,37 @@
 import { createPersistedStore } from 'svelte-pieces'
 import type { PageLoad } from './$types'
-import type { AnalyzeSyntaxRequestBody, ChatRequestBody, Content, OpenAiChatStreamResponse, Sentence, TranslateRequestBody, YtCaptionsRequestBody, YtTranscribeRequestBody } from '$lib/types'
+import type { AnalyzeSyntaxRequestBody, ChatRequestBody, Content, OpenAiChatStreamResponse, Sentence, TranslateRequestBody, YtTranscribeRequestBody } from '$lib/types'
 import { get } from 'svelte/store'
-import { apiFetch } from '$lib/client/apiFetch'
+import { apiFetch } from '$lib/utils/apiFetch'
 import { fetchSSE } from '$lib/client/fetchSSE'
 import type { ChatCompletionRequestMessage } from 'openai-edge'
 import { merge_translations } from './merge_translations'
 import { merge_syntax } from './merge_syntax'
 import { getCEDict } from './getCEDict'
+import { add_youtube_to_db, check_is_in_my_videos, remove_from_my_videos, youtube_in_db } from './check-youtube'
 
-export const load = (async ({ params: { youtubeId }, fetch }) => {
-  const content = createPersistedStore<Content>(`content_${youtubeId}`, {}, true)
-  const summary = createPersistedStore<Content>(`summary_${youtubeId}`, {}, true)
+export const load = (async ({ params: { youtubeId: youtube_id }, fetch, parent }) => {
+  const { supabase } = await parent()
+  let youtube = await youtube_in_db(youtube_id, supabase)
+  if (!youtube)
+    youtube = await add_youtube_to_db(youtube_id, fetch)
 
-  const currentContent = get(content)
-  if (!currentContent.paragraphs?.length)
-    await getCaptions()
+  const content = createPersistedStore<Content>(`content_${youtube_id}`, {}, true)
+  const summary = createPersistedStore<Content>(`summary_${youtube_id}`, {}, true)
 
-  async function getCaptions() {
-    const response = await apiFetch<YtCaptionsRequestBody>('/api/yt_captions', { youtube_id: youtubeId }, fetch)
-    if (!response.ok) return
-    const sentences = await response.json() as Sentence[]
-    content.set({ paragraphs: [{ sentences }] })
-  }
+  // const currentContent = get(content)
+  // if (!currentContent.paragraphs?.length)
+  //   await getCaptions()
+
+  // async function getCaptions() {
+  //   const response = await apiFetch<YtCaptionsRequestBody>('/api/yt_captions', { youtube_id }, fetch)
+  //   if (!response.ok) return
+  //   const sentences = await response.json() as Sentence[]
+  //   content.set({ paragraphs: [{ sentences }] })
+  // }
 
   async function transcribeCaptions(openai_api_key: string) {
-    const response = await apiFetch<YtTranscribeRequestBody>('/api/yt_transcribe', { youtube_id: youtubeId, openai_api_key, language_code: 'zh', duration_seconds: 600 }, fetch)
+    const response = await apiFetch<YtTranscribeRequestBody>('/api/yt_transcribe', { youtube_id, openai_api_key, language_code: 'zh', duration_seconds: 600 }, fetch)
     if (!response.ok) return
     const sentences = await response.json() as Sentence[]
     content.set({ paragraphs: [{ sentences }] })
@@ -105,7 +111,12 @@ export const load = (async ({ params: { youtubeId }, fetch }) => {
     content.set({ ...currentContent, paragraphs: [{ sentences: sentencesWithTranslation }] })
   }
 
+
   return {
+    youtube_id,
+    youtube,
+    check_is_in_my_videos,
+    remove_from_my_videos,
     content,
     summary,
     transcribeCaptions,
@@ -116,6 +127,6 @@ export const load = (async ({ params: { youtubeId }, fetch }) => {
     translate,
     streamed: {
       cedict: getCEDict(),
-    }
+    },
   }
 }) satisfies PageLoad

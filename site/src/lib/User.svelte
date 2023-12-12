@@ -3,10 +3,9 @@
   import { ShowHide, Slideover, portal } from 'svelte-pieces'
   import type { BaseUser } from './supabase/user'
   import type { Readable } from 'svelte/store'
-  import type { AuthError } from '@supabase/supabase-js'
 
   export let user: Readable<BaseUser>
-  export let signOut: () => Promise<{ error: AuthError; }>
+  export let signOut: () => Promise<void>
   $: email = $user?.session?.user?.email
 </script>
 
