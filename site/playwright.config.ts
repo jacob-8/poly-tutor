@@ -17,8 +17,13 @@ export default defineConfig({
   },
   projects: [
     {
+      name: 'reset', // don't run this in CI when adding these tests to CI
+      testMatch: /reset-db\.setup\.ts/,
+    },
+    {
       name: 'login',
       testMatch: /login\.setup\.ts/,
+      dependencies: ['reset'],
     },
     {
       name: 'authed chromium',
@@ -35,6 +40,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
       },
+      dependencies: ['reset'],
     },
   ],
   webServer: {
