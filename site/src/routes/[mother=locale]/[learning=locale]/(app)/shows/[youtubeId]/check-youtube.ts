@@ -12,12 +12,12 @@ export async function youtube_in_db(youtube_id: string, supabase: Supabase): Pro
   return youtube
 }
 
-export async function add_youtube_to_db(youtube_id: string, fetch): Promise<YouTube> {
+export async function add_youtube_to_db(youtube_id: string, fetch): Promise<{ youtube?: YouTube, error?: string }> {
   const response = await apiFetch<YtAddRequestBody>('/api/yt_add', { youtube_id }, fetch)
   const body = await response.json()
   if (!response.ok)
-    console.error(body.message)
-  return body as YouTube
+    return { error: body.message }
+  return { youtube: body }
 }
 
 export async function check_is_in_my_videos(youtube_id: string, supabase: Supabase) {

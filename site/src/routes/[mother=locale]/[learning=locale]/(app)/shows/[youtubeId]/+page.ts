@@ -13,8 +13,10 @@ import { add_youtube_to_db, check_is_in_my_videos, remove_from_my_videos, youtub
 export const load = (async ({ params: { youtubeId: youtube_id }, fetch, parent }) => {
   const { supabase } = await parent()
   let youtube = await youtube_in_db(youtube_id, supabase)
+
+  let error = ''
   if (!youtube)
-    youtube = await add_youtube_to_db(youtube_id, fetch)
+    ({ youtube, error } = await add_youtube_to_db(youtube_id, fetch))
 
   const content = createPersistedStore<Content>(`content_${youtube_id}`, {}, true)
   const summary = createPersistedStore<Content>(`summary_${youtube_id}`, {}, true)
@@ -115,6 +117,7 @@ export const load = (async ({ params: { youtubeId: youtube_id }, fetch, parent }
   return {
     youtube_id,
     youtube,
+    error,
     check_is_in_my_videos,
     remove_from_my_videos,
     content,

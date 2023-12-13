@@ -45,7 +45,6 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
 
 async function get_youtube_info_from_youtube(youtube_id: string) {
   const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${youtube_id}&key=${YOUTUBE_API_3_KEY}`
-  // https://www.googleapis.com/youtube/v3/videos?part=snippet&id=b5JaHbjKb2I&key=AIzaSyAIzgFszWJ402f6BQVGPtqhSLN_fU1DvGs
 
   const response = await fetch(url)
   const data = await response.json() as YouTubeVideoSnippetData
@@ -81,7 +80,6 @@ async function channel_is_in_db(channel_id: string, supabase: Supabase) {
 
 async function add_channel(channel_id: string, supabase: Supabase) {
   const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channel_id}&key=${YOUTUBE_API_3_KEY}`
-  // https://www.googleapis.com/youtube/v3/channels?part=snippet&id=UC-7jKPgRmLBiB1ltbABubNA&key=AIzaSyAIzgFszWJ402f6BQVGPtqhSLN_fU1DvGs
 
   const response = await fetch(url)
   const { items: [{ snippet: { title, description, thumbnails } }] } = await response.json() as YouTubeChannelSnippetData

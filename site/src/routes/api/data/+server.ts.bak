@@ -1,0 +1,15 @@
+// import { ResponseCodes } from '$lib/responseCodes'
+// import type { RequestHandler } from './$types'
+// import { json, error } from '@sveltejs/kit'
+
+// export const GET: RequestHandler = async ({ locals: { getSession, supabase } }) => {
+//   const { data: session_data, error: _error } = await getSession()
+
+//   if (_error || !session_data?.user)
+//     throw error(ResponseCodes.UNAUTHORIZED, { message: _error?.message || 'Unauthorized' })
+
+//   getSession must be changed into a function that returns both supabase and session if we want to run normal supabase on the server - so far we are just using full supabase (admin) on the server
+//   const { data: table_data } = await supabase.from('test').select('*')
+
+//   return json({ table_data })
+// }

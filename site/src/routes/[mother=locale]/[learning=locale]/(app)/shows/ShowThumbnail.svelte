@@ -13,7 +13,7 @@
   // https://i.ytimg.com/vi... // shortened alt url
 </script>
 
-<div class="sm:max-w-470px">
+<div class="sm:max-w-470px mx-auto">
   <a class="block mb-1 relative overflow-hidden h-0 pb-56.25% sm:rounded" style="view-transition-name: yt-thumbnail-{youtube.id}" {href}>
     <img class="w-full absolute centered" src="https://i.ytimg.com/vi/{youtube.id}/sddefault.jpg" alt={youtube.title} title={youtube.description} />
     {#if youtube.duration_seconds}
