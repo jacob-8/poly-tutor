@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { CEDictEntry, Content, Sentence } from '$lib/types'
+  import type { CEDictEntry, Section, Sentence } from '$lib/types'
   import Paragraphs from './Paragraphs.svelte'
   import { page } from '$app/stores'
   import { Button } from 'svelte-pieces'
@@ -7,7 +7,7 @@
   import OpenAiUserKey from '$lib/OpenAiUserKey.svelte'
 
   export let entries: Record<string, CEDictEntry>
-  export let content: Content
+  export let content: Section
   export let email: string
   export let studySentence: (sentence: Sentence) => void
   export let transcribeCaptions: (openai_api_key: string) => Promise<void>
@@ -18,15 +18,16 @@
   export let playerState: YT.PlayerState
   export let youtubeComponent: Youtube
 
-  $: captionsLength = content.paragraphs?.map(paragraph => {
-    return paragraph.sentences?.map(sentence => sentence.text).join('\n')
-  }).join('\n\n').length
+// $: captionsLength = content.paragraphs?.map(paragraph => {
+  //   return paragraph.sentences?.map(sentence => sentence.text).join('\n')
+  // }).join('\n\n').length
 </script>
 
 <div class="pb-20">
-  {#if content.paragraphs}
-    <div class="text-xs text-gray">({captionsLength} characters)</div>
-    <Paragraphs {youtubeComponent} {playerState} {entries} {setTime} {currentTimeMs} {studySentence} paragraphs={content.paragraphs} />
+  {#if content}
+    <pre>{JSON.stringify(content, null, 1)}</pre>
+    <!-- <div class="text-xs text-gray">({captionsLength} characters)</div>
+    <Paragraphs {youtubeComponent} {playerState} {entries} {setTime} {currentTimeMs} {studySentence} paragraphs={content.paragraphs} /> -->
     <Button size="sm" form="simple" color="red" onclick={deleteContent}>Delete Captions</Button>
   {:else if email}
     <div class="text-base">

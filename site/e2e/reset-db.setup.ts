@@ -1,10 +1,16 @@
 import { test as setup } from '@playwright/test'
-// @ts-expect-error
 import { execSync } from 'child_process'
+import { readFileSync } from 'fs'
+import DB from './db'
 
-setup('reset db', async () => {
+setup('reseed db', async () => {
   await startSupabase()
-  reseedDb()
+  const dataBase = new DB()
+  await dataBase.executeQuery(`truncate table youtube_channels cascade;`)
+  await dataBase.executeQuery(`truncate table auth.users cascade;`)
+  const seedFilePath = '../supabase/seed.sql'
+  const seedSql = readFileSync(seedFilePath, 'utf8')
+  await dataBase.executeQuery(seedSql)
 })
 
 async function startSupabase() {
@@ -14,19 +20,6 @@ async function startSupabase() {
   } catch {
     console.warn('Supabase not detected - Starting it now')
     execSync('pnpx supabase start')
+    console.warn('Supabase started')
   }
-}
-
-// requires installing psql locally and setting password to postgres
-function reseedDb() {
-  // Windows version when running from e2e tests
-  execSync(
-    'SET PGPASSWORD=postgres&&psql -U postgres -h 127.0.0.1 -p 54322 -f ../supabase/clear-db-data.sql',
-    { stdio: 'ignore' }
-  )
-  // PGPASSWORD=postgres psql -U postgres -h 127.0.0.1 -p 54322 -f supabase/clear-db-data.sql // in Bash from project root
-
-  execSync(
-    'SET PGPASSWORD=postgres&&psql -U postgres -h 127.0.0.1 -p 54322 -f ../supabase/seed.sql'
-  )
 }

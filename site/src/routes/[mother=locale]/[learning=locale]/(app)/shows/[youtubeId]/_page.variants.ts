@@ -42,7 +42,8 @@ export const variants: Variant<Component>[] = [
         youtube_id: 'psHi-KSFuwQ',
         youtube,
         streamed: {
-          cedict: new Promise((resolve) => { setTimeout(() => resolve({}), 3000) }),
+          cedict: new Promise((resolve) => { setTimeout(() => resolve({}), 1000) }),
+          transcript: new Promise((resolve) => { setTimeout(() => resolve({ transcript: {sentences: [{text: 'hi world'}]}}), 1000) }),
         },
         // @ts-ignore
         check_is_in_my_videos: (youtube_id) => { console.info(`check_is_in_my_videos(${youtube_id})`)},

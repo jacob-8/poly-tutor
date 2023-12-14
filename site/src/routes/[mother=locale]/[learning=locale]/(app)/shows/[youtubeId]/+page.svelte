@@ -1,15 +1,28 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import Youtube, { PlayerState } from './Youtube.svelte'
-  import type { Sentence } from '$lib/types'
+  import type { CEDictEntry, Sentence } from '$lib/types'
   import StudySentence from './StudySentence.svelte'
   import { Button } from 'svelte-pieces'
   import Content from './Content.svelte'
-  import Summary from './Summary.svelte'
+  import SummaryComponent from './Summary.svelte'
   import { browser } from '$app/environment'
+  import type { Transcript, Summary } from '$lib/supabase/database.types'
 
   export let data
-  $: ({ youtube_id, youtube, error, check_is_in_my_videos, remove_from_my_videos, content, summary, user, transcribeCaptions, getSummary, deleteContent, deleteSummary, supabase } = data)
+  $: ({ youtube_id, youtube, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribeCaptions, deleteTranscript, addSummary, deleteSummary, supabase } = data)
+
+  let cedict: Record<string, CEDictEntry> = {}
+  $: if (streamed.cedict)
+    streamed.cedict.then((c) => cedict = c)
+
+  let transcript: Transcript
+  $: if (streamed.transcript)
+    streamed.transcript.then((t) => transcript = t)
+
+  // let summary: Summary
+  // $: if (streamed.summary)
+  //   streamed.summary.then((s) => summary = s)
 
   let checked_for_video = false
   $: if (browser && $user && !checked_for_video) {
@@ -58,58 +71,50 @@
       {#if $user}
         <button type="button" class="text-red p-1" on:click={() => remove_from_my_videos(youtube_id, supabase)}>Remove from my videos</button>
       {/if}
-      <div class="mt-2 bg-gray-100 p-3 rounded overflow-y-auto grow-1 flex flex-col">
-        {youtube.description}
-        {#if $content?.paragraphs}
-          <div class="mb-1">
-            {#if !$content.paragraphs?.[0].sentences?.[0]?.syntax}
-              <Button onclick={data.analyze_syntax}>{$page.data.t.shows.analyze}</Button>
-            {/if}
-
-            {#if !$content.paragraphs?.[0]?.sentences?.[0]?.machine_translation?.en}
-              <Button onclick={data.translate}>{$page.data.t.shows.translate}</Button>
-            {/if}
-          </div>
-
-          {#if currentStudySentence}
-            {#await data.streamed.cedict}
-              Loading dictionary...
-            {:then entries}
-              <StudySentence playing={playerState === PlayerState.PLAYING} {entries} onmouseenter={() => youtubeComponent.pause()} onmouseleave={() => youtubeComponent.play()} sentence={currentStudySentence} />
-            {:catch error}
-              Loading dictionary error: {error.message}
-            {/await}
-          {:else}
-            Hover/click on sentence to study.
-          {/if}
-        {/if}
-      </div>
     {/if}
+
+    <div class="mt-2 bg-gray-100 p-3 rounded overflow-y-auto grow-1 flex flex-col">
+      {#if transcript}
+        {@const hasSyntaxAnalysis = transcript.transcript.sentences[0].syntax}
+        {@const hasMachineTranslation = transcript.transcript.sentences[0].machine_translation}
+        <div class="mb-1">
+          {#if !hasSyntaxAnalysis}
+            <Button onclick={data.analyze_syntax}>{$page.data.t.shows.analyze}</Button>
+          {/if}
+
+          {#if !hasMachineTranslation}
+            <Button onclick={data.translate}>{$page.data.t.shows.translate}</Button>
+          {/if}
+        </div>
+
+        {#if currentStudySentence}
+          <StudySentence playing={playerState === PlayerState.PLAYING} entries={cedict} onmouseenter={() => youtubeComponent.pause()} onmouseleave={() => youtubeComponent.play()} sentence={currentStudySentence} />
+        {:else}
+          Hover/click on sentence to study.
+        {/if}
+      {/if}
+    </div>
   </div>
   <div class="w-1/2 pl-2 text-3xl">
-    {#if youtube}
-      {#await data.streamed.cedict}
-        ...
-      {:then entries}
-        {#if $content.paragraphs}
-          <Summary {getSummary}
-            {deleteSummary} {studySentence} paragraphs={$summary.summary} />
-        {/if}
+    <!-- {youtube.description} -->
 
-        <Content
-          {entries}
-          {transcribeCaptions}
-          {youtubeComponent}
-          {playerState}
-          {deleteContent}
-          {currentTimeMs}
-          {setTime}
-          content={$content}
-          email={$user?.session.user.email}
-          {studySentence} />
-      {:catch error}
-        Loading dictionary error: {error.message}
-      {/await}
+    {#if youtube}
+      <!-- {#if transcript}
+          <SummaryComponent {addSummary}
+            {deleteSummary} {studySentence} paragraphs={summary.summary} />
+        {/if} -->
+
+      <Content
+        entries={cedict}
+        {transcribeCaptions}
+        {youtubeComponent}
+        {playerState}
+        deleteContent={deleteTranscript}
+        {currentTimeMs}
+        {setTime}
+        content={transcript?.transcript}
+        email={$user?.session.user.email}
+        {studySentence} />
     {:else if error}
       Error: {error}
       {#if !$user}

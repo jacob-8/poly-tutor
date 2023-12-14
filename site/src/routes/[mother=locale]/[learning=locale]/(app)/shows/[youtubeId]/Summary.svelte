@@ -4,7 +4,7 @@
   import { Button } from 'svelte-pieces'
   import OpenAiUserKey from '$lib/OpenAiUserKey.svelte'
 
-  export let getSummary: (key: string) => Promise<void>
+  export let addSummary: (key: string) => Promise<void>
   export let deleteSummary: () => void
   export let paragraphs: Paragraph[]
   export let studySentence: (sentence: Sentence) => void
@@ -38,7 +38,7 @@
   {:else}
     <div class="text-base">
       <OpenAiUserKey let:openai_api_key>
-        <Button onclick={() => getSummary(openai_api_key)}>{$page.data.t.shows.summarize}</Button>
+        <Button onclick={() => addSummary(openai_api_key)}>{$page.data.t.shows.summarize}</Button>
       </OpenAiUserKey>
     </div>
   {/if}

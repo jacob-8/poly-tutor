@@ -138,7 +138,7 @@ export interface Database {
           end_ms: number
           id: string
           start_ms: number
-          summary: string
+          summary: Section
           summary_source: string
           title: string | null
           updated_at: string
@@ -151,7 +151,7 @@ export interface Database {
           end_ms: number
           id?: string
           start_ms: number
-          summary: string
+          summary: Section
           summary_source: string
           title?: string | null
           updated_at?: string
@@ -164,7 +164,7 @@ export interface Database {
           end_ms?: number
           id?: string
           start_ms?: number
-          summary?: string
+          summary?: Section
           summary_source?: string
           title?: string | null
           updated_at?: string

@@ -25,9 +25,9 @@ VALUES
 
 INSERT INTO youtube_transcripts (youtube_id, transcript, transcript_source, created_by)
 VALUES
-  ('9ruqSX_p_48', '{"key": "value", "key2": "value2"}'::jsonb, 'spoofing', '5e040c00-ce26-4f2f-8413-e0985ec1f4b2'),
-  ('UnlyETVcDzY', '{"key": "value", "key2": "value2"}'::jsonb, 'spoofing', '5e040c00-ce26-4f2f-8413-e0985ec1f4b2'); 
+  ('9ruqSX_p_48', '{"sentences": [{ "text": "This is a fake transcript..." }]}'::jsonb, 'spoofing', '5e040c00-ce26-4f2f-8413-e0985ec1f4b2'),
+  ('UnlyETVcDzY', '{"sentences": [{ "text": "This is a fake transcript..." }]}'::jsonb, 'spoofing', '5e040c00-ce26-4f2f-8413-e0985ec1f4b2'); 
 
 INSERT INTO youtube_summaries (youtube_id, summary, summary_source, start_ms, end_ms, created_by)
 VALUES
-  ('9ruqSX_p_48', 'This is a fake summary...', 'spoofing', '0', '10000', '5e040c00-ce26-4f2f-8413-e0985ec1f4b2'); 
+  ('9ruqSX_p_48', '{"sentences": [{ "text": "This is a fake summary..." }]}'::jsonb, 'spoofing', '0', '10000', '5e040c00-ce26-4f2f-8413-e0985ec1f4b2'); 
