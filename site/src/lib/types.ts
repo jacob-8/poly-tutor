@@ -1,21 +1,18 @@
 import type { google } from '@google-cloud/language/build/protos/protos'
 
-export interface Content {
-  summary?: Paragraph[]
-  paragraphs?: Paragraph[]
-}
-
-export interface Paragraph {
-  sentences: Sentence[]
+// Books, Shows, Volumes, Pages, Paragraphs are all sections, this let's us nest as many layers as we need
+export interface Section {
+  sentences?: Sentence[]
+  children?: Section[]
 }
 
 export interface Sentence {
   text: string
-  syntax?: google.cloud.language.v1.IAnalyzeSyntaxResponse
   words?: Word[]
   start_ms?: number
   end_ms?: number
   machine_translation?: Translation
+  syntax?: google.cloud.language.v1.IAnalyzeSyntaxResponse
 }
 
 interface Word {

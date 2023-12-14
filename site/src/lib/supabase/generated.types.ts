@@ -1,3 +1,5 @@
+import type { Section } from '$lib/types'
+
 export type Json =
   | string
   | number
@@ -108,21 +110,21 @@ export interface Database {
         Row: {
           description: string | null
           id: string
-          thumbnail_id: string
+          thumbnail_url: string
           title: string
           updated_at: string
         }
         Insert: {
           description?: string | null
           id: string
-          thumbnail_id: string
+          thumbnail_url: string
           title: string
           updated_at?: string
         }
         Update: {
           description?: string | null
           id?: string
-          thumbnail_id?: string
+          thumbnail_url?: string
           title?: string
           updated_at?: string
         }
@@ -137,6 +139,7 @@ export interface Database {
           id: string
           start_ms: number
           summary: string
+          summary_source: string
           title: string | null
           updated_at: string
           youtube_id: string
@@ -149,6 +152,7 @@ export interface Database {
           id?: string
           start_ms: number
           summary: string
+          summary_source: string
           title?: string | null
           updated_at?: string
           youtube_id: string
@@ -161,6 +165,7 @@ export interface Database {
           id?: string
           start_ms?: number
           summary?: string
+          summary_source?: string
           title?: string | null
           updated_at?: string
           youtube_id?: string
@@ -184,32 +189,32 @@ export interface Database {
       }
       youtube_transcripts: {
         Row: {
-          captions_source: string | null
           created_at: string
           created_by: string
           description: string | null
           id: string
-          transcript: Json | null
+          transcript: Section
+          transcript_source: string
           updated_at: string
           youtube_id: string
         }
         Insert: {
-          captions_source?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
           id?: string
-          transcript?: Json | null
+          transcript: Section
+          transcript_source: string
           updated_at?: string
           youtube_id: string
         }
         Update: {
-          captions_source?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
           id?: string
-          transcript?: Json | null
+          transcript?: Section
+          transcript_source?: string
           updated_at?: string
           youtube_id?: string
         }

@@ -2,7 +2,7 @@ CREATE TABLE youtube_channels (
   id text unique primary key, -- youtube channel_id
   title text not null,
   "description" text null,
-  thumbnail_id text not null,
+  thumbnail_url text not null,
   updated_at timestamp with time zone not null default now()
 );
 

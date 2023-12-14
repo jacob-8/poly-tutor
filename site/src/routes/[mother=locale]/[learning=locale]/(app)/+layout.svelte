@@ -4,27 +4,15 @@
   import User from '$lib/User.svelte'
   import { ShowHide } from 'svelte-pieces'
   import SelectLanguage from '$lib/i18n/SelectLanguage.svelte'
-  import { invalidateAll, onNavigate } from '$app/navigation'
+  import { invalidateAll } from '$app/navigation'
 
   export let data
-
-  onNavigate((navigation) => {
-    if (!document.startViewTransition) return
-
-    return new Promise((resolve) => {
-      document.startViewTransition(async () => {
-        resolve()
-        await navigation.complete
-      })
-    })
-  })
 </script>
 
 <div class="flex items-center space-x-1 py-1 pl-1" data-sveltekit-preload-data="tap">
   <div class="text-lg font-semibold flex items-center truncate">
     {#if $page.data.youtube}
-      <a href="../shows">
-        <span class="i-iconamoon-arrow-left-1 mr-1" /></a>
+      <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 mr-1" /></a>
       {$page.data.youtube.title}
     {:else if $page.url.pathname.includes('shows')}
       <a href="/">
@@ -50,12 +38,12 @@
 
 <slot />
 
+{#await import('./ViewTransition.svelte') then { default: ViewTransition}}
+  <ViewTransition />
+{/await}
+
 <style>
   a, button {
     --at-apply: px-2 py-2 hover:bg-gray/20 rounded flex items-center;
-  }
-
-  :root::view-transition-old(root), :root::view-transition-new(root) {
-    animation-duration: 0s;
   }
 </style>

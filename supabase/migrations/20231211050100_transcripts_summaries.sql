@@ -1,9 +1,9 @@
 CREATE TABLE youtube_transcripts (
   id uuid primary key default uuid_generate_v4(),
   youtube_id text references youtubes(id) not null,
-  transcript jsonb, -- transcript that has the captions split into chapters, paragraphs, sentences - then each sentence get's it's own machine translations
+  transcript jsonb not null, -- transcript that has the captions split into chapters, paragraphs, sentences - then each sentence get's it's own machine translations
+  transcript_source text not null,
   "description" text null, -- user added metadata, like what Whisper prompt was used, what GPT3.5 revision prompt was used
-  captions_source text null,
   created_by uuid references auth.users not null default auth.uid(),
   created_at timestamp with time zone not null default now(),
   updated_at timestamp with time zone not null default now()
@@ -30,7 +30,8 @@ CREATE TABLE youtube_summaries (
   id uuid primary key default uuid_generate_v4(),
   youtube_id text references youtubes(id) not null,
   title text null,
-  summary text not null,
+  summary jsonb not null,
+  summary_source text not null,
   start_ms int not null,
   end_ms int not null,
   "description" text null, -- user added metadata, like what prompts were used

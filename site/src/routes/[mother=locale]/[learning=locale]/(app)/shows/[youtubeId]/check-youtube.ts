@@ -17,13 +17,16 @@ export async function add_youtube_to_db(youtube_id: string, fetch): Promise<{ yo
   const body = await response.json()
   if (!response.ok)
     return { error: body.message }
-  return { youtube: body }
+  return { youtube: body as YouTube }
 }
 
 export async function check_is_in_my_videos(youtube_id: string, supabase: Supabase) {
   const alreadyAdded = await youtube_is_already_mine(youtube_id, supabase)
   if (alreadyAdded) return
-  const { data, error } = await supabase.from('user_youtubes').insert({ youtube_id })
+  const { data, error } = await supabase.from('user_youtubes')
+    .insert({ youtube_id })
+    .select()
+    .single()
   if (error)
     throw new Error(error.message)
   console.info({added_to_my_youtubes: data})

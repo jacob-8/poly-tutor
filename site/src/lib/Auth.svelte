@@ -1,6 +1,7 @@
 <script lang="ts">
   import { invalidateAll } from '$app/navigation'
   import { page } from '$app/stores'
+  import { PUBLIC_INBUCKET_URL } from '$env/static/public'
   import { Button, Form, Modal } from 'svelte-pieces'
   import { toast } from 'svelte-pieces/ui/Toasts.svelte'
 
@@ -16,6 +17,9 @@
     if (error) return toast(error.message, TEN_SECONDS)
     toast(`${$page.data.t.layout.sent_code}: ${email}`, FOUR_SECONDS)
     sixDigitCodeSent = true
+
+    if (PUBLIC_INBUCKET_URL)
+      window.open(`${PUBLIC_INBUCKET_URL}/monitor`, '_blank')
   }
 
   async function handleOTP() {

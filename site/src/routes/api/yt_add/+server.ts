@@ -83,15 +83,15 @@ async function add_channel(channel_id: string, supabase: Supabase) {
 
   const response = await fetch(url)
   const { items: [{ snippet: { title, description, thumbnails } }] } = await response.json() as YouTubeChannelSnippetData
-  const AFTER_SLASH_BEFORE_EQUAL = /\/([^/]*)=/
-  const match = thumbnails.default.url.match(AFTER_SLASH_BEFORE_EQUAL)
-  const thumbnail_id = match ? match[1] : ''
+  const BEFORE_EQUAL = /([^=]*)=/
+  const match = thumbnails.default.url.match(BEFORE_EQUAL)
+  const thumbnail_url = match ? match[1] : ''
 
   const { error } = await supabase.from('youtube_channels').insert({
     id: channel_id,
     title,
     description,
-    thumbnail_id,
+    thumbnail_url,
   })
   if (error)
     throw new Error(error.message)
