@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { CEDictEntry, Paragraph, Sentence } from '$lib/types'
+  import type { CEDictEntry, Sentence } from '$lib/types'
   import { Button } from 'svelte-pieces'
   import { prepareSentences } from './prepareSentences'
   import { PlayerState } from './Youtube.svelte'
@@ -7,7 +7,8 @@
   import type Youtube from './Youtube.svelte'
 
   export let entries: Record<string, CEDictEntry>
-  export let paragraphs: Paragraph[] = []
+  // export let paragraphs: Paragraph[] = []
+  export let sentences: Sentence[] = []
   export let studySentence: (sentence: Sentence) => void
 
   export let currentTimeMs: number
@@ -22,7 +23,7 @@
   let updated_play_position: Date | null = null
   let selected_caption_index = 0
 
-  $: captions = prepareSentences(paragraphs.flatMap(paragraph => paragraph.sentences), entries)
+  $: captions = prepareSentences(sentences, entries)
 
   $: is_playing = playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING
   let current_caption_index = 0

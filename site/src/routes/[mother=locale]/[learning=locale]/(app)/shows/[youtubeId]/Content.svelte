@@ -25,9 +25,12 @@
 
 <div class="pb-20">
   {#if content}
-    <pre>{JSON.stringify(content, null, 1)}</pre>
-    <!-- <div class="text-xs text-gray">({captionsLength} characters)</div>
-    <Paragraphs {youtubeComponent} {playerState} {entries} {setTime} {currentTimeMs} {studySentence} paragraphs={content.paragraphs} /> -->
+    <!-- <pre>{JSON.stringify(content, null, 1)}</pre> -->
+    <!-- {#each content.sentences as sentence}
+      {sentence.text}
+    {/each} -->
+    <!-- <div class="text-xs text-gray">({captionsLength} characters)</div> -->
+    <Paragraphs {youtubeComponent} {playerState} {entries} {setTime} {currentTimeMs} {studySentence} sentences={content.sentences} />
     <Button size="sm" form="simple" color="red" onclick={deleteContent}>Delete Captions</Button>
   {:else if email}
     <div class="text-base">

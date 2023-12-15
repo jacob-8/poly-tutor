@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types'
-import type { AnalyzeSyntaxRequestBody, ChatRequestBody, Content, OpenAiChatStreamResponse, Sentence, TranslateRequestBody, YtCaptionsRequestBody, YtTranscribeRequestBody } from '$lib/types'
+import type { AnalyzeSyntaxRequestBody, ChatRequestBody, OpenAiChatStreamResponse, Sentence, TranslateRequestBody, YtCaptionsRequestBody, YtTranscribeRequestBody } from '$lib/types'
 import { get } from 'svelte/store'
 import { apiFetch } from '$lib/utils/apiFetch'
 import { fetchSSE } from '$lib/client/fetchSSE'
@@ -8,7 +8,7 @@ import { merge_translations } from './merge_translations'
 import { merge_syntax } from './merge_syntax'
 import { getCEDict } from './getCEDict'
 import { add_youtube_to_db, check_is_in_my_videos, remove_from_my_videos, youtube_in_db } from './check-youtube'
-import type { Transcript } from '$lib/supabase/database.types'
+import type { Summary, Transcript } from '$lib/supabase/database.types'
 
 export const load = (async ({ params: { youtubeId: youtube_id }, fetch, parent }) => {
   const { supabase } = await parent()
@@ -58,8 +58,9 @@ export const load = (async ({ params: { youtubeId: youtube_id }, fetch, parent }
 
   // TODO: repeat same process for summary
 
-  async function getSummary() {
-    alert('not implemented')
+  async function getSummary(): Promise<Summary | null> {
+    return Promise.resolve(null)
+
   //   const { data: [summary], error } = await supabase
   //     .from('youtube_summaries')
   //     .select()
