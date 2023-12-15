@@ -20,9 +20,9 @@
   $: if (streamed.transcript)
     streamed.transcript.then((t) => transcript = t)
 
-  // let summary: Summary
-  // $: if (streamed.summary)
-  //   streamed.summary.then((s) => summary = s)
+  let summary: Summary
+  $: if (streamed.summary)
+    streamed.summary.then((s) => summary = s)
 
   let checked_for_video = false
   $: if (browser && $user && !checked_for_video) {
@@ -99,10 +99,10 @@
     <!-- {youtube.description} -->
 
     {#if youtube}
-      <!-- {#if transcript}
-          <SummaryComponent {addSummary}
-            {deleteSummary} {studySentence} paragraphs={summary.summary} />
-        {/if} -->
+      {#if transcript}
+        <SummaryComponent {addSummary}
+          {deleteSummary} {studySentence} sentences={summary?.summary?.sentences} />
+      {/if}
 
       <Content
         entries={cedict}
