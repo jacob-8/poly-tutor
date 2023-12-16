@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { dev } from '$app/environment'
   import { invalidateAll } from '$app/navigation'
   import { page } from '$app/stores'
   import { PUBLIC_INBUCKET_URL } from '$env/static/public'
   import { Button, Form, Modal } from 'svelte-pieces'
-  import { toast } from 'svelte-pieces/ui/Toasts.svelte'
+  import { toast } from '$lib/client/Toasts.svelte'
 
   let email: string
   let sixDigitCodeSent = false
@@ -17,32 +18,49 @@
     if (error) return toast(error.message, TEN_SECONDS)
     toast(`${$page.data.t.layout.sent_code}: ${email}`, FOUR_SECONDS)
     sixDigitCodeSent = true
-
-    if (PUBLIC_INBUCKET_URL)
-      window.open(`${PUBLIC_INBUCKET_URL}/monitor`, '_blank')
   }
 
+  let submitting_code = false
   async function handleOTP() {
+    submitting_code = true
     const { data, error } = await $page.data.supabase.auth.verifyOtp({
       email,
       token: sixDigitCode.toString(),
       type: 'email',
     })
     console.info({ data, error })
-    if (error) return toast(error.message, TEN_SECONDS)
+    // eslint-disable-next-line require-atomic-updates
+    sixDigitCode = null
+    submitting_code = false
+    if (error)
+      return toast(error.message, TEN_SECONDS)
+
     toast(`Signed in with ${email}`, FOUR_SECONDS)
     invalidateAll()
   }
 
-  const sixDigitCodePattern = '[0-9]{6}'
+  $: code_is_6_digits = /^[0-9]{6}$/.test(sixDigitCode?.toString())
+  $: if (code_is_6_digits && !submitting_code) handleOTP()
 
   function autofocus(node: HTMLInputElement) {
     setTimeout(() => node.focus(), 15)
   }
+
+  async function auto_sign_in_on_dev() {
+    if (!email)
+      email = 'manual@mock.com'
+    await sendCode()
+    if (PUBLIC_INBUCKET_URL)
+      window.open(`${PUBLIC_INBUCKET_URL}/monitor`, '_blank')
+  }
 </script>
 
 <Modal on:close>
-  <div slot="heading">{$page.data.t.layout.sign_in}</div>
+  <div slot="heading">{$page.data.t.layout.sign_in}
+    {#if submitting_code}
+      <span class="i-svg-spinners-3-dots-fade align--4px" />
+    {/if}
+  </div>
   {#if !sixDigitCodeSent}
     <Form let:loading onsubmit={sendCode}>
       <input
@@ -54,27 +72,20 @@
         bind:value={email}
       />
       <div class="modal-footer">
+        {#if dev}
+          <Button form="simple" onclick={auto_sign_in_on_dev}>Dev: Auto-sign-in</Button>
+        {/if}
         <Button {loading} form="filled" type="submit">{$page.data.t.layout.send_code}</Button>
       </div>
     </Form>
   {:else}
-    <Form let:loading onsubmit={handleOTP}>
-      <input
-        type="text"
-        placeholder="{$page.data.t.layout.enter_6_digit_code} ({email})"
-        class="border border-gray-400 p-2 rounded w-full"
-        pattern={sixDigitCodePattern}
-        required
-        bind:value={sixDigitCode}
-      />
-      <div class="modal-footer">
-        <Button {loading} form="filled" type="submit">{$page.data.t.layout.sign_in}</Button>
-      </div>
-    </Form>
+    <input
+      type="number"
+      placeholder="{$page.data.t.layout.enter_6_digit_code} ({email})"
+      class="border border-gray-400 p-2 rounded w-full"
+      max="999999"
+      required
+      bind:value={sixDigitCode}
+    />
   {/if}
 </Modal>
-
-{#await import('svelte-pieces/ui/Toasts.svelte') then { default: Toasts }}
-  <Toasts />
-  <!-- Place in layout and improve from https://github.dev/beyonk-group/svelte-notifications -->
-{/await}

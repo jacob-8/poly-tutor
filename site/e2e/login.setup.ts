@@ -6,7 +6,7 @@ const INBUCKET_URL = 'http://localhost:54324'
 // With OTP help from https://www.bekapod.dev/articles/supabase-magic-login-testing-with-playwright/
 
 setup('login', async ({ page }) => {
-  const email = 'bob_smith@gmail.com'
+  const email = 'playwright@mock.com'
   const [username] = email.split('@')
   const { token: oldToken } = await getLoginMessage(username)
   await page.goto('/')
@@ -15,10 +15,8 @@ setup('login', async ({ page }) => {
   await page.getByPlaceholder('Email address').fill(email)
   await page.getByRole('button', { name: 'Send 6-Digit Code' }).click()
   const { token } = await waitForNewToken(oldToken, username)
-  await page.getByPlaceholder('Enter 6-digit code (bob_smith@gmail.com)').fill(token)
-  await page.locator('button[type="submit"]').click()
-  await page.getByRole('button', { name: 'b' }).click()
-  await expect(page.getByText(email)).toBeVisible()
+  await page.getByPlaceholder(`Enter 6-digit code (${email})`).fill(token)
+  await expect(page.getByText(`Signed in with ${email}`)).toBeVisible()
 
   await page.context().storageState({ path: STORAGE_STATE })
 })

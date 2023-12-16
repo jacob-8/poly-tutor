@@ -10,13 +10,6 @@ import Ukr40eBfeyg_getTracks from './data/get-tracks-Ukr40eBfeyg.json'
 import Ukr40eBfeyg_getCaptions from './data/get-captions-zh-TW-Ukr40eBfeyg.json'
 import _9OkddyYQBec_getCaptions from './data/get-captions-zh-TW-9OkddyYQBec.json'
 
-function createChunkEncoder() {
-  const encoder = new TextEncoder()
-  return function (text: string): Uint8Array {
-    return encoder.encode(text)
-  }
-}
-
 export const handlers = [
   http.get(CAPTIONS_URL, ({request: { url }}) => {
     if (url.includes('v=HRenI3LURNk') && url.includes('type=list'))
@@ -91,3 +84,10 @@ export const handlers = [
   //   })
   // }),
 ]
+
+function createChunkEncoder() {
+  const encoder = new TextEncoder()
+  return function (text: string): Uint8Array {
+    return encoder.encode(text)
+  }
+}

@@ -24,9 +24,9 @@
   </div>
   <div class="grow-1" />
   <ShowHide let:show let:toggle>
-    <button type="button" on:click={toggle}><span class="i-heroicons-language-20-solid"></span></button>
+    <button aria-label="Select Language" type="button" on:click={toggle}><span class="i-heroicons-language-20-solid"></span></button>
     {#if show}
-      <SelectLanguage on:close={toggle} />
+      <SelectLanguage close={toggle} />
     {/if}
   </ShowHide>
   <!-- <span class="i-ri-sun-line dark:i-ri-moon-line" /> -->
@@ -40,6 +40,10 @@
 
 {#await import('./ViewTransition.svelte') then { default: ViewTransition}}
   <ViewTransition />
+{/await}
+
+{#await import('$lib/client/Toasts.svelte') then { default: Toasts }}
+  <Toasts />
 {/await}
 
 <style>

@@ -8,6 +8,7 @@
   import SummaryComponent from './Summary.svelte'
   import { browser } from '$app/environment'
   import type { Transcript, Summary } from '$lib/supabase/database.types'
+  import { goto } from '$app/navigation'
 
   export let data
   $: ({ youtube_id, youtube, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribeCaptions, deleteTranscript, addSummary, deleteSummary, supabase } = data)
@@ -69,7 +70,10 @@
 
     {#if youtube}
       {#if $user}
-        <button type="button" class="text-red p-1" on:click={() => remove_from_my_videos(youtube_id, supabase)}>Remove from my videos</button>
+        <button type="button" class="text-red p-1" on:click={async () => {
+          await remove_from_my_videos(youtube_id, supabase)
+          goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
+        }}>Remove from my videos</button>
       {/if}
     {/if}
 

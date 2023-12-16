@@ -1,8 +1,10 @@
 import type { Channel, YouTube } from '$lib/supabase/database.types'
 import type { PageLoad } from './$types'
 
-export const load = (async ({parent}) => {
+export const load = (async ({parent, params: { learning }}) => {
   const { supabase } = await parent()
+  const language = learning.replace(/-.*/, '')
+
   const { data: user_youtubes, error } = await supabase
     .from('user_youtubes')
     .select(`
@@ -21,12 +23,15 @@ export const load = (async ({parent}) => {
         )
       )
     `)
-    .eq('youtubes.language', 'zh')
+    .eq('youtubes.language', language) // Interestingly if a user has youtubes in the opposite language, they will still come down, just with the youtubes - so this eq only restricts the youtubes portion of the call, not the entire query
     .order('added_at', { ascending: false })
   if (error)
     console.error(error)
 
-  const user_youtube_ids = user_youtubes.map(y => y.youtubes.id)
+  const user_youtubes_in_language = user_youtubes.filter(y => y.youtubes)
+  // no need to filter out nulls if we can fix the query above
+
+  const user_youtube_ids = user_youtubes_in_language.map(y => y.youtubes.id)
 
   const { data: other_youtubes_data, error: error2 } = await supabase
     .from('youtubes')
@@ -44,14 +49,14 @@ export const load = (async ({parent}) => {
         thumbnail_url
       )
     `)
-    .eq('language', 'zh')
+    .eq('language', language)
     .not('id', 'in', `(${user_youtube_ids.join(',')})`)
     .order('created_at', { ascending: false })
     .limit(10)
   if (error2)
     console.error(error2)
 
-  const youtubes: Partial<YouTube & { channel: Partial<Channel>}>[] = user_youtubes.map(y => {
+  const youtubes: Partial<YouTube & { channel: Partial<Channel>}>[] = user_youtubes_in_language.map(y => {
     return {
       ...y.youtubes,
       channel: y.youtubes.youtube_channels,
