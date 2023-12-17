@@ -9,6 +9,7 @@
   import { browser } from '$app/environment'
   import type { Transcript, Summary } from '$lib/supabase/database.types'
   import { goto } from '$app/navigation'
+  import Description from './Description.svelte'
 
   export let data
   $: ({ youtube_id, youtube, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribeCaptions, deleteTranscript, addSummary, deleteSummary, supabase } = data)
@@ -100,7 +101,8 @@
     </div>
   </div>
   <div class="w-1/2 pl-2 text-3xl">
-    <!-- {youtube.description} -->
+
+    <Description description={youtube.description} />
 
     {#if youtube}
       {#if transcript}

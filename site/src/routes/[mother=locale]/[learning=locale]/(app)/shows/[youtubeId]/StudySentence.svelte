@@ -11,7 +11,8 @@
   $: unKnownWords = sentence.words?.filter(({ known }) => !known) || []
 </script>
 
-<div class:opacity-15={playing} class="h-full" on:mouseenter={onmouseenter} on:mouseleave={onmouseleave}>
+<!-- on:mouseenter={onmouseenter} on:mouseleave={onmouseleave} -->
+<div class:opacity-15={playing} class="h-full">
   <div class="text-xl">
     {#if sentence.words}
       {#each sentence.words as { text }}
