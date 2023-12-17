@@ -117,7 +117,7 @@
         {currentTimeMs}
         {setTime}
         content={transcript?.transcript}
-        email={$user?.session.user.email}
+        email={$user?.session?.user.email}
         {studySentence} />
     {:else if error}
       Error: {error}

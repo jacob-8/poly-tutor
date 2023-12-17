@@ -1,21 +1,21 @@
-import type { Channel, YouTube } from '$lib/supabase/database.types'
+import type { YoutubeWithChannel } from '$lib/mocks/shows'
 import type { PageLoad } from './$types'
 
 export const load = (async ({parent, params: { learning }}) => {
   const { supabase } = await parent()
   const language = learning.replace(/-.*/, '')
 
-  const { data: user_youtubes, error } = await supabase
+  const { data: user_youtubes_data, error } = await supabase
     .from('user_youtubes')
     .select(`
       added_at,
-      youtubes (
+      youtube:youtubes!inner(
         id,
         title,
         description,
         language,
         duration_seconds,
-        youtube_channels (
+        channel:youtube_channels(
           id,
           title,
           description,
@@ -23,17 +23,19 @@ export const load = (async ({parent, params: { learning }}) => {
         )
       )
     `)
-    .eq('youtubes.language', language) // Interestingly if a user has youtubes in the opposite language, they will still come down, just with the youtubes - so this eq only restricts the youtubes portion of the call, not the entire query
+    .eq('youtubes.language', language)
     .order('added_at', { ascending: false })
   if (error)
     console.error(error)
 
-  const user_youtubes_in_language = user_youtubes.filter(y => y.youtubes)
-  // no need to filter out nulls if we can fix the query above
+  const user_youtubes: YoutubeWithChannel[] = user_youtubes_data.map(y => ({
+    ...y.youtube,
+    created_at: y.added_at
+  }))
 
-  const user_youtube_ids = user_youtubes_in_language.map(y => y.youtubes.id)
+  const user_youtube_ids = user_youtubes.map(y => y.id)
 
-  const { data: other_youtubes_data, error: error2 } = await supabase
+  const { data: other_youtubes, error: error2 } = await supabase
     .from('youtubes')
     .select(`
       id,
@@ -42,7 +44,7 @@ export const load = (async ({parent, params: { learning }}) => {
       language,
       duration_seconds,
       created_at,
-      youtube_channels (
+      channel:youtube_channels(
         id,
         title,
         description,
@@ -52,27 +54,13 @@ export const load = (async ({parent, params: { learning }}) => {
     .eq('language', language)
     .not('id', 'in', `(${user_youtube_ids.join(',')})`)
     .order('created_at', { ascending: false })
-    .limit(10)
+    .limit(20)
+    .returns<YoutubeWithChannel[]>()
   if (error2)
     console.error(error2)
 
-  const youtubes: Partial<YouTube & { channel: Partial<Channel>}>[] = user_youtubes_in_language.map(y => {
-    return {
-      ...y.youtubes,
-      channel: y.youtubes.youtube_channels,
-      created_at: y.added_at
-    }
-  })
-
-  const other_youtubes: Partial<YouTube & { channel: Partial<Channel>}>[] = other_youtubes_data.map(y => {
-    return {
-      ...y,
-      channel: y.youtube_channels,
-    }
-  })
-
   return {
-    youtubes,
+    user_youtubes,
     other_youtubes,
   }
 }) satisfies PageLoad

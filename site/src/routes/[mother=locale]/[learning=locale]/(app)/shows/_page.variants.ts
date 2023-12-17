@@ -1,6 +1,6 @@
 import type { Variant } from 'kitbook'
 import type Component from './+page.svelte'
-import { chineseVideo, natureShow } from '$lib/mocks/shows'
+import { chineseVideo, natureShow, type YoutubeWithChannel } from '$lib/mocks/shows'
 import { mockLayoutData } from '$lib/mocks/data/page'
 
 // export const viewports: Viewport[] = [
@@ -8,7 +8,7 @@ import { mockLayoutData } from '$lib/mocks/data/page'
 //   { name: 'Mobile', width: 320, height: 480}
 // ]
 
-const other_youtubes = [
+const other_youtubes: YoutubeWithChannel[] = [
   chineseVideo,
   chineseVideo,
   chineseVideo,
@@ -22,7 +22,7 @@ export const variants: Variant<Component>[] = [
     props: {
       data: {
         ...mockLayoutData,
-        youtubes: [],
+        user_youtubes: [],
         other_youtubes,
       }
     },
@@ -31,7 +31,7 @@ export const variants: Variant<Component>[] = [
     props: {
       data: {
         ...mockLayoutData,
-        youtubes: [
+        user_youtubes: [
           natureShow,
           natureShow,
           natureShow,
@@ -46,7 +46,7 @@ export const variants: Variant<Component>[] = [
     props: {
       data: {
         ...mockLayoutData,
-        youtubes: [
+        user_youtubes: [
           natureShow,
         ],
         other_youtubes,

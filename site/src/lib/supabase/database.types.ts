@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Database as DatabaseGenerated } from './generated.types'
-// import type { MergeDeep } from 'type-fest'
-// import type { Section } from '$lib/types'
+import type { Database as DatabaseGenerated, Tables } from './generated.types'
+import type { Merge } from 'type-fest'
+import type { Section } from '$lib/types'
 
 
 export type Database = DatabaseGenerated
@@ -28,8 +28,9 @@ export type Database = DatabaseGenerated
 
 export type Supabase = SupabaseClient<Database>
 
-export type YouTube = Database['public']['Tables']['youtubes']['Row']
-export type Channel = Database['public']['Tables']['youtube_channels']['Row']
+export type YouTube = Tables<'youtubes'>
+export type Channel = Tables<'youtube_channels'>
 
-export type Transcript = Database['public']['Tables']['youtube_transcripts']['Row']
-export type Summary = Database['public']['Tables']['youtube_summaries']['Row']
+export type Transcript = Tables<'youtube_transcripts'>
+export type Transcript2 = Merge<Tables<'youtube_transcripts'>, {transcript: Section}>
+export type Summary = Tables<'youtube_summaries'>

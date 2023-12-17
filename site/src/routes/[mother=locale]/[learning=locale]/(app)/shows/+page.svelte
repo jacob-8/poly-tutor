@@ -26,7 +26,7 @@
       </div>
       <div class="text-sm my-1">{$page.data.t.home.youtube_description}</div>
     </div>
-    {#each data.youtubes as youtube}
+    {#each data.user_youtubes as youtube}
       <ShowThumbnail {youtube} channel={youtube.channel} />
     {/each}
   </div>
