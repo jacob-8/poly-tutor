@@ -1,5 +1,5 @@
 import type { Sentence } from '$lib/types'
-import type { YoutubeCaption } from './get_captions_from_youtube'
+import type { YoutubeCaption } from './+server'
 
 export function convert_to_db_captions_format(captions_from_youtube: YoutubeCaption[]): Sentence[] {
   return captions_from_youtube.map((

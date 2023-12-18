@@ -1,6 +1,4 @@
-import { apiFetch } from '$lib/utils/apiFetch'
 import type { Supabase, YouTube } from '$lib/supabase/database.types'
-import type { YtAddRequestBody } from '$lib/types'
 
 export async function youtube_in_db(youtube_id: string, supabase: Supabase): Promise<YouTube> {
   const { data: [youtube], error } = await supabase
@@ -12,16 +10,9 @@ export async function youtube_in_db(youtube_id: string, supabase: Supabase): Pro
   return youtube
 }
 
-export async function add_youtube_to_db(youtube_id: string, fetch): Promise<{ youtube?: YouTube, error?: string }> {
-  const response = await apiFetch<YtAddRequestBody>('/api/yt_add', { youtube_id }, fetch)
-  const body = await response.json()
-  if (!response.ok)
-    return { error: body.message }
-  return { youtube: body as YouTube }
-}
-
 export async function check_is_in_my_videos(youtube_id: string, supabase: Supabase) {
   const alreadyAdded = await youtube_is_already_mine(youtube_id, supabase)
+  console.info({alreadyAdded})
   if (alreadyAdded) return
   const { data, error } = await supabase.from('user_youtubes')
     .insert({ youtube_id })

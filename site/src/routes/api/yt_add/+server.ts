@@ -11,19 +11,23 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
   if (_error || !session_data?.user)
     throw error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
-  const { youtube_id } = await request.json() as YtAddRequestBody
+  const { youtube_id, language_code } = await request.json() as YtAddRequestBody
 
   if (!youtube_id)
     throw error(ResponseCodes.BAD_REQUEST, 'No youtube_id found in request body')
 
   try {
-    const { channel_id, title, description, language } = await get_youtube_info_from_youtube(youtube_id)
+    const { channel_id, title, description, locale } = await get_youtube_info_from_youtube(youtube_id)
 
     const adminSupabase = getAdminSupabaseClient()
 
     const channel_exists = await channel_is_in_db(channel_id, adminSupabase)
     if (!channel_exists)
       await add_channel(channel_id, adminSupabase)
+
+    const language = locale
+      ? (locale.includes('zh') ? 'zh' : 'en')
+      : language_code
 
     const { data, error: _error2 } = await adminSupabase.from('youtubes').insert({
       id: youtube_id,
@@ -50,20 +54,20 @@ async function get_youtube_info_from_youtube(youtube_id: string) {
   const data = await response.json() as YouTubeVideoSnippetData
   const { items: [{ snippet: { channelId, title, description, publishedAt, defaultLanguage, defaultAudioLanguage } }] } = data
 
-  const language = (defaultLanguage || defaultAudioLanguage)?.includes('zh') ? 'zh' : 'en'
+  const locale = defaultLanguage || defaultAudioLanguage
 
   const result: {
     title: string,
     description: string,
     channel_id: string,
     published_at: string, // TODO: use this
-    language: 'en' | 'zh',
+    locale: string,
   } = {
     title,
     description,
     channel_id: channelId,
     published_at: publishedAt,
-    language,
+    locale,
   }
   return result
 }

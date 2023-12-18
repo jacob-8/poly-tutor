@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { youtube_ids } from '../../src/lib/mocks/shows'
 
 const youtube_prefix = 'https://www.youtube.com/watch?v='
 
@@ -75,22 +76,24 @@ test('user pastes in youtube url for a youtube already in the db with captions a
 test('captions load in from YouTube when a new video is added that YouTube has captions for', async ({ page }) => {
   await page.goto('/en/zh-TW/shows')
   await page.waitForLoadState('networkidle')
-  const youtube_provides_captions = 'lpyKfNjTZi8'
-  await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + youtube_provides_captions)
+  await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + youtube_ids.has_captions__llama)
   await expect(page.getByText('hǎ 哈luō 囉gè 各wèi 位guàn 觀zhòng')).toBeVisible()
 })
 
 // Test: user pastes in youtube url for a youtube not in the db and which YouTube does not have captions for. He sees a button allowing him to transcribe using his credits+Whisper. He transcribes (using mock response) and sees the captions load in.
-// test('user can transcribe captions using Whisper when YouTube does not have them', async ({ page }) => {
-//   await page.goto('/en/zh-TW/shows')
-//   await page.waitForLoadState('networkidle')
-//   const youtube_has_no_captions = 'lpyKfNjTZi8'
-//   await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + youtube_has_no_captions)
-//   // add openai-mock api key
-//   await page.getByRole('button', { name: 'Transcribe' }).click()
-//   await expect(page.getByText('hǎ 哈luō 囉gè 各wèi 位guàn 觀zhòng')).toBeVisible()
-// })
+test.skip('user can transcribe captions using Whisper when YouTube does not have them', async ({ page }) => {
+  await page.goto('/en/zh-TW/shows')
+  await page.waitForLoadState('networkidle')
+  await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + youtube_ids.has_no_captions__ai_camp)
+  // add openai-mock api key
+  await page.getByRole('button', { name: 'Get Captions' }).click()
+  await expect(page.getByText('hǎ 哈luō 囉gè 各wèi 位guàn 觀zhòng')).toBeVisible()
+})
 
 // Test: user can generate translations (mock local api w/ MSW)
 
 // Test: user opens existing video and can view someone elses transcripts and translations
+
+// Test: shows clip duration
+
+// Test: new user for the very first time, when signing up from a youtube will have their auth saved first then after a small delay the youtube will be added to their videos once the db has their auth id to connect things to, otherwise their will be an error upon trying to add

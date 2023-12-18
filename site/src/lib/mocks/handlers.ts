@@ -1,38 +1,59 @@
 import { http, HttpResponse, passthrough } from 'msw'
 // import type { ChatRequestBody } from '$lib/types'
-import { CAPTIONS_URL } from '$env/static/private'
 // import streamResponses from './data/stream_penguin.json'
 import lpyKfNjTZi8_getTracks from './data/get-tracks-lpyKfNjTZi8.json'
 import lpyKfNjTZi8_getCaptions from './data/get-captions-zh-TW-lpyKfNjTZi8.json'
-import HRenI3LURNk_getTracks from './data/get-tracks-HRenI3LURNk.json'
-import HRenI3LURNk_getCaptions from './data/get-captions-zh-TW-HRenI3LURNk.json'
-import Ukr40eBfeyg_getTracks from './data/get-tracks-Ukr40eBfeyg.json'
-import Ukr40eBfeyg_getCaptions from './data/get-captions-zh-TW-Ukr40eBfeyg.json'
-import _9OkddyYQBec_getCaptions from './data/get-captions-zh-TW-9OkddyYQBec.json'
+// import HRenI3LURNk_getTracks from './data/get-tracks-HRenI3LURNk.json'
+// import HRenI3LURNk_getCaptions from './data/get-captions-zh-TW-HRenI3LURNk.json'
+// import Ukr40eBfeyg_getTracks from './data/get-tracks-Ukr40eBfeyg.json'
+// import Ukr40eBfeyg_getCaptions from './data/get-captions-zh-TW-Ukr40eBfeyg.json'
+// import _9OkddyYQBec_getCaptions from './data/get-captions-zh-TW-9OkddyYQBec.json'
+import { youtube_ids } from './shows'
 
 export const handlers = [
-  http.get(CAPTIONS_URL, ({request: { url }}) => {
-    if (url.includes('v=HRenI3LURNk') && url.includes('type=list'))
-      return HttpResponse.json(HRenI3LURNk_getTracks)
+  http.get('https://jsonplaceholder.typicode.com/todos/2', () => {
+    return HttpResponse.json({
+      'userId': 2,
+      'id': 2,
+      'title': 'this ones mocked',
+      'completed': false
+    })
+  }),
+  http.get('https://mocked.captions.url', ({request}) => {
+    const url = new URL(request.url)
+    const youtube_id = url.searchParams.get('v')
+    const isTracksRequest = url.searchParams.get('type') === 'list'
+    const isCaptionsRequest = url.searchParams.get('fmt') === 'srv3'
 
-    if (url.includes('v=HRenI3LURNk') && url.includes('fmt=srv3'))
-      return HttpResponse.json(HRenI3LURNk_getCaptions)
+    // if (youtube_id === 'HRenI3LURNk') {
+    //   if (isTracksRequest)
+    //     return HttpResponse.json(HRenI3LURNk_getTracks)
+    //   if (isCaptionsRequest)
+    //     return HttpResponse.json(HRenI3LURNk_getCaptions)
+    // }
 
-    if (url.includes('v=lpyKfNjTZi8') && url.includes('type=list'))
-      return HttpResponse.json(lpyKfNjTZi8_getTracks)
+    // if (youtube_id === 'Ukr40eBfeyg') {
+    //   if (isTracksRequest)
+    //     return HttpResponse.json(Ukr40eBfeyg_getTracks)
+    //   if (isCaptionsRequest)
+    //     return HttpResponse.json(Ukr40eBfeyg_getCaptions)
+    // }
 
-    if (url.includes('v=lpyKfNjTZi8') && url.includes('fmt=srv3'))
-      return HttpResponse.json(lpyKfNjTZi8_getCaptions)
+    if (youtube_id === youtube_ids.has_captions__llama) {
+      if (isTracksRequest)
+        return HttpResponse.json(lpyKfNjTZi8_getTracks)
+      if (isCaptionsRequest)
+        return HttpResponse.json(lpyKfNjTZi8_getCaptions)
+    }
 
-    if ((url.includes('v=Ukr40eBfeyg') || url.includes('v=9OkddyYQBec')) && url.includes('type=list'))
-      return HttpResponse.json(Ukr40eBfeyg_getTracks)
+    if (youtube_id === youtube_ids.has_no_captions__ai_camp)
+      return new HttpResponse('Internal Server Error', { status: 500 })
 
-    if (url.includes('v=Ukr40eBfeyg') && url.includes('fmt=srv3'))
-      return HttpResponse.json(Ukr40eBfeyg_getCaptions)
+    if (youtube_id === 'throw-network-error')
+      return HttpResponse.error()
 
-    if (url.includes('v=9OkddyYQBec') && url.includes('fmt=srv3'))
-      return HttpResponse.json(_9OkddyYQBec_getCaptions)
-
+    // if (url.includes('v=9OkddyYQBec') && url.includes('fmt=srv3'))
+    //   return HttpResponse.json(_9OkddyYQBec_getCaptions)
     return passthrough()
   }),
 

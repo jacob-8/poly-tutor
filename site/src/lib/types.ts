@@ -55,10 +55,12 @@ export interface CEDictEntry {
 
 export interface YtAddRequestBody {
   youtube_id: string
+  language_code: 'en' | 'zh'
 }
 
 export interface YtCaptionsRequestBody {
   youtube_id: string
+  locale: LocaleCode
 }
 
 export interface YtTranscribeRequestBody {
@@ -80,6 +82,7 @@ export interface AnalyzeSyntaxRequestBody {
 }
 
 import type { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai-edge'
+import type { LocaleCode } from './i18n/locales'
 
 export interface ChatRequestBody {
   messages: ChatCompletionRequestMessage[]

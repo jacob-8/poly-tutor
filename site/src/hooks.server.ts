@@ -1,11 +1,11 @@
-// import { dev } from '$app/environment'
+import { dev } from '$app/environment'
 import { getSession, getSupabase } from '$lib/supabase'
 import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from '$lib/supabase/constants'
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
-  // if (dev)
-  //   await import('$lib/mocks/serverForHooks')
+  if (dev)
+    await import('$lib/mocks/serverForHooks')
 
   // only useful for things that are guaranteed to run server-side but not for passing to the client
   event.locals.getSession = () => {

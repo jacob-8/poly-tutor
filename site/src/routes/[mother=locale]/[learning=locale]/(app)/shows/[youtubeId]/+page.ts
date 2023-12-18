@@ -1,22 +1,30 @@
 import type { PageLoad } from './$types'
-import type { AnalyzeSyntaxRequestBody, ChatRequestBody, OpenAiChatStreamResponse, Sentence, TranslateRequestBody, YtCaptionsRequestBody, YtTranscribeRequestBody } from '$lib/types'
-import { get } from 'svelte/store'
-import { apiFetch } from '$lib/utils/apiFetch'
-import { fetchSSE } from '$lib/client/fetchSSE'
-import type { ChatCompletionRequestMessage } from 'openai-edge'
-import { merge_translations } from './merge_translations'
-import { merge_syntax } from './merge_syntax'
+// import type { AnalyzeSyntaxRequestBody, ChatRequestBody, OpenAiChatStreamResponse, TranslateRequestBody } from '$lib/types'
+import type { Sentence, YtAddRequestBody, YtCaptionsRequestBody, YtTranscribeRequestBody } from '$lib/types'
+// import { fetchSSE } from '$lib/client/fetchSSE'
+// import type { ChatCompletionRequestMessage } from 'openai-edge'
+// import { merge_translations } from './merge_translations'
+// import { merge_syntax } from './merge_syntax'
 import { getCEDict } from './getCEDict'
-import { add_youtube_to_db, check_is_in_my_videos, remove_from_my_videos, youtube_in_db } from './check-youtube'
-import type { Summary, Transcript } from '$lib/supabase/database.types'
+import { check_is_in_my_videos, remove_from_my_videos, youtube_in_db } from './check-youtube'
+import type { Summary, Transcript, YouTube } from '$lib/supabase/database.types'
+import { invalidateAll } from '$app/navigation'
+import { get } from 'svelte/store'
+import type { LocaleCode } from '$lib/i18n/locales'
+import { post_request } from '$lib/utils/post-request'
 
-export const load = (async ({ params: { youtubeId: youtube_id }, fetch, parent }) => {
-  const { supabase } = await parent()
+export const load = (async ({ params: { youtubeId: youtube_id, learning }, fetch, parent }) => {
+  const { supabase, user } = await parent()
   let youtube = await youtube_in_db(youtube_id, supabase)
 
   let error = ''
-  if (!youtube)
-    ({ youtube, error } = await add_youtube_to_db(youtube_id, fetch))
+  if (!youtube) {
+    const language_code = learning.replace(/-.*/, '') as 'zh' | 'en'
+    const { data, error: addingError } = await post_request<YtAddRequestBody, YouTube>('/api/yt_add', { youtube_id, language_code }, fetch)
+    if (error)
+      error = addingError.message
+    youtube = data
+  }
 
   async function getTranscript(): Promise<Transcript | null> {
     const { data: [transcript], error } = await supabase
@@ -29,9 +37,16 @@ export const load = (async ({ params: { youtubeId: youtube_id }, fetch, parent }
       return transcript
 
     const sentences = await getYoutubesCaptions()
-    if (!sentences.length) return null
+    if (!sentences) return
 
-    const { data: justSavedTranscript, error: savingError } = await supabase
+    const { data: justSavedTranscript, error: savingError } = await saveTranscript(sentences)
+    if (savingError)
+      throw new Error(savingError.message)
+    return justSavedTranscript
+  }
+
+  function saveTranscript(sentences: Sentence[]) {
+    return supabase
       .from('youtube_transcripts')
       .insert({
         youtube_id,
@@ -40,25 +55,31 @@ export const load = (async ({ params: { youtubeId: youtube_id }, fetch, parent }
       })
       .select()
       .single()
-
-    if (savingError)
-      throw new Error(savingError.message)
-    return justSavedTranscript
   }
 
   async function getYoutubesCaptions() {
-    const response = await apiFetch<YtCaptionsRequestBody>('/api/yt_captions', { youtube_id }, fetch)
-    const body = await response.json()
-    if (!response.ok) {
-      console.error(body.message)
-      return []
+    if (!get(user)) return
+    const { data: sentences, error } = await post_request<YtCaptionsRequestBody, Sentence[]>('/api/yt_captions', { youtube_id, locale: learning as LocaleCode }, fetch)
+    if (error) {
+      console.error(`Getting YouTube captions error: ${error.message}`)
+      return
     }
-    return body as Sentence[]
+    return sentences
   }
 
-  // TODO: repeat same process for summary
+  async function transcribeCaptions(openai_api_key: string) {
+    const { data: sentences, error } = await post_request<YtTranscribeRequestBody, Sentence[]>('/api/yt_transcribe', { youtube_id, openai_api_key, language_code: 'zh', duration_seconds: 600 }, fetch)
+    if (error)
+      throw new Error(error.message)
+
+    const { error: savingError } = await saveTranscript(sentences)
+    if (savingError)
+      throw new Error(savingError.message)
+    invalidateAll()
+  }
 
   async function getSummary(): Promise<Summary | null> {
+    // TODO: repeat same process for summary as getTranscript
     return Promise.resolve(null)
 
   //   const { data: [summary], error } = await supabase
@@ -68,15 +89,6 @@ export const load = (async ({ params: { youtubeId: youtube_id }, fetch, parent }
   //   if (error)
   //     throw new Error(error.message)
   //   return summary
-  }
-
-  async function transcribeCaptions(openai_api_key: string) {
-    alert('not implemented')
-    console.info('transcribeCaptions', openai_api_key)
-  //   const response = await apiFetch<YtTranscribeRequestBody>('/api/yt_transcribe', { youtube_id, openai_api_key, language_code: 'zh', duration_seconds: 600 }, fetch)
-  //   if (!response.ok) return
-  //   const sentences = await response.json() as Sentence[]
-  //   content.set({ paragraphs: [{ sentences }] })
   }
 
   function addSummary(openai_api_key: string): Promise<void> {
@@ -125,11 +137,11 @@ export const load = (async ({ params: { youtubeId: youtube_id }, fetch, parent }
   }
 
   function deleteTranscript() {
-    alert('not implemented')
+    alert('not implemented - will not delete from db but will allow creation of additional transcripts and then users can choose which one to use')
   }
 
   function deleteSummary() {
-    alert('not implemented')
+    alert('not implemented - will not delete from db but will allow creation of additional summaries for different sections and then users can choose which one to use')
   }
 
 

@@ -31,3 +31,8 @@ export const chineseVideo: YoutubeWithChannel = {
     thumbnail_url: 'https://yt3.ggpht.com/ytc/APkrFKav44IZWeQMQttWjk2AsDi8oLkP1Mnf6zgIVu8s'
   }
 }
+
+export const youtube_ids = {
+  has_captions__llama: 'lpyKfNjTZi8', // https://www.youtube.com/watch?v=lpyKfNjTZi8
+  has_no_captions__ai_camp: '9OkddyYQBec', // https://www.youtube.com/watch?v=9OkddyYQBec
+}
