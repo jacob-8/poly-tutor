@@ -69,15 +69,6 @@
       {setPlaybackRate}
       {playbackRate} />
 
-    {#if youtube}
-      {#if $user}
-        <button type="button" class="text-red p-1" on:click={async () => {
-          await remove_from_my_videos(youtube_id, supabase)
-          goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
-        }}>Remove from my videos</button>
-      {/if}
-    {/if}
-
     <div class="mt-2 bg-gray-100 p-3 rounded overflow-y-auto grow-1 flex flex-col">
       {#if transcript}
         {@const hasSyntaxAnalysis = transcript.transcript.sentences[0].syntax}
@@ -101,10 +92,16 @@
     </div>
   </div>
   <div class="w-1/2 pl-2 text-3xl">
-
-    <Description description={youtube.description} />
-
     {#if youtube}
+      {#if $user}
+        <button type="button" class="text-red p-1" on:click={async () => {
+          await remove_from_my_videos(youtube_id, supabase)
+          goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
+        }}>Remove from my videos</button>
+      {/if}
+
+      <Description description={youtube.description} />
+
       {#if transcript}
         <SummaryComponent {addSummary}
           {deleteSummary} {studySentence} sentences={summary?.summary?.sentences} />
@@ -119,7 +116,7 @@
         {currentTimeMs}
         {setTime}
         content={transcript?.transcript}
-        email={$user?.session?.user.email}
+        email={$user?.email}
         {studySentence} />
     {:else if error}
       Error: {error}

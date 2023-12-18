@@ -4,7 +4,6 @@ import {writeFileSync} from 'node:fs'
 import { createChunkDecoder } from '$lib/client/chunkDecoder'
 import type { OpenAiChatStreamResponse } from '$lib/types'
 
-console.info('setup msw')
 export const server = setupServer(...handlers)
 
 server.events.on('response:bypass', ({ request, response }) => {

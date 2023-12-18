@@ -12,4 +12,4 @@ export const mockLayoutData: LayoutData = {
   user_vocabulary: writable([]),
 }
 
-export const mockBobUser = readable({session: {user: {email: 'bob@gmail.com'}}}) as Readable<BaseUser>
+export const mockBobUser = readable({ email: 'bob@gmail.com'}) as Readable<BaseUser>

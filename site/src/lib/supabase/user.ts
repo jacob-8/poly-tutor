@@ -1,18 +1,15 @@
 import { writable } from 'svelte/store'
-import type { AuthResponse, Session, SupabaseClient } from '@supabase/supabase-js'
+import type { AuthResponse, Session, SupabaseClient, User } from '@supabase/supabase-js'
 import { setCookie } from '$lib/utils/cookies'
 import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from './constants'
 const browser = typeof window !== 'undefined'
 
-export interface BaseUser {
-  session: Session,
-  // TODO profile in token metadata
-}
+export type BaseUser = User
 
 /** Subscribes to current user, caches it to local storage, and sets cookie for server-side rendering. */
 export function createUserStore({ supabase, authResponse, log = false }: { supabase: SupabaseClient, authResponse: AuthResponse, userKey?: string, log?: boolean }) {
 
-  const { subscribe, set } = writable<BaseUser>(authResponse?.data)
+  const { subscribe, set } = writable<BaseUser>(authResponse?.data.user)
 
   if (!browser)
     return { subscribe }
@@ -27,10 +24,10 @@ export function createUserStore({ supabase, authResponse, log = false }: { supab
     if (log) console.info({authStateChangeEvent: event})
     if (session) {
       // if (_session?.expires_at !== session?.expires_at)
-      const user: BaseUser = { session }
+      const { user } = session
       set(user)
       if (browser)
-        cacheUser(user, userKey)
+        cacheUser({user, session, userKey})
     } else {
       set(null)
       if (log) console.info('set user to null')
@@ -43,12 +40,12 @@ export function createUserStore({ supabase, authResponse, log = false }: { supab
   }
 }
 
-function cacheUser(user: BaseUser, userKey: string) {
+function cacheUser({ user, session, userKey }: { user: BaseUser, session: Session, userKey: string}) {
   localStorage.setItem(userKey, JSON.stringify(user))
 
   const century = 100 * 365 * 24 * 60 * 60
-  setCookie(ACCESS_TOKEN_COOKIE_NAME, user.session.access_token, { maxAge: century, path: '/', sameSite: 'lax' })
-  setCookie(REFRESH_TOKEN_COOKIE_NAME, user.session.refresh_token, { maxAge: century, path: '/', sameSite: 'lax' })
+  setCookie(ACCESS_TOKEN_COOKIE_NAME, session.access_token, { maxAge: century, path: '/', sameSite: 'lax' })
+  setCookie(REFRESH_TOKEN_COOKIE_NAME, session.refresh_token, { maxAge: century, path: '/', sameSite: 'lax' })
 
   // Cookies are limited to 4kb, about 1,000-4000 characters
   // const minimalUser: Partial<BaseUser> = {

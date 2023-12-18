@@ -6,23 +6,22 @@
 
   export let user: Readable<BaseUser>
   export let signOut: () => Promise<void>
-  $: email = $user?.session?.user?.email
 </script>
 
-{#if email}
+{#if $user}
   <ShowHide let:show let:toggle>
     <button class="header-btn" type="button" title={JSON.stringify($user, null, 1)} on:click={toggle}>
       <div
         class="w-34px h-34px rounded-full flex items-center justify-center font-semibold bg-gray-100 hover:bg-gray-200 uppercase"
       >
-        {email[0]}
+        {$user.email[0]}
       </div>
     </button>
     {#if show}
       <div use:portal>
         <Slideover on:close={toggle}>
           <span slot="title">
-            {email}
+            {$user.email}
           </span>
           <button class="slideover-btn" type="button" on:click={signOut}>
             <span class="i-material-symbols-logout-rounded vertical--3px" />
