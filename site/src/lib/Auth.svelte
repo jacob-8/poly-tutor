@@ -8,7 +8,7 @@
 
   let email: string
   let sixDigitCodeSent = false
-  let sixDigitCode: number
+  let sixDigitCode: string
   const TEN_SECONDS = 10000
   const FOUR_SECONDS = 4000
 
@@ -39,7 +39,7 @@
     invalidateAll()
   }
 
-  $: code_is_6_digits = /^[0-9]{6}$/.test(sixDigitCode?.toString())
+  $: code_is_6_digits = /^[0-9]{6}$/.test(sixDigitCode)
   $: if (code_is_6_digits && !submitting_code) handleOTP()
 
   function autofocus(node: HTMLInputElement) {
@@ -80,11 +80,10 @@
     </Form>
   {:else}
     <input
-      type="number"
+      type="text"
       placeholder="{$page.data.t.layout.enter_6_digit_code} ({email})"
       class="border border-gray-400 p-2 rounded w-full"
-      max="999999"
-      required
+      maxlength="6"
       bind:value={sixDigitCode}
     />
   {/if}
