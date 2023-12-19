@@ -45,15 +45,3 @@ async function handleResponse<ExpectedResponse extends Record<string, any>>(resp
   const body = await response.json() as ExpectedResponse
   return { data: body, error: null }
 }
-
-
-
-// export function apiFetch<T extends Record<string, any>>(route: string, data: T, _fetch = fetch) {
-//   return _fetch(route, {
-//     method: 'POST',
-//     body: JSON.stringify(data),
-//     headers: {
-//       'content-type': 'application/json',
-//     },
-//   })
-// }

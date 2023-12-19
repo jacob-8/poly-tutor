@@ -3,7 +3,6 @@ import { handlers } from './server-handlers'
 import { writeFileSync } from 'node:fs'
 import { createChunkDecoder } from '$lib/client/chunkDecoder'
 import type { OpenAiChatStreamResponse } from '$lib/types'
-import { PUBLIC_SUPABASE_API_URL } from '$env/static/public'
 
 export const server = setupServer(...handlers)
 
@@ -12,7 +11,9 @@ export const server = setupServer(...handlers)
 // })
 
 server.events.on('response:bypass', ({ request, response }) => {
-  if (request.url.startsWith(PUBLIC_SUPABASE_API_URL))
+  const LOCAL_SUPABASE_URL = 'http://127.0.0.1:54321'
+  const DEPLOYED_SUPABASE_URL = 'https://zfxvyodqwvigxarorgjx.supabase.co'
+  if (request.url.startsWith(LOCAL_SUPABASE_URL) || request.url.startsWith(DEPLOYED_SUPABASE_URL))
     return
 
   if (response.headers.get('content-type')?.includes('event-stream'))

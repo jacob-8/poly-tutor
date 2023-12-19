@@ -10,6 +10,6 @@ export default defineProject({
     setupFiles: ['./src/lib/mocks/msw/vitest-server.ts'],
     includeSource: ['src/**/*.ts'],
     include: ['src/**/*.test.ts'],
-    exclude: ['src/service-worker.test.ts', '**/fetchSSE.test.ts', '**/getStream.test.ts', ...defaultExclude],
+    exclude: ['src/service-worker.test.ts', ...defaultExclude],
   },
 })

@@ -1,6 +1,5 @@
 import { http, HttpResponse, passthrough } from 'msw'
-// import type { ChatRequestBody } from '$lib/types'
-// import streamResponses from './data/stream_penguin.json'
+import streamResponses from '../data/stream_penguin.json'
 import lpyKfNjTZi8_getTracks from '../data/get-tracks-lpyKfNjTZi8.json'
 import lpyKfNjTZi8_getCaptions from '../data/get-captions-zh-TW-lpyKfNjTZi8.json'
 // import HRenI3LURNk_getTracks from './data/get-tracks-HRenI3LURNk.json'
@@ -9,7 +8,7 @@ import lpyKfNjTZi8_getCaptions from '../data/get-captions-zh-TW-lpyKfNjTZi8.json
 // import Ukr40eBfeyg_getCaptions from './data/get-captions-zh-TW-Ukr40eBfeyg.json'
 // import _9OkddyYQBec_getCaptions from './data/get-captions-zh-TW-9OkddyYQBec.json'
 import { youtube_ids } from '../shows'
-import type { WhisperTranscript, ExternalYoutubeTranscribeRequestBody } from '$lib/types'
+import type { WhisperTranscript, ExternalYoutubeTranscribeRequestBody, ChatRequestBody } from '$lib/types'
 import { ResponseCodes } from '$lib/responseCodes'
 
 export const handlers = [
@@ -70,7 +69,7 @@ export const handlers = [
     return passthrough()
   }),
 
-  http.get('https://example.com/stream', () => {
+  http.post('https://example.com/stream', () => {
     const encode = createChunkEncoder()
     const msg1 = encode('data: hello\r\n\r\n')
     const msg2 = encode('data: world\r\n\r\n')
@@ -90,33 +89,33 @@ export const handlers = [
     })
   }),
 
-  // http.post('https://api.openai.com/v1/chat/completions', async ({request}) => {
-  //   const { messages } = await request.json() as ChatRequestBody
+  http.post('https://api.openai.com/v1/chat/completions', async ({request}) => {
+    const { messages } = await request.json() as ChatRequestBody
 
-  //   const lastMessage = messages[messages.length - 1].content
-  //   if (lastMessage === 'BUG!') throw new Error('BUG!')
+    const lastMessage = messages[messages.length - 1].content
+    if (lastMessage === 'BUG!') throw new Error('BUG!')
 
-  //   const encode = createChunkEncoder()
-  //   const stream = new ReadableStream({
-  //     async start(controller) {
-  //       await new Promise(resolve => setTimeout(resolve, 1000))
-  //       for (const msg of streamResponses) {
-  //         controller.enqueue(encode(`data: ${JSON.stringify(msg)}\n\n`))
-  //         const randomMs = Math.floor(Math.random() * 200)
-  //         await new Promise(resolve => setTimeout(resolve, randomMs))
-  //       }
+    const encode = createChunkEncoder()
+    const stream = new ReadableStream({
+      async start(controller) {
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        for (const msg of streamResponses) {
+          controller.enqueue(encode(`data: ${JSON.stringify(msg)}\n\n`))
+          const randomMs = Math.floor(Math.random() * 20)
+          await new Promise(resolve => setTimeout(resolve, randomMs))
+        }
 
-  //       controller.enqueue(encode('data: [DONE]\n\n'))
-  //       controller.close()
-  //     },
-  //   })
+        controller.enqueue(encode('data: [DONE]\n\n'))
+        controller.close()
+      },
+    })
 
-  //   return new HttpResponse(stream, {
-  //     headers: {
-  //       'Content-Type': 'text/event-stream',
-  //     },
-  //   })
-  // }),
+    return new HttpResponse(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+      },
+    })
+  }),
 ]
 
 function createChunkEncoder() {
