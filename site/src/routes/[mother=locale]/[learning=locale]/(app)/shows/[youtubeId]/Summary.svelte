@@ -2,10 +2,8 @@
   import { page } from '$app/stores'
   import type { Sentence } from '$lib/types'
   import { Button } from 'svelte-pieces'
-  import OpenAiUserKey from '$lib/OpenAiUserKey.svelte'
 
   export let addSummary: (key: string) => Promise<void>
-  export let deleteSummary: () => void
   export let sentences: Sentence[]
   export let studySentence: (sentence: Sentence) => void
 </script>
@@ -32,12 +30,9 @@
         {/if}
       </div>
     {/each}
-    <Button size="sm" form="simple" color="red" onclick={deleteSummary}>Delete Summary</Button>
   {:else}
     <div class="text-base">
-      <OpenAiUserKey let:openai_api_key>
-        <Button onclick={() => addSummary(openai_api_key)}>{$page.data.t.shows.summarize}</Button>
-      </OpenAiUserKey>
+      <Button onclick={() => addSummary('openai-foo-key')}>{$page.data.t.shows.summarize}</Button>
     </div>
   {/if}
 </div>

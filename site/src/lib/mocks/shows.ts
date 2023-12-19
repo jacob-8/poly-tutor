@@ -1,5 +1,11 @@
 import type { Channel, YouTube } from '$lib/supabase/database.types'
 
+export const youtube_ids = {
+  has_captions_in_db: '9ruqSX_p_48',
+  has_captions_on_youtube__llama: 'lpyKfNjTZi8', // has_captions_in_youtube https://www.youtube.com/watch?v=lpyKfNjTZi8
+  has_no_captions__ai_camp: '9OkddyYQBec', // https://www.youtube.com/watch?v=9OkddyYQBec
+}
+
 export type YoutubeWithChannel = Partial<YouTube> & { channel: Partial<Channel> }
 
 export const natureShow: YoutubeWithChannel = {
@@ -18,7 +24,7 @@ export const natureShow: YoutubeWithChannel = {
 }
 
 export const chineseVideo: YoutubeWithChannel = {
-  id: '9ruqSX_p_48',
+  id: youtube_ids.has_captions_in_db,
   title: '自驾游贵州黔东南，花50元买了个竹篓，是不是特别洋气？【小白的奇幻旅行】',
   description: 'description here...',
   language: 'zh',
@@ -30,9 +36,4 @@ export const chineseVideo: YoutubeWithChannel = {
     description: null,
     thumbnail_url: 'https://yt3.ggpht.com/ytc/APkrFKav44IZWeQMQttWjk2AsDi8oLkP1Mnf6zgIVu8s'
   }
-}
-
-export const youtube_ids = {
-  has_captions__llama: 'lpyKfNjTZi8', // https://www.youtube.com/watch?v=lpyKfNjTZi8
-  has_no_captions__ai_camp: '9OkddyYQBec', // https://www.youtube.com/watch?v=9OkddyYQBec
 }

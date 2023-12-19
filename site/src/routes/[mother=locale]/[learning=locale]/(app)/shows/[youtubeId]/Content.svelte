@@ -4,15 +4,12 @@
   import { page } from '$app/stores'
   import { Button } from 'svelte-pieces'
   import type Youtube from './Youtube.svelte'
-  import OpenAiUserKey from '$lib/OpenAiUserKey.svelte'
 
   export let entries: Record<string, CEDictEntry>
   export let content: Section
   export let email: string
   export let studySentence: (sentence: Sentence) => void
   export let transcribeCaptions: (openai_api_key: string) => Promise<void>
-  export let deleteContent: () => void
-
   export let currentTimeMs: number
   export let setTime: (ms: number) => void
   export let playerState: YT.PlayerState
@@ -31,12 +28,11 @@
     {/each} -->
     <!-- <div class="text-xs text-gray">({captionsLength} characters)</div> -->
     <Paragraphs {youtubeComponent} {playerState} {entries} {setTime} {currentTimeMs} {studySentence} sentences={content.sentences} />
-    <Button size="sm" form="simple" color="red" onclick={deleteContent}>Delete Captions</Button>
   {:else if email}
     <div class="text-base">
-      <OpenAiUserKey let:openai_api_key>
-        <Button size="lg" class="mt-2" onclick={() => transcribeCaptions(openai_api_key)}>{$page.data.t.shows.get_captions} (show price)</Button>
-      </OpenAiUserKey>
+      <Button size="lg" class="mt-2" onclick={() => transcribeCaptions('sk-openai-key-foo')}>{$page.data.t.shows.get_captions} (show price)</Button>
+      <!-- <OpenAiUserKey let:openai_api_key>
+      </OpenAiUserKey> -->
     </div>
   {:else}
     {$page.data.t.layout.sign_in}

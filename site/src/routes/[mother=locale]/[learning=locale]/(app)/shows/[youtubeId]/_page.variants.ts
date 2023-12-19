@@ -79,9 +79,6 @@ export const variants: Variant<Component>[] = [
             { 'text': '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' }
           ]}}), 1000) }),
         },
-        deleteSummary: () => {
-          alert('Hey, this is cool. It is fake! And free.')
-        },
         // @ts-ignore
         check_is_in_my_videos: (youtube_id) => { console.info(`check_is_in_my_videos(${youtube_id})`)},
         // @ts-ignore

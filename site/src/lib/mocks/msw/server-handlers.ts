@@ -1,59 +1,72 @@
 import { http, HttpResponse, passthrough } from 'msw'
 // import type { ChatRequestBody } from '$lib/types'
 // import streamResponses from './data/stream_penguin.json'
-import lpyKfNjTZi8_getTracks from './data/get-tracks-lpyKfNjTZi8.json'
-import lpyKfNjTZi8_getCaptions from './data/get-captions-zh-TW-lpyKfNjTZi8.json'
+import lpyKfNjTZi8_getTracks from '../data/get-tracks-lpyKfNjTZi8.json'
+import lpyKfNjTZi8_getCaptions from '../data/get-captions-zh-TW-lpyKfNjTZi8.json'
 // import HRenI3LURNk_getTracks from './data/get-tracks-HRenI3LURNk.json'
 // import HRenI3LURNk_getCaptions from './data/get-captions-zh-TW-HRenI3LURNk.json'
 // import Ukr40eBfeyg_getTracks from './data/get-tracks-Ukr40eBfeyg.json'
 // import Ukr40eBfeyg_getCaptions from './data/get-captions-zh-TW-Ukr40eBfeyg.json'
 // import _9OkddyYQBec_getCaptions from './data/get-captions-zh-TW-9OkddyYQBec.json'
-import { youtube_ids } from './shows'
+import { youtube_ids } from '../shows'
+import type { WhisperTranscript, ExternalYoutubeTranscribeRequestBody } from '$lib/types'
+import { ResponseCodes } from '$lib/responseCodes'
 
 export const handlers = [
-  http.get('https://jsonplaceholder.typicode.com/todos/2', () => {
-    return HttpResponse.json({
-      'userId': 2,
-      'id': 2,
-      'title': 'this ones mocked',
-      'completed': false
-    })
+  http.post('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', async ({request}) => {
+    const clonedRequest = request.clone()
+    const { poly_key, language, youtube_id } = await clonedRequest.json() as ExternalYoutubeTranscribeRequestBody
+    if (youtube_id !== youtube_ids.has_no_captions__ai_camp && poly_key !== 'test-key')
+      return passthrough()
+
+    if (language === 'fr') {
+      return new HttpResponse('French language not supported', {
+        status: ResponseCodes.BAD_REQUEST,
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      })
+    }
+
+    const body: WhisperTranscript = {
+      transcript: [
+        {
+          text: language === 'en' ? 'This is a mocked Whisper transcription' : '這是一個模擬的Whisper轉錄',
+          start_second: 0,
+          end_second: 4,
+        },
+        {
+          text: language === 'en' ? 'And another sentence' : '還有一個句子',
+          start_second: 4,
+          end_second: 8,
+        },
+      ]
+    }
+    return HttpResponse.json(body)
   }),
+
   http.get('https://mocked.captions.url', ({request}) => {
     const url = new URL(request.url)
     const youtube_id = url.searchParams.get('v')
     const isTracksRequest = url.searchParams.get('type') === 'list'
     const isCaptionsRequest = url.searchParams.get('fmt') === 'srv3'
 
-    // if (youtube_id === 'HRenI3LURNk') {
-    //   if (isTracksRequest)
-    //     return HttpResponse.json(HRenI3LURNk_getTracks)
-    //   if (isCaptionsRequest)
-    //     return HttpResponse.json(HRenI3LURNk_getCaptions)
-    // }
-
-    // if (youtube_id === 'Ukr40eBfeyg') {
-    //   if (isTracksRequest)
-    //     return HttpResponse.json(Ukr40eBfeyg_getTracks)
-    //   if (isCaptionsRequest)
-    //     return HttpResponse.json(Ukr40eBfeyg_getCaptions)
-    // }
-
-    if (youtube_id === youtube_ids.has_captions__llama) {
+    if (youtube_id === youtube_ids.has_captions_on_youtube__llama) {
       if (isTracksRequest)
         return HttpResponse.json(lpyKfNjTZi8_getTracks)
       if (isCaptionsRequest)
         return HttpResponse.json(lpyKfNjTZi8_getCaptions)
     }
 
-    if (youtube_id === youtube_ids.has_no_captions__ai_camp)
-      return new HttpResponse('Internal Server Error', { status: 500 })
+    if (youtube_id === youtube_ids.has_no_captions__ai_camp) {
+      return new HttpResponse('Internal Server Error', { status: 500, headers: {
+        'Content-Type': 'text/plain',
+      } })
+    }
 
     if (youtube_id === 'throw-network-error')
       return HttpResponse.error()
 
-    // if (url.includes('v=9OkddyYQBec') && url.includes('fmt=srv3'))
-    //   return HttpResponse.json(_9OkddyYQBec_getCaptions)
     return passthrough()
   }),
 

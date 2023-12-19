@@ -1,22 +1,13 @@
 import { error, json, type Config } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { ResponseCodes } from '$lib/responseCodes'
-import type { Sentence, YtTranscribeRequestBody } from '$lib/types'
+import type { ExternalYoutubeTranscribeRequestBody, Sentence, WhisperTranscript, YtTranscribeRequestBody } from '$lib/types'
 import { OPENAI_API_KEY, POLY_WHISPER_KEY } from '$env/static/private'
 import { calculate_chunk_seconds } from './calculate-chunk-seconds'
 import { post_request } from '$lib/utils/post-request'
 
 export const config: Config = {
   runtime: 'edge',
-}
-
-interface ExternalYoutubeTranscribeRequestBody {
-  youtube_id: string
-  openai_api_key: string
-  poly_key: string
-  language?: string
-  prompt?: string
-  seconds_per_chunk?: number
 }
 
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
@@ -47,35 +38,27 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
 
 目標是讓每個句子都在一個時間段內，以保持清晰。`
 
-    interface WhisperTranscript {
-      transcript: {
-        text: string,
-        start_second: number,
-        end_second: number,
-      }[]
-    }
+  const { data, error: transcribe_error } = await post_request<ExternalYoutubeTranscribeRequestBody, WhisperTranscript>('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', {
+    youtube_id,
+    openai_api_key,
+    poly_key: POLY_WHISPER_KEY,
+    language: language_code,
+    prompt,
+    seconds_per_chunk: calculate_chunk_seconds(duration_seconds),
+  })
 
-    const { data, error: transcribe_error } = await post_request<ExternalYoutubeTranscribeRequestBody, WhisperTranscript>('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', {
-      youtube_id,
-      openai_api_key,
-      poly_key: POLY_WHISPER_KEY,
-      language: language_code,
-      prompt,
-      seconds_per_chunk: calculate_chunk_seconds(duration_seconds),
-    })
+  if (transcribe_error) throw error(ResponseCodes.INTERNAL_SERVER_ERROR, transcribe_error.message)
 
-    if (transcribe_error) throw error(ResponseCodes.INTERNAL_SERVER_ERROR, transcribe_error.message)
+  try {
+    const sentences: Sentence[] = data.transcript.map(({ text, start_second, end_second }) => ({
+      text,
+      start_ms: start_second * 1000,
+      end_ms: end_second * 1000,
+    }))
 
-    try {
-      const sentences: Sentence[] = data.transcript.map(({ text, start_second, end_second }) => ({
-        text,
-        start_ms: start_second * 1000,
-        end_ms: end_second * 1000,
-      }))
-
-      return json(sentences)
-    } catch (err) {
-      throw error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
-    }
+    return json(sentences)
+  } catch (err) {
+    throw error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
+  }
 }
 

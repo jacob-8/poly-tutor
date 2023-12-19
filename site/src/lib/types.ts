@@ -70,6 +70,23 @@ export interface YtTranscribeRequestBody {
   duration_seconds: number
 }
 
+export interface ExternalYoutubeTranscribeRequestBody {
+  youtube_id: string
+  openai_api_key: string
+  poly_key: string
+  language?: string
+  prompt?: string
+  seconds_per_chunk?: number
+}
+
+export interface WhisperTranscript {
+  transcript: {
+    text: string,
+    start_second: number,
+    end_second: number,
+  }[]
+}
+
 export interface TranslateRequestBody {
   text: string
   sourceLanguageCode: string

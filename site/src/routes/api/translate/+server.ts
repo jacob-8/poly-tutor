@@ -23,14 +23,15 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
   if (!dev && session_data.user.email !== 'jacob@polylingual.dev')
     throw error(ResponseCodes.UNAUTHORIZED, { message: 'Unauthorized' })
 
+  const { text, sourceLanguageCode, targetLanguageCode } = await request.json() as TranslateRequestBody
+  const location = 'global'
+
+  if (!text)
+    throw error(ResponseCodes.BAD_REQUEST, 'No text property found in request body')
+
+  console.info({ length: text.length })
+
   try {
-    const { text, sourceLanguageCode, targetLanguageCode } = await request.json() as TranslateRequestBody
-    const location = 'global'
-
-    if (!text)
-      throw error(ResponseCodes.BAD_REQUEST, 'No text property found in request body')
-
-    console.info({ length: text.length })
     const textSections = splitText(text)
     const textTranslations = await Promise.all(textSections.map(async (text) => {
       const [response] = await translationClient.translateText({
@@ -40,11 +41,11 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
         sourceLanguageCode,
         targetLanguageCode,
       })
-      const translation = response.translations.map(t => t.translatedText).join('\n')
+      const translation = response.translations.map(translation => translation.translatedText).join('\n')
       return translation
     }))
 
-    return json(textTranslations.join('\n'))
+    return json({line_separated_translations: textTranslations.join('\n')})
   } catch (err) {
     console.error(err.message)
     throw error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)

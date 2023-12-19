@@ -12,7 +12,7 @@
   import Description from './Description.svelte'
 
   export let data
-  $: ({ youtube_id, youtube, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribeCaptions, deleteTranscript, addSummary, deleteSummary, supabase } = data)
+  $: ({ youtube_id, youtube, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribeCaptions, addSummary, supabase } = data)
 
   let cedict: Record<string, CEDictEntry> = {}
   $: if (streamed.cedict)
@@ -71,15 +71,15 @@
 
     <div class="mt-2 bg-gray-100 p-3 rounded overflow-y-auto grow-1 flex flex-col">
       {#if transcript}
-        {@const hasSyntaxAnalysis = transcript.transcript.sentences[0].syntax}
+        <!-- {@const hasSyntaxAnalysis = transcript.transcript.sentences[0].syntax} -->
         {@const hasMachineTranslation = transcript.transcript.sentences[0].machine_translation}
         <div class="mb-1">
-          {#if !hasSyntaxAnalysis}
-            <Button onclick={data.analyze_syntax}>{$page.data.t.shows.analyze}</Button>
-          {/if}
+          <!-- {#if !hasSyntaxAnalysis}
+            <Button onclick={() => data.analyze_syntax(transcript.transcript.sentences)}>{$page.data.t.shows.analyze}</Button>
+          {/if} -->
 
           {#if !hasMachineTranslation}
-            <Button onclick={data.translate}>{$page.data.t.shows.translate}</Button>
+            <Button onclick={() => data.translate(transcript.transcript.sentences)}>{$page.data.t.shows.translate}</Button>
           {/if}
         </div>
 
@@ -104,7 +104,7 @@
 
       {#if transcript}
         <SummaryComponent {addSummary}
-          {deleteSummary} {studySentence} sentences={summary?.summary?.sentences} />
+          {studySentence} sentences={summary?.summary?.sentences} />
       {/if}
 
       <Content
@@ -112,7 +112,6 @@
         {transcribeCaptions}
         {youtubeComponent}
         {playerState}
-        deleteContent={deleteTranscript}
         {currentTimeMs}
         {setTime}
         content={transcript?.transcript}

@@ -37,7 +37,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
     const { data: tracks, error: tracks_error } = await get_request<YoutubeCaptionTrack[]>(`${CAPTIONS_URL}?v=${youtube_id}&type=list`)
     if (tracks_error) {
       console.warn({tracks_error})
-      throw new Error('Error getting caption tracks')
+      return json(null)
     }
 
     if (!tracks.length) throw new Error('No caption tracks found')

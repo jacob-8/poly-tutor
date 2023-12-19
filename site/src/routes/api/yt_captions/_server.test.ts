@@ -47,24 +47,19 @@ describe(POST, () => {
     `)
   })
 
-  test('properly passes on no captions error', async () => {
+  test('returns null when no captions', async () => {
     const body: YtCaptionsRequestBody = {
       youtube_id: youtube_ids.has_no_captions__ai_camp,
       locale: 'zh-TW',
     }
-    await expect(() => request(POST, { locals: authenticatedLocal, body })).rejects.toThrowErrorMatchingInlineSnapshot(`
-      HttpError {
-        "body": {
-          "message": "Error getting caption tracks",
-        },
-        "status": 500,
-      }
-    `)
+    const response = await request(POST, { locals: authenticatedLocal, body })
+    expect(response.status).toBe(ResponseCodes.OK)
+    expect(await response.json()).toBeNull()
   })
 
   test('parses and returns captions when they exist', async () => {
     const body: YtCaptionsRequestBody = {
-      youtube_id: youtube_ids.has_captions__llama,
+      youtube_id: youtube_ids.has_captions_on_youtube__llama,
       locale: 'zh-TW',
     }
     const response = await request(POST, { locals: authenticatedLocal, body })

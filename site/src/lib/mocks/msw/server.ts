@@ -1,38 +1,31 @@
 import { setupServer } from 'msw/node'
-import { handlers } from './handlers'
-import {writeFileSync} from 'node:fs'
+import { handlers } from './server-handlers'
+import { writeFileSync } from 'node:fs'
 import { createChunkDecoder } from '$lib/client/chunkDecoder'
 import type { OpenAiChatStreamResponse } from '$lib/types'
+import { PUBLIC_SUPABASE_API_URL } from '$env/static/public'
 
 export const server = setupServer(...handlers)
 
+// server.events.on('request:start', ({ request }) => {
+//   console.log({url: request.url})
+// })
+
 server.events.on('response:bypass', ({ request, response }) => {
+  if (request.url.startsWith(PUBLIC_SUPABASE_API_URL))
+    return
+
   if (response.headers.get('content-type')?.includes('event-stream'))
     saveStreamedResponse(response)
 
-  if (response.headers.get('content-type')?.includes('json')) {
-    if (request.url.startsWith('https://zfxvyodqwvigxarorgjx.supabase.co/auth/v1/'))
-      return
+  if (response.headers.get('content-type')?.includes('json'))
     saveJsonResponse(response)
-  }
 
-  console.info(
-    '%s %s received live and saved to disk if stream or json %s %s',
-    request.method,
-    request.url,
-    response.status,
-    response.statusText
-  )
+  console.info(`${request.method}:${request.url} received live and saved to disk if stream or json ${response.status} ${response.statusText}`)
 })
 
 server.events.on('response:mocked', ({ request, response }) => {
-  console.info(
-    '%s %s received and mocked %s %s',
-    request.method,
-    request.url,
-    response.status,
-    response.statusText
-  )
+  console.info(`${request.method}:${request.url} received and mocked: ${response.status} ${response.statusText}`)
 })
 
 function saveJsonResponse(response: Response) {

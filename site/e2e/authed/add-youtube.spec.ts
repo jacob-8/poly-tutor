@@ -76,24 +76,39 @@ test('user pastes in youtube url for a youtube already in the db with captions a
 test('captions load in from YouTube when a new video is added that YouTube has captions for', async ({ page }) => {
   await page.goto('/en/zh-TW/shows')
   await page.waitForLoadState('networkidle')
-  await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + youtube_ids.has_captions__llama)
+  await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + youtube_ids.has_captions_on_youtube__llama)
   await expect(page.getByText('hǎ 哈luō 囉gè 各wèi 位guàn 觀zhòng')).toBeVisible()
 })
 
 // Test: user pastes in youtube url for a youtube not in the db and which YouTube does not have captions for. He sees a button allowing him to transcribe using his credits+Whisper. He transcribes (using mock response) and sees the captions load in.
-test.skip('user can transcribe captions using Whisper when YouTube does not have them', async ({ page }) => {
-  await page.goto('/en/zh-TW/shows')
+test('user can transcribe captions using Whisper when YouTube does not have them and translate them', async ({ page }) => {
+  await page.goto(`/en/zh-TW/shows/${youtube_ids.has_no_captions__ai_camp}`)
   await page.waitForLoadState('networkidle')
-  await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + youtube_ids.has_no_captions__ai_camp)
-  // add openai-mock api key
   await page.getByRole('button', { name: 'Get Captions' }).click()
-  await expect(page.getByText('hǎ 哈luō 囉gè 各wèi 位guàn 觀zhòng')).toBeVisible()
+  await expect(page.getByText('zhè 這shì 是yī 一gè 個mú 模nǐ 擬d')).toBeVisible()
+  // remove the following temporary section once they can generate captions for other users transcripts
+  await page.route('/api/translate', async (route) => {
+    const { text } = await route.request().postDataJSON()
+    const translatedText = text.split('\n').map(t => 'Mocked translation: ' + t).join('\n')
+    route.fulfill({
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ line_separated_translations: translatedText })
+    })
+  })
+  await page.getByRole('button', { name: 'Translate' }).click()
+  await new Promise(r => setTimeout(r, 1000)) // because study sentence isn't actually connected to live data
+  await page.getByText('zhè 這shì 是yī 一gè 個mú 模nǐ 擬d').hover()
+  await expect(page.getByText('Mocked translation')).toBeVisible()
 })
 
-// Test: user can generate translations (mock local api w/ MSW)
+test.skip('user can generate translations for another users transcript', async ({ page }) => {
+  await page.goto(`/en/zh-TW/shows/${youtube_ids.has_captions_in_db}`)
+  await page.waitForLoadState('networkidle')
+  await page.getByRole('button', { name: 'Translate' }).click()
+  await expect(page.getByText('Mocked translation: This is a fake transcript')).toBeVisible()
+})
 
-// Test: user opens existing video and can view someone elses transcripts and translations
-
-// Test: shows clip duration
+// Test: user can generate a summary
 
 // Test: new user for the very first time, when signing up from a youtube will have their auth saved first then after a small delay the youtube will be added to their videos once the db has their auth id to connect things to, otherwise their will be an error upon trying to add

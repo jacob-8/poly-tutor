@@ -10,7 +10,6 @@ setup('login', async ({ page }) => {
   const [username] = email.split('@')
   const { token: oldToken } = await getLoginMessage(username)
   await page.goto('/')
-  await page.waitForLoadState('networkidle') // Wait for page to be hydrated
   await page.getByRole('button', { name: 'Sign in' }).click()
   await page.getByPlaceholder('Email address').fill(email)
   await page.getByRole('button', { name: 'Send 6-Digit Code' }).click()

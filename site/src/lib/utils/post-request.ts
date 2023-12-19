@@ -1,14 +1,14 @@
 import { ResponseCodes } from '$lib/responseCodes'
 
-export async function post_request<T extends Record<string, any>, ExpectedResponse extends Record<string, any>>(route: string, data: T, _fetch = fetch): Promise<{
+type Return<ExpectedResponse> = {
   data: ExpectedResponse,
   error: null
 } | {
   data: null,
   error: { status: number, message: string }
-}> {
-  console.info({ data })
+}
 
+export async function post_request<T extends Record<string, any>, ExpectedResponse extends Record<string, any>>(route: string, data: T, _fetch = fetch): Promise<Return<ExpectedResponse>> {
   const response = await _fetch(route, {
     method: 'POST',
     body: JSON.stringify(data),
@@ -16,35 +16,37 @@ export async function post_request<T extends Record<string, any>, ExpectedRespon
       'content-type': 'application/json',
     },
   })
-  const body = await response.json() as ExpectedResponse
 
-  if (response.status !== ResponseCodes.OK)
-    return { data: null, error: { status: response.status, message: body.message } }
-
-  return { data: body, error: null }
+  return handleResponse<ExpectedResponse>(response)
 }
 
-export async function get_request<ExpectedResponse extends Record<string, any>>(route: string, _fetch = fetch): Promise<{
-  data: ExpectedResponse,
-  error: null
-} | {
-  data: null,
-  error: { status: number, message: string }
-}> {
+export async function get_request<ExpectedResponse extends Record<string, any>>(route: string, _fetch = fetch): Promise<Return<ExpectedResponse>> {
   const response = await _fetch(route)
+  return handleResponse<ExpectedResponse>(response)
+}
 
-  if (response.status !== ResponseCodes.OK) {
+async function handleResponse<ExpectedResponse extends Record<string, any>>(response: Response): Promise<Return<ExpectedResponse>> {
+  const { status } = response
+  if (status !== ResponseCodes.OK) {
+    const responseClone = response.clone()
     try {
-      const body = await response.json()
-      return { data: null, error: { status: response.status, message: body.message } }
+      try {
+        const body = await response.json()
+        return { data: null, error: { status, message: body.message || JSON.stringify(body) } }
+      } catch {
+        const textBody = await responseClone.text()
+        return { data: null, error: { status, message: textBody } }
+      }
     } catch (err) {
-      return { data: null, error: { status: response.status, message: err.message } }
+      return { data: null, error: { status, message: err.message } }
     }
   }
 
   const body = await response.json() as ExpectedResponse
   return { data: body, error: null }
 }
+
+
 
 // export function apiFetch<T extends Record<string, any>>(route: string, data: T, _fetch = fetch) {
 //   return _fetch(route, {

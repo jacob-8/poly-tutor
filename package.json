@@ -1,39 +1,42 @@
 {
-	"name": "poly-tutor-monorepo",
-	"private": true,
-	"scripts": {
-		"dev": "pnpm -F site dev",
-		"build": "pnpm -F site build",
-		"preview": "pnpm -F site preview",
-		"postinstall": "simple-git-hooks",
-		"check": "pnpm -F site check",
-		"check:watch": "pnpm -F site check-watch",
-		"test": "vitest",
-		"e2e": "pnpm -F site test:e2e:ui",
-		"lint": "eslint --cache --quiet",
-		"lint:fix": "eslint --cache --fix",
-		"check-packages": "pnpm update --interactive --recursive --latest"
-	},
-	"devDependencies": {
-		"@typescript-eslint/eslint-plugin": "6.14.0",
-		"@typescript-eslint/parser": "6.14.0",
-		"eslint": "^8.56.0",
-		"eslint-define-config": "^2.0.0",
-		"eslint-plugin-svelte": "^2.35.0",
-		"globals": "^13.24.0",
-		"simple-git-hooks": "^2.9.0",
-		"svelte": "^4.2.8",
-		"tslib": "^2.6.2",
-		"typescript": "^5.3.3",
-		"vitest": "^1.0.4"
-	},
-	"type": "module",
-	"simple-git-hooks": {
-		"pre-commit": "npx lint-staged"
-	},
-	"lint-staged": {
-		"*.{js,ts,svelte}": [
-			"eslint --cache --fix"
-		]
-	}
+  "name": "poly-tutor-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -F site dev",
+    "build": "pnpm -F site build",
+    "preview": "pnpm -F site preview",
+    "postinstall": "simple-git-hooks",
+    "check": "pnpm -F site check",
+    "check:watch": "pnpm -F site check-watch",
+    "test": "vitest",
+    "e2e": "pnpm -F site test:e2e:ui",
+    "lint": "eslint --cache --quiet",
+    "lint:fix": "eslint --cache --fix",
+    "check-packages": "pnpm update --interactive --recursive --latest"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "6.14.0",
+    "@typescript-eslint/parser": "6.14.0",
+    "eslint": "^8.56.0",
+    "eslint-define-config": "^2.0.0",
+    "eslint-plugin-svelte": "^2.35.0",
+    "globals": "^13.24.0",
+    "simple-git-hooks": "^2.9.0",
+    "svelte": "^4.2.8",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
+  },
+  "type": "module",
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,ts,svelte}": [
+      "eslint --cache --fix"
+    ]
+  },
+  "msw": {
+    "workerDirectory": "site\\static"
+  }
 }
