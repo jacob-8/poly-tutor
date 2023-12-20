@@ -5,6 +5,7 @@
 
   export let addSummary: ({openai_api_key, sentences}: {openai_api_key: string, sentences: Sentence[]}) => Promise<void>
   export let sentences: Sentence[]
+  export let transcript: Sentence[]
   export let studySentence: (sentence: Sentence) => void
 </script>
 
@@ -32,7 +33,7 @@
     {/each}
   {:else}
     <div class="text-base">
-      <Button onclick={() => addSummary({openai_api_key: 'openai-foo-key', sentences})}>{$page.data.t.shows.summarize}</Button>
+      <Button onclick={() => addSummary({openai_api_key: 'openai-foo-key', sentences: transcript})}>{$page.data.t.shows.summarize}</Button>
     </div>
   {/if}
 </div>

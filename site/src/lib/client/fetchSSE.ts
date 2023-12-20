@@ -1,3 +1,4 @@
+import { ResponseCodes } from '$lib/responseCodes'
 import { createChunkDecoder } from './chunkDecoder'
 
 interface FetchSSE {
@@ -19,8 +20,7 @@ export function fetchSSE<T extends Record<string, any>>(url: string, data: T): F
         body: JSON.stringify(data),
       })
 
-      const SUCCESS = 200
-      if (response.status !== SUCCESS) {
+      if (response.status !== ResponseCodes.OK) {
         const { message } = await response.json()
         dispatchEvent({ type: 'error', data: message })
         return

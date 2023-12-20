@@ -1,6 +1,7 @@
 import { createChunkDecoder } from '$lib/client/chunkDecoder'
 import type { ChatRequestBody } from '$lib/types'
 
+// This is a simple way to receive entire stream and return it
 async function getStream(url: string, lastMessage = 'normal') {
   const data: ChatRequestBody = {
     messages: [{
@@ -59,23 +60,23 @@ describe(getStream, () => {
   test('ChatGPT normal', async () => {
     const streamedResponse = await getStream('https://api.openai.com/v1/chat/completions')
     expect(streamedResponse).toMatchInlineSnapshot(`
-      "data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}
-
-      data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"企"},"finish_reason":null}]}
+      "data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"企"},"finish_reason":null}]}
 
       data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"鹅"},"finish_reason":null}]}
 
-      data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":" ("},"finish_reason":null}]}
+      data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"("},"finish_reason":null}]}
 
       data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"q"},"finish_reason":null}]}
 
       data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"ǐ"},"finish_reason":null}]}
 
-      data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"'é"},"finish_reason":null}]}
+      data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"'"},"finish_reason":null}]}
+
+      data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"é"},"finish_reason":null}]}
 
       data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":")"},"finish_reason":null}]}
 
-      data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"。\\n\\n"},"finish_reason":null}]}
+      data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"。"},"finish_reason":null}]}
 
       data: {"id":"chatcmpl-8Nh6hF13Na8XqMplwFT6VCjz5sJcP","object":"chat.completion.chunk","created":1700657939,"model":"gpt-4-1106-preview","system_fingerprint":"fp_a24b4d720c","choices":[{"index":0,"delta":{"content":"你"},"finish_reason":null}]}
 
@@ -109,9 +110,6 @@ describe(getStream, () => {
 
   test('bug', async () => {
     await expect(() => getStream('https://api.openai.com/v1/chat/completions', 'BUG!')).rejects.toThrowErrorMatchingInlineSnapshot(`[TypeError: Failed to fetch]`)
-
-    // const streamedResponse = await getStream('https://api.openai.com/v1/chat/completions', 'BUG!')
-    // expect(streamedResponse).toMatchInlineSnapshot(`undefined`)
   })
 })
 

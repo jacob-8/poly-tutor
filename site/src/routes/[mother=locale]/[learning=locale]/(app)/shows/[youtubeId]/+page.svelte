@@ -98,9 +98,9 @@
 
       <Description description={youtube.description} />
 
-      {#if transcript}
+      {#if transcript?.transcript.sentences}
         <Summary {addSummary}
-          {studySentence} sentences={$summary?.sentences} />
+          {studySentence} sentences={$summary?.sentences} transcript={transcript.transcript.sentences} />
       {/if}
 
       {#if transcript !== undefined}

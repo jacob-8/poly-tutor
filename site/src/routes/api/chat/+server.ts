@@ -25,6 +25,8 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
 
   if (!api_key) throw error(ResponseCodes.BAD_REQUEST, 'No OPENAI_API_KEY found')
 
+  if (!messages?.length) throw error(ResponseCodes.BAD_REQUEST, 'No messages found')
+
   try {
     const completionRequest: CreateChatCompletionRequest = {
       model,
@@ -52,7 +54,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
     //   const { done, value } = await reader.read()
     //   if (done) break
     //   const chunk = decoder(value)
-    //   console.log(chunk)
+    //   console.info(chunk)
     // }
 
     return new Response(response.body, { headers: { 'Content-Type': 'text/event-stream;charset=utf-8' } })

@@ -1,5 +1,4 @@
 import { http, HttpResponse, passthrough } from 'msw'
-import streamResponses from '../data/stream_penguin.json'
 import lpyKfNjTZi8_getTracks from '../data/get-tracks-lpyKfNjTZi8.json'
 import lpyKfNjTZi8_getCaptions from '../data/get-captions-zh-TW-lpyKfNjTZi8.json'
 // import HRenI3LURNk_getTracks from './data/get-tracks-HRenI3LURNk.json'
@@ -10,6 +9,7 @@ import lpyKfNjTZi8_getCaptions from '../data/get-captions-zh-TW-lpyKfNjTZi8.json
 import { unseeded_youtubes } from '../seed/youtubes'
 import type { WhisperTranscript, ExternalYoutubeTranscribeRequestBody, ChatRequestBody } from '$lib/types'
 import { ResponseCodes } from '$lib/responseCodes'
+import { create_chat_completion_data } from '../data/create_chat_completion'
 
 export const handlers = [
   http.post('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', async ({request}) => {
@@ -91,7 +91,6 @@ export const handlers = [
 
   http.post('https://api.openai.com/v1/chat/completions', async ({request}) => {
     const { messages } = await request.json() as ChatRequestBody
-
     const lastMessage = messages[messages.length - 1].content
     if (lastMessage === 'BUG!') throw new Error('BUG!')
 
@@ -99,7 +98,9 @@ export const handlers = [
     const stream = new ReadableStream({
       async start(controller) {
         await new Promise(resolve => setTimeout(resolve, 1000))
-        for (const msg of streamResponses) {
+        const message = '企鹅(qǐ\'é)。你喜欢企鹅吗？为什么？'.split('')
+
+        for (const msg of create_chat_completion_data(message)) {
           controller.enqueue(encode(`data: ${JSON.stringify(msg)}\n\n`))
           const randomMs = Math.floor(Math.random() * 20)
           await new Promise(resolve => setTimeout(resolve, randomMs))
