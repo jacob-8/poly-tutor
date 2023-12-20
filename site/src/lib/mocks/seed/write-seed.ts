@@ -1,5 +1,4 @@
-import { writeFileSync } from 'fs'
-import { userString, youtube_channels, youtubes, youtube_transcripts, youtube_summaries } from './values'
+import { userString, youtube_channels, youtubes, youtube_transcripts, youtube_summaries } from './tables'
 
 function convert_to_sql_string(value: string | number | object) {
   if (typeof value === 'string')
@@ -14,12 +13,15 @@ function convert_to_sql_string(value: string | number | object) {
 }
 
 function write_sql_file_string(table_name: string, rows: object[]) {
-  const column_names = Object.keys(rows[0])
+  const column_names = Object.keys(rows[0]).sort()
   const column_names_string = `"${column_names.join('", "')}"`
+
   const values_string = rows.map(row => {
-    const values = Object.values(row).map(convert_to_sql_string)
+    const values = column_names.map(column => convert_to_sql_string(row[column]))
+    // const values = Object.values(row).map(convert_to_sql_string)
     return `(${values.join(', ')})`
   }).join(',\n')
+
   return `INSERT INTO ${table_name} (${column_names_string}) VALUES\n${values_string};`
 }
 
@@ -38,8 +40,8 @@ if (import.meta.vitest) {
         },
       },
       {
-        text: null,
         real: 12.4,
+        text: null, // order of keys doesn't matter
         int: 2,
         array: [],
         jsonb: {
@@ -47,7 +49,9 @@ if (import.meta.vitest) {
         },
       },
     ]
-    expect(write_sql_file_string('everything', everything_mock)).toMatchFileSnapshot('./write.test.sql')
+    expect(write_sql_file_string('everything', everything_mock)).toMatchFileSnapshot('./write-seed.test.sql')
+    // This will cause our tests to fail if we update our mock data w/o updating the seed, and it will make it effortless to update.
+    expect(exportToSql()).toMatchFileSnapshot('/supabase/seed.sql')
   })
 }
 
@@ -62,5 +66,6 @@ ${write_sql_file_string('youtube_transcripts', youtube_transcripts)}
 
 ${write_sql_file_string('youtube_summaries', youtube_summaries)}
 `
-  writeFileSync('./supabase/seed.sql', sql)
+  return sql
+  // writeFileSync('./supabase/seed.sql', sql)
 }
