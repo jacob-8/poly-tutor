@@ -3,7 +3,7 @@
   import type { Sentence } from '$lib/types'
   import { Button } from 'svelte-pieces'
 
-  export let addSummary: (key: string) => Promise<void>
+  export let addSummary: ({openai_api_key, sentences}: {openai_api_key: string, sentences: Sentence[]}) => Promise<void>
   export let sentences: Sentence[]
   export let studySentence: (sentence: Sentence) => void
 </script>
@@ -32,7 +32,7 @@
     {/each}
   {:else}
     <div class="text-base">
-      <Button onclick={() => addSummary('openai-foo-key')}>{$page.data.t.shows.summarize}</Button>
+      <Button onclick={() => addSummary({openai_api_key: 'openai-foo-key', sentences})}>{$page.data.t.shows.summarize}</Button>
     </div>
   {/if}
 </div>

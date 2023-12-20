@@ -3,7 +3,6 @@ import type { Database as DatabaseGenerated, Tables } from './generated.types'
 import type { Merge } from 'type-fest'
 import type { Section } from '$lib/types'
 
-
 export type Database = DatabaseGenerated
 // breaks types and does not work as Supabase describes
 // export type Database = MergeDeep<DatabaseGenerated,  SpecificyJsonValues>

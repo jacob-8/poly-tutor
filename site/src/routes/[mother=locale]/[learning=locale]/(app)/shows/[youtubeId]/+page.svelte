@@ -5,14 +5,14 @@
   import StudySentence from './StudySentence.svelte'
   import { Button } from 'svelte-pieces'
   import Content from './Content.svelte'
-  import SummaryComponent from './Summary.svelte'
+  import Summary from './Summary.svelte'
   import { browser } from '$app/environment'
-  import type { Transcript, Summary } from '$lib/supabase/database.types'
+  import type { Transcript } from '$lib/supabase/database.types'
   import { goto } from '$app/navigation'
   import Description from './Description.svelte'
 
   export let data
-  $: ({ youtube_id, youtube, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribeCaptions, addSummary, supabase } = data)
+  $: ({ youtube_id, youtube, summary, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribeCaptions, addSummary, supabase } = data)
 
   let cedict: Record<string, CEDictEntry> = {}
   $: if (streamed.cedict)
@@ -21,10 +21,6 @@
   let transcript: Transcript
   $: if (streamed.transcript)
     streamed.transcript.then((t) => transcript = t)
-
-  let summary: Summary
-  $: if (streamed.summary)
-    streamed.summary.then((s) => summary = s)
 
   let checked_for_video = false
   $: if (browser && $user && !checked_for_video) {
@@ -102,9 +98,9 @@
 
       <Description description={youtube.description} />
 
-      {#if summary !== undefined}
-        <SummaryComponent {addSummary}
-          {studySentence} sentences={summary?.summary?.sentences} />
+      {#if transcript}
+        <Summary {addSummary}
+          {studySentence} sentences={$summary?.sentences} />
       {/if}
 
       {#if transcript !== undefined}
