@@ -7,7 +7,7 @@ import lpyKfNjTZi8_getCaptions from '../data/get-captions-zh-TW-lpyKfNjTZi8.json
 // import Ukr40eBfeyg_getTracks from './data/get-tracks-Ukr40eBfeyg.json'
 // import Ukr40eBfeyg_getCaptions from './data/get-captions-zh-TW-Ukr40eBfeyg.json'
 // import _9OkddyYQBec_getCaptions from './data/get-captions-zh-TW-9OkddyYQBec.json'
-import { youtube_ids } from '../shows'
+import { unseeded_youtubes } from '../seed/youtubes'
 import type { WhisperTranscript, ExternalYoutubeTranscribeRequestBody, ChatRequestBody } from '$lib/types'
 import { ResponseCodes } from '$lib/responseCodes'
 
@@ -15,7 +15,7 @@ export const handlers = [
   http.post('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', async ({request}) => {
     const clonedRequest = request.clone()
     const { poly_key, language, youtube_id } = await clonedRequest.json() as ExternalYoutubeTranscribeRequestBody
-    if (youtube_id !== youtube_ids.has_no_captions__ai_camp && poly_key !== 'test-key')
+    if (youtube_id !== unseeded_youtubes.zh_no_captions__ai_camp.id && poly_key !== 'test-key')
       return passthrough()
 
     if (language === 'fr') {
@@ -50,14 +50,14 @@ export const handlers = [
     const isTracksRequest = url.searchParams.get('type') === 'list'
     const isCaptionsRequest = url.searchParams.get('fmt') === 'srv3'
 
-    if (youtube_id === youtube_ids.has_captions_on_youtube__llama) {
+    if (youtube_id === unseeded_youtubes.zh_captions_on_youtube__llama.id) {
       if (isTracksRequest)
         return HttpResponse.json(lpyKfNjTZi8_getTracks)
       if (isCaptionsRequest)
         return HttpResponse.json(lpyKfNjTZi8_getCaptions)
     }
 
-    if (youtube_id === youtube_ids.has_no_captions__ai_camp) {
+    if (youtube_id === unseeded_youtubes.zh_no_captions__ai_camp.id) {
       return new HttpResponse('Internal Server Error', { status: 500, headers: {
         'Content-Type': 'text/plain',
       } })

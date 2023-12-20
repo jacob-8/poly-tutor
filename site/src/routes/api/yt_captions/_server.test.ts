@@ -3,7 +3,7 @@ import { POST } from './+server'
 import { authenticatedLocal, unAuthenticatedLocal } from '$lib/mocks/locals'
 import { ResponseCodes } from '$lib/responseCodes'
 import type { YtCaptionsRequestBody } from '$lib/types'
-import { youtube_ids } from '$lib/mocks/shows'
+import { unseeded_youtubes } from '$lib/mocks/seed/youtubes'
 
 // vi.mock('$env/static/private', () => import.meta.env);
 vi.mock('$env/static/private', () => {
@@ -49,7 +49,7 @@ describe(POST, () => {
 
   test('returns null when no captions', async () => {
     const body: YtCaptionsRequestBody = {
-      youtube_id: youtube_ids.has_no_captions__ai_camp,
+      youtube_id: unseeded_youtubes.zh_no_captions__ai_camp.id,
       locale: 'zh-TW',
     }
     const response = await request(POST, { locals: authenticatedLocal, body })
@@ -59,7 +59,7 @@ describe(POST, () => {
 
   test('parses and returns captions when they exist', async () => {
     const body: YtCaptionsRequestBody = {
-      youtube_id: youtube_ids.has_captions_on_youtube__llama,
+      youtube_id: unseeded_youtubes.zh_captions_on_youtube__llama.id,
       locale: 'zh-TW',
     }
     const response = await request(POST, { locals: authenticatedLocal, body })

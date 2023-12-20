@@ -1,20 +1,14 @@
 import { test, expect } from '@playwright/test'
-import { youtube_ids } from '../../src/lib/mocks/shows'
+import { seeded_youtubes } from '$lib/mocks/seed/youtubes'
 
-const youtube_prefix = 'https://www.youtube.com/watch?v='
-
-test('unauthed user opens video with captions in db and sees them', async ({ page }) => {
-  await page.goto('/en/zh-TW/shows')
-  await page.waitForLoadState('networkidle')
-  await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + youtube_ids.has_captions_in_db)
+// TODO: Current
+test('visitor opens video with captions, transcripts, translations, and summary in db and sees them', async ({ page }) => {
+  await page.goto(`/en/zh-TW/shows/${seeded_youtubes.zh_transcribed_summarized.youtube.id}`)
   await expect(page.getByText('zài 在 贵zhōu 州dī 的dì 第yī 一tiān')).toBeVisible()
 })
 
-// TODO: Current
-// Test: anonymous visitor opens existing video and can view someone elses transcripts and translations and summary
-
 test.skip('Chinese words are split', async ({ page }) => {
-  await page.goto(`/en/zh-TW/shows/${youtube_ids.has_captions_in_db}`)
+  await page.goto(`/en/zh-TW/shows/${seeded_youtubes.zh_transcribed_summarized.youtube.id}`)
   await expect(page.getByText('贵州')).toBeVisible()
 })
 

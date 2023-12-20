@@ -1,20 +1,13 @@
 import type { Variant } from 'kitbook'
 import type Component from './+page.svelte'
-import { chineseVideo, natureShow, type YoutubeWithChannel } from '$lib/mocks/shows'
 import { mockLayoutData } from '$lib/mocks/data/page'
+import { seeded_youtubes } from '$lib/mocks/seed/youtubes'
 
 // export const viewports: Viewport[] = [
 //   { name: 'Desktop', width: 800, height: 600 },
 //   { name: 'Mobile', width: 320, height: 480}
 // ]
 
-const other_youtubes: YoutubeWithChannel[] = [
-  chineseVideo,
-  chineseVideo,
-  chineseVideo,
-  chineseVideo,
-  chineseVideo,
-]
 
 export const variants: Variant<Component>[] = [
   {
@@ -23,7 +16,9 @@ export const variants: Variant<Component>[] = [
       data: {
         ...mockLayoutData,
         user_youtubes: [],
-        other_youtubes,
+        other_youtubes: [
+          seeded_youtubes.zh_transcribed,
+        ],
       }
     },
   },
@@ -32,13 +27,15 @@ export const variants: Variant<Component>[] = [
       data: {
         ...mockLayoutData,
         user_youtubes: [
-          natureShow,
-          natureShow,
-          natureShow,
-          natureShow,
-          natureShow,
+          seeded_youtubes.zh_transcribed_summarized,
+          seeded_youtubes.zh_transcribed_summarized,
+          seeded_youtubes.zh_transcribed_summarized,
+          seeded_youtubes.zh_transcribed_summarized,
+          seeded_youtubes.zh_transcribed_summarized,
         ],
-        other_youtubes,
+        other_youtubes: [
+          seeded_youtubes.zh_transcribed,
+        ],
       }
     },
   },
@@ -47,9 +44,11 @@ export const variants: Variant<Component>[] = [
       data: {
         ...mockLayoutData,
         user_youtubes: [
-          natureShow,
+          seeded_youtubes.zh_transcribed_summarized,
         ],
-        other_youtubes,
+        other_youtubes: [
+          seeded_youtubes.zh_transcribed,
+        ],
       }
     },
   },

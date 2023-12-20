@@ -27,7 +27,7 @@
       <div class="text-sm my-1">{$page.data.t.home.youtube_description}</div>
     </div>
     {#each data.user_youtubes as youtube}
-      <ShowThumbnail {youtube} channel={youtube.channel} />
+      <ShowThumbnail youtube={youtube.youtube} channel={youtube.channel} />
     {/each}
   </div>
 </div>
@@ -36,7 +36,7 @@
   <h2 class=" my-3 font-semibold text-xl">Others are watching...</h2>
   <div class="grid sm:grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
     {#each data.other_youtubes as youtube}
-      <ShowThumbnail {youtube} channel={youtube.channel} />
+      <ShowThumbnail youtube={youtube.youtube} channel={youtube.channel} />
     {/each}
   </div>
 </div>

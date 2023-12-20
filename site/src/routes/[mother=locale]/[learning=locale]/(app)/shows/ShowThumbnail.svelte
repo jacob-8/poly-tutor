@@ -36,6 +36,8 @@
   </div>
 </div>
 
+<!-- <pre>{JSON.stringify(youtube, null, 2)}</pre> -->
+
 <style>
   .centered {
     top: 50%;

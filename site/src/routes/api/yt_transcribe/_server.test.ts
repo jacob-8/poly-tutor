@@ -3,7 +3,7 @@ import { POST } from './+server'
 import { authenticatedLocal, unAuthenticatedLocal } from '$lib/mocks/locals'
 import { ResponseCodes } from '$lib/responseCodes'
 import type { YtTranscribeRequestBody } from '$lib/types'
-import { youtube_ids } from '$lib/mocks/shows'
+import { unseeded_youtubes } from '$lib/mocks/seed/youtubes'
 
 vi.mock('$env/static/private', () => {
   return {
@@ -37,7 +37,7 @@ describe(POST, () => {
 
   test('properly passes on error from transcriber', async () => {
     const body: YtTranscribeRequestBody = {
-      youtube_id: youtube_ids.has_no_captions__ai_camp,
+      youtube_id: unseeded_youtubes.zh_no_captions__ai_camp.id,
       language_code: 'fr' as 'en',
       duration_seconds: 100,
       openai_api_key: 'foo',
@@ -54,7 +54,7 @@ describe(POST, () => {
 
   test('returns proper sentences after successful transcription', async () => {
     const body: YtTranscribeRequestBody = {
-      youtube_id: youtube_ids.has_captions_on_youtube__llama,
+      youtube_id: unseeded_youtubes.zh_captions_on_youtube__llama.id,
       language_code: 'zh',
       duration_seconds: 100,
       openai_api_key: 'fee',

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { youtube_ids } from '../../src/lib/mocks/shows'
+import { seeded_youtubes, unseeded_youtubes } from '$lib/mocks/seed/youtubes'
 
 const youtube_prefix = 'https://www.youtube.com/watch?v='
 
@@ -67,8 +67,7 @@ test('user can remove video from his videos', async ({ page }) => {
 test('user pastes in youtube url for a youtube already in the db with captions and he sees the captions load in from the db', async ({ page }) => {
   await page.goto('/en/zh-TW/shows')
   await page.waitForLoadState('networkidle')
-  const has_captions_in_db = '9ruqSX_p_48'
-  await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + has_captions_in_db)
+  await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + seeded_youtubes.zh_transcribed_summarized.youtube.id)
   await expect(page.getByText('zài 在 贵zhōu 州dī 的dì 第yī 一tiān')).toBeVisible()
 })
 
@@ -76,13 +75,13 @@ test('user pastes in youtube url for a youtube already in the db with captions a
 test('captions load in from YouTube when a new video is added that YouTube has captions for', async ({ page }) => {
   await page.goto('/en/zh-TW/shows')
   await page.waitForLoadState('networkidle')
-  await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + youtube_ids.has_captions_on_youtube__llama)
+  await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + unseeded_youtubes.zh_captions_on_youtube__llama.id)
   await expect(page.getByText('hǎ 哈luō 囉gè 各wèi 位guàn 觀zhòng')).toBeVisible()
 })
 
 // Test: user pastes in youtube url for a youtube not in the db and which YouTube does not have captions for. He sees a button allowing him to transcribe using his credits+Whisper. He transcribes (using mock response) and sees the captions load in.
 test('user can transcribe captions using Whisper when YouTube does not have them and translate them', async ({ page }) => {
-  await page.goto(`/en/zh-TW/shows/${youtube_ids.has_no_captions__ai_camp}`)
+  await page.goto(`/en/zh-TW/shows/${unseeded_youtubes.zh_no_captions__ai_camp.id}`)
   await page.waitForLoadState('networkidle')
   await page.getByRole('button', { name: 'Get Captions' }).click()
   await expect(page.getByText('zhè 這shì 是yī 一gè 個mú 模nǐ 擬d')).toBeVisible()
@@ -103,7 +102,7 @@ test('user can transcribe captions using Whisper when YouTube does not have them
 })
 
 test.skip('user can generate translations for another users transcript', async ({ page }) => {
-  await page.goto(`/en/zh-TW/shows/${youtube_ids.has_captions_in_db}`)
+  await page.goto(`/en/zh-TW/shows/${seeded_youtubes.zh_transcribed.youtube.id}`)
   await page.waitForLoadState('networkidle')
   await page.route('/api/translate', async (route) => {
     const { text } = await route.request().postDataJSON()
@@ -121,7 +120,7 @@ test.skip('user can generate translations for another users transcript', async (
 })
 
 test.skip('user can generate a summary for an entire clip', async ({ page }) => {
-  await page.goto(`/en/zh-TW/shows/${youtube_ids.has_captions_in_db}`)
+  await page.goto(`/en/zh-TW/shows/${seeded_youtubes.zh_transcribed.youtube.id}`)
   await page.waitForLoadState('networkidle')
   await page.getByRole('button', { name: 'Summarize' }).click()
   await expect(page.getByText('This is a fake summary')).toBeVisible()

@@ -1,6 +1,6 @@
 import type { Variant, Viewport } from 'kitbook'
 import type Component from './ShowThumbnail.svelte'
-import { natureShow } from '$lib/mocks/shows'
+import { seeded_youtubes } from '$lib/mocks/seed/youtubes'
 
 export const languages = []
 export const viewports: Viewport[] = [
@@ -10,8 +10,8 @@ export const viewports: Viewport[] = [
 export const variants: Variant<Component>[] = [
   {
     props: {
-      youtube: natureShow,
-      channel: natureShow.channel,
+      youtube: seeded_youtubes.zh_transcribed_summarized.youtube,
+      channel: seeded_youtubes.zh_transcribed_summarized.channel,
     },
   },
 ]
