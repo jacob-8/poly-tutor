@@ -19,7 +19,5 @@ test.skip('Chinese words are split', async ({ page }) => {
   await expect(page.getByText('贵州')).toBeVisible()
 })
 
-
 // Test: shows clip duration
 
-// Test: non-user trying to translate gets a 'no session' error from Supabase currently - this needs caught and formed into an easy to login situation

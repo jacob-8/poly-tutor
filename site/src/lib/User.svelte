@@ -3,7 +3,6 @@
   import { ShowHide, Slideover, portal } from 'svelte-pieces'
   import type { BaseUser } from './supabase/user'
   import type { Readable } from 'svelte/store'
-  import { browser } from '$app/environment'
 
   export let user: Readable<BaseUser>
   export let signOut: () => Promise<void>
@@ -34,12 +33,10 @@
   </ShowHide>
 {:else}
   <ShowHide let:show let:toggle>
-    {#if browser}
-      <button class="header-btn" type="button" on:click={toggle}>
-        <span class="i-material-symbols-login-rounded vertical--2px" />
-        <span class="hidden sm:inline">{$page.data.t.layout.sign_in}</span>
-      </button>
-    {/if}
+    <button class="header-btn" type="button" on:click={toggle}>
+      <span class="i-material-symbols-login-rounded vertical--2px" />
+      <span class="hidden sm:inline">{$page.data.t.layout.sign_in}</span>
+    </button>
     {#if show}
       {#await import('$lib/Auth.svelte') then { default: Auth }}
         <Auth on:close={toggle} />

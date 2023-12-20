@@ -36,7 +36,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
       return transcript
 
     const sentences = await getYoutubesCaptions()
-    if (!sentences) return
+    if (!sentences) return null
 
     const { data: justSavedTranscript, error: savingError } = await saveTranscript(sentences)
     if (savingError)
@@ -84,7 +84,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
       .eq('youtube_id', youtube_id)
     if (error)
       throw new Error(error.message)
-    return summary
+    return summary || null
   }
 
   // TODO: turn on

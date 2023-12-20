@@ -5,6 +5,7 @@
   import { ShowHide } from 'svelte-pieces'
   import SelectLanguage from '$lib/i18n/SelectLanguage.svelte'
   import { invalidateAll } from '$app/navigation'
+  import { browser } from '$app/environment'
 
   export let data
 </script>
@@ -23,17 +24,19 @@
     {/if}
   </div>
   <div class="grow-1" />
-  <ShowHide let:show let:toggle>
-    <button aria-label="Select Language" type="button" on:click={toggle}><span class="i-heroicons-language-20-solid"></span></button>
-    {#if show}
-      <SelectLanguage close={toggle} />
-    {/if}
-  </ShowHide>
-  <!-- <span class="i-ri-sun-line dark:i-ri-moon-line" /> -->
-  <User user={data.user} signOut={async () => {
-    await data.supabase?.auth.signOut()
-    invalidateAll()
-  }} />
+  {#if browser}
+    <ShowHide let:show let:toggle>
+      <button aria-label="Select Language" type="button" on:click={toggle}><span class="i-heroicons-language-20-solid"></span></button>
+      {#if show}
+        <SelectLanguage close={toggle} />
+      {/if}
+    </ShowHide>
+    <!-- <span class="i-ri-sun-line dark:i-ri-moon-line" /> -->
+    <User user={data.user} signOut={async () => {
+      await data.supabase?.auth.signOut()
+      invalidateAll()
+    }} />
+  {/if}
 </div>
 
 <slot />
