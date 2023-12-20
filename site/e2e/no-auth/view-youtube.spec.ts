@@ -10,12 +10,14 @@ test('unauthed user opens video with captions in db and sees them', async ({ pag
   await expect(page.getByText('zài 在 贵zhōu 州dī 的dì 第yī 一tiān')).toBeVisible()
 })
 
+// TODO: Current
+// Test: anonymous visitor opens existing video and can view someone elses transcripts and translations and summary
+
 test.skip('Chinese words are split', async ({ page }) => {
   await page.goto(`/en/zh-TW/shows/${youtube_ids.has_captions_in_db}`)
   await expect(page.getByText('贵州')).toBeVisible()
 })
 
-// Test: anonymous visitor opens existing video and can view someone elses transcripts and translations and summary
 
 // Test: shows clip duration
 

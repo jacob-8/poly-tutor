@@ -105,10 +105,30 @@ test('user can transcribe captions using Whisper when YouTube does not have them
 test.skip('user can generate translations for another users transcript', async ({ page }) => {
   await page.goto(`/en/zh-TW/shows/${youtube_ids.has_captions_in_db}`)
   await page.waitForLoadState('networkidle')
+  await page.route('/api/translate', async (route) => {
+    const { text } = await route.request().postDataJSON()
+    const translatedText = text.split('\n').map(t => 'Mocked translation: ' + t).join('\n')
+    route.fulfill({
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ line_separated_translations: translatedText })
+    })
+  })
   await page.getByRole('button', { name: 'Translate' }).click()
+  await new Promise(r => setTimeout(r, 1000)) // because study sentence isn't actually connected to live data
+  await page.getByText('This is a fake transcript').hover()
   await expect(page.getByText('Mocked translation: This is a fake transcript')).toBeVisible()
 })
 
-// Test: user can generate a summary
+test.skip('user can generate a summary for an entire clip', async ({ page }) => {
+  await page.goto(`/en/zh-TW/shows/${youtube_ids.has_captions_in_db}`)
+  await page.waitForLoadState('networkidle')
+  await page.getByRole('button', { name: 'Summarize' }).click()
+  await expect(page.getByText('This is a fake summary')).toBeVisible()
+})
+
+// TODO: do these in a separate test suite, depends on login, and then the transcribe above depends on setting the openai api key
+// Test: user can add an openai api key
+// Test: user trying to operate without openai api key gets popup to do so
 
 // Test: new user for the very first time, when signing up from a youtube will have their auth saved first then after a small delay the youtube will be added to their videos once the db has their auth id to connect things to, otherwise their will be an error upon trying to add
