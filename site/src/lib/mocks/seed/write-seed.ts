@@ -1,3 +1,4 @@
+import { writeFileSync } from 'fs'
 import { userString, youtube_channels, youtubes, youtube_transcripts, youtube_summaries } from './tables'
 
 function convert_to_sql_string(value: string | number | object) {
@@ -66,6 +67,6 @@ ${write_sql_file_string('youtube_transcripts', youtube_transcripts)}
 
 ${write_sql_file_string('youtube_summaries', youtube_summaries)}
 `
+  writeFileSync('./supabase/seed.sql', sql) // using this because Vitest is not always updating snapshot, oddly enough
   return sql
-  // writeFileSync('./supabase/seed.sql', sql)
 }

@@ -1,3 +1,4 @@
+import type { YouTubeWithAllData } from '$lib/mocks/seed/youtubes'
 import type { PageLoad } from './$types'
 
 export const load = (async ({parent, params: { learning }}) => {
@@ -28,8 +29,11 @@ export const load = (async ({parent, params: { learning }}) => {
   if (error)
     console.error(error)
 
-  const user_youtubes = user_youtubes_data.map(y => ({
-    ...y,
+  const user_youtubes: YouTubeWithAllData[] = user_youtubes_data.map(y => ({
+    youtube: {
+      ...y.youtube,
+      channel_id: y.youtube.channel.id,
+    },
     channel: y.youtube.channel,
   }))
 
@@ -59,8 +63,11 @@ export const load = (async ({parent, params: { learning }}) => {
   if (error2)
     console.error(error2)
 
-  const other_youtubes = other_youtubes_data.map(y => ({
-    youtube: y,
+  const other_youtubes: YouTubeWithAllData[] = other_youtubes_data.map(y => ({
+    youtube: {
+      ...y,
+      channel_id: y.channel.id,
+    },
     channel: y.channel,
   }))
 

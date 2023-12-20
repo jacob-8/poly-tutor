@@ -8,7 +8,6 @@ import { seeded_youtubes } from '$lib/mocks/seed/youtubes'
 //   { name: 'Mobile', width: 320, height: 480}
 // ]
 
-
 export const variants: Variant<Component>[] = [
   {
     name: 'new user',

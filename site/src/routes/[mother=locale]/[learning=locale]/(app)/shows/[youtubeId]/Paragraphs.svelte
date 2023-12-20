@@ -152,7 +152,9 @@
       else
         play({ start_ms: sentence.start_ms, index })
     }}>
-    {#each sentence.words as {text, known, pronunciation}}
+    <div>{sentence.text}</div>
+    <!-- <pre>{JSON.stringify(sentence, null, 2)}</pre> -->
+    <!-- {#each sentence.words as {text, known, pronunciation}}
       <div class="flex flex-col" class:text-green-500={!known}>
         <div class="text-xs text-center text-gray h-10px group-hover:opacity-100" class:opacity-0={known}>
           {pronunciation.replace(' ', '')}
@@ -161,7 +163,7 @@
           {text}
         </div>
       </div>
-    {/each}
+    {/each} -->
   </div>
 {/each}
 

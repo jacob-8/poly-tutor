@@ -1,4 +1,6 @@
 import type { google } from '@google-cloud/language/build/protos/protos'
+import type { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai-edge'
+import type { LocaleCode } from './i18n/locales'
 
 // Books, Shows, Volumes, Pages, Paragraphs are all sections, this let's us nest as many layers as we need
 export interface Section {
@@ -11,7 +13,7 @@ export interface Sentence {
   words?: Word[]
   start_ms?: number
   end_ms?: number
-  machine_translation?: Translation
+  translation?: Translation
   syntax?: google.cloud.language.v1.IAnalyzeSyntaxResponse
 }
 
@@ -24,10 +26,7 @@ interface Word {
   tones?: string
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
-interface Translation {
-  [bcp: string]: string;
-}
+type Translation = Partial<Record<LocaleCode, string>>
 
 export interface CEDictEntry {
   hsk?: string
@@ -89,17 +88,14 @@ export interface WhisperTranscript {
 
 export interface TranslateRequestBody {
   text: string
-  sourceLanguageCode: string
-  targetLanguageCode: string
+  sourceLanguageCode: LocaleCode // https://cloud.google.com/translate/docs/languages
+  targetLanguageCode: LocaleCode
 }
 
 export interface AnalyzeSyntaxRequestBody {
   text: string
   sourceLanguageCode: string
 }
-
-import type { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai-edge'
-import type { LocaleCode } from './i18n/locales'
 
 export interface ChatRequestBody {
   messages: ChatCompletionRequestMessage[]

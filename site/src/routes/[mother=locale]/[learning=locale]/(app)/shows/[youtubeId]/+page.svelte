@@ -72,7 +72,7 @@
     <div class="mt-2 bg-gray-100 p-3 rounded overflow-y-auto grow-1 flex flex-col">
       {#if transcript}
         <!-- {@const hasSyntaxAnalysis = transcript.transcript.sentences[0].syntax} -->
-        {@const hasMachineTranslation = transcript.transcript.sentences[0].machine_translation}
+        {@const hasMachineTranslation = transcript.transcript.sentences[0].translation}
         <div class="mb-1">
           <!-- {#if !hasSyntaxAnalysis}
             <Button onclick={() => data.analyze_syntax(transcript.transcript.sentences)}>{$page.data.t.shows.analyze}</Button>
@@ -102,21 +102,22 @@
 
       <Description description={youtube.description} />
 
-      {#if transcript}
+      {#if summary !== undefined}
         <SummaryComponent {addSummary}
           {studySentence} sentences={summary?.summary?.sentences} />
       {/if}
 
-      <Content
-        entries={cedict}
-        {transcribeCaptions}
-        {youtubeComponent}
-        {playerState}
-        {currentTimeMs}
-        {setTime}
-        content={transcript?.transcript}
-        email={$user?.email}
-        {studySentence} />
+      {#if transcript !== undefined}
+        <Content
+          entries={cedict}
+          {transcribeCaptions}
+          {youtubeComponent}
+          {playerState}
+          {currentTimeMs}
+          {setTime}
+          content={transcript?.transcript}
+          {studySentence} />
+      {/if}
     {:else if error}
       Error: {error}
       {#if !$user}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import type { CEDictEntry, Sentence } from '$lib/types'
 
   export let entries: Record<string, CEDictEntry> = {}
@@ -22,8 +23,8 @@
       {sentence.text}
     {/if}
   </div>
-  {#if sentence.machine_translation}
-    {sentence.machine_translation?.en}
+  {#if sentence.translation}
+    {sentence.translation[$page.data.mother]}
   {/if}
   <div class="border-b border-gray-300 pb-2 mb-2"></div>
 

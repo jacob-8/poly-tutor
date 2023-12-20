@@ -13,7 +13,6 @@ import { post_request } from '$lib/utils/post-request'
 import { merge_syntax } from './merge_syntax'
 
 export const load = (async ({ params: { youtubeId: youtube_id, mother, learning }, fetch, parent }) => {
-  const mother_language = mother.replace(/-.*/, '') as 'zh' | 'en'
   const learning_language = learning.replace(/-.*/, '') as 'zh' | 'en'
   const { supabase, user } = await parent()
   let youtube = await youtube_in_db(youtube_id, supabase)
@@ -78,17 +77,14 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     invalidateAll()
   }
 
-  // TODO: repeat same process for summary as getTranscript
   async function getSummary(): Promise<Summary | null> {
-    return Promise.resolve(null)
-
-  //   const { data: [summary], error } = await supabase
-  //     .from('youtube_summaries')
-  //     .select()
-  //     .eq('youtube_id', youtube_id)
-  //   if (error)
-  //     throw new Error(error.message)
-  //   return summary
+    const { data: [summary], error } = await supabase
+      .from('youtube_summaries')
+      .select()
+      .eq('youtube_id', youtube_id)
+    if (error)
+      throw new Error(error.message)
+    return summary
   }
 
   // TODO: turn on
@@ -122,7 +118,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     //       if (detail === '[DONE]') {
     //         const response = await apiFetch<TranslateRequestBody>('/api/translate', { text: streamingInSummary, sourceLanguageCode: 'zh', targetLanguageCode: 'en' })
     //         const translatedSummary = await response.json() as string
-    //         summary.set({ summary: [{ sentences: [{text: streamingInSummary, machine_translation: { en: translatedSummary}}] }] })
+    //         summary.set({ summary: [{ sentences: [{text: streamingInSummary, translation: { en: translatedSummary}}] }] })
     //         resolve()
     //         return
     //       }
@@ -140,7 +136,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
   // TODO: move this into an endpoint to allow for translating others's captions
   async function translate(sentences: Sentence[]) {
     const text = sentences.map(sentence => sentence.text).join('\n')
-    const { data, error } = await post_request<TranslateRequestBody, {line_separated_translations: string}>('/api/translate', { text, sourceLanguageCode: learning_language, targetLanguageCode: mother_language }, fetch)
+    const { data, error } = await post_request<TranslateRequestBody, {line_separated_translations: string}>('/api/translate', { text, sourceLanguageCode: learning as LocaleCode, targetLanguageCode: mother as LocaleCode }, fetch)
     if (error) {
       console.error(error.message)
       return alert(error.message)

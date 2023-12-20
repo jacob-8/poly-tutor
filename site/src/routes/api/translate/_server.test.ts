@@ -59,7 +59,7 @@ describe(POST, () => {
     const body: TranslateRequestBody = {
       text: 'Translate me!\nTranslate me again.',
       sourceLanguageCode: 'en',
-      targetLanguageCode: 'zh',
+      targetLanguageCode: 'zh-TW',
     }
     const response = await request(POST, { locals: authenticatedLocal, body })
     expect(response.status).toBe(ResponseCodes.OK)

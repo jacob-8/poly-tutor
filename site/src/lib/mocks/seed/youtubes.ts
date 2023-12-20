@@ -1,7 +1,7 @@
 import type { TablesInsert } from '$lib/supabase/generated.types'
 export const seeded_user_id = '5e040c00-ce26-4f2f-8413-e0985ec1f4b2'
 
-interface YouTubeWithAllData {
+export interface YouTubeWithAllData {
   channel: TablesInsert<'youtube_channels'>
   youtube: TablesInsert<'youtubes'>
   transcripts?: TablesInsert<'youtube_transcripts'>[]
@@ -27,7 +27,7 @@ export const zh_transcribed_summarized: YouTubeWithAllData = {
     channel_id: xiao_bai_channel.id,
     id: '9ruqSX_p_48',
     title: '自驾游贵州黔东南，花50元买了个竹篓，是不是特别洋气？【小白的奇幻旅行】',
-    description: 'description here...',
+    description: 'A video that has no captions on YouTube, but captions were transcribed using Whisper. Then a summary was added.',
     duration_seconds: 614.2, // write with decimal for clarity that this is a 'real' number
     // created_at: '2023-12-13T10:21:03.459834+00:00',
   },
@@ -36,7 +36,6 @@ export const zh_transcribed_summarized: YouTubeWithAllData = {
       youtube_id: '9ruqSX_p_48',
       transcript: {
         sentences: [
-          { text: 'This is a fake transcript...' },
           { text: '在贵州的第一天，我们就遇到了一位非常热情的当地人。' },
           { text: '他推荐我们去尝试当地的特色美食，真是太美味了！' },
           { text: '今天我们参观了一个古老的苗族村落，那里的风俗真是独特。' },
@@ -58,7 +57,7 @@ export const zh_transcribed_summarized: YouTubeWithAllData = {
       youtube_id: '9ruqSX_p_48',
       summary: {
         sentences: [
-          { text: 'This is a fake summary...' }
+          { text: 'A very short but fake summary for testing purposes.' }
         ]
       },
       summary_source: 'spoofing',
@@ -76,7 +75,7 @@ export const zh_transcribed: YouTubeWithAllData = {
     channel_id: xiao_bai_channel.id,
     id: 'UnlyETVcDzY',
     title: 'An Elder Transforms a Village by Bringing Back 200 Apple Saplings with a Donkey – Truly Amazing!',
-    description: 'description here...',
+    description: 'A video that has no captions on YouTube, but captions were transcribed using Whisper.',
     duration_seconds: 534
   },
   transcripts: [
@@ -101,6 +100,54 @@ export const zh_nothing: YouTubeWithAllData = {
   }
 }
 
+export const en_transcribed_translated_summarized: YouTubeWithAllData = {
+  channel: freeCodeCamp_channel,
+  youtube: {
+    language: 'en',
+    channel_id: freeCodeCamp_channel.id,
+    id: 'HSZ_uaif57o',
+    title: 'Learn LangChain.js - Build LLM apps with JavaScript and OpenAI',
+    description: 'description here...',
+    duration_seconds: 5940
+  },
+  transcripts: [
+    {
+      youtube_id: 'HSZ_uaif57o',
+      transcript: {
+        sentences: [
+          {
+            text: 'Hello, everyone, and welcome to this video where I will show you how to use LangChain.js to build a language model application.',
+            translation: {
+              'zh-TW': '大家好，歡迎來到這個視頻，在這個視頻中，我將向您展示如何使用LangChain.js來構建語言模型應用程序。'
+            },
+          },
+          { text: 'So we are going to be using JavaScript and OpenAI to build a language model application.' },
+          { text: 'This is going to be a lot of fun.' },
+          { text: 'Lets get started.' },
+          { text: 'So the first thing we need to do is go to the LangChain.js website.' },
+          { text: 'So this is LangChain.js.' },
+        ]
+      },
+      transcript_source: 'spoofing',
+      created_by: seeded_user_id
+    }
+  ],
+  summaries: [
+    {
+      youtube_id: 'HSZ_uaif57o',
+      summary: {
+        sentences: [
+          { text: 'A tutorial showing how to use LangChain.js to build a language model application.' }
+        ]
+      },
+      summary_source: 'spoofing',
+      start_ms: 0,
+      end_ms: 10000,
+      created_by: seeded_user_id
+    }
+  ],
+}
+
 export const en_nothing: YouTubeWithAllData = {
   channel: freeCodeCamp_channel,
   youtube: {
@@ -117,6 +164,7 @@ export const seeded_youtubes: Record<string, YouTubeWithAllData> = {
   zh_transcribed_summarized,
   zh_transcribed,
   zh_nothing,
+  en_transcribed_translated_summarized,
   en_nothing,
 }
 
