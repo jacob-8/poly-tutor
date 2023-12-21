@@ -12,6 +12,7 @@ import type { LocaleCode } from '$lib/i18n/locales'
 import { post_request } from '$lib/utils/post-request'
 import { merge_syntax } from './merge_syntax'
 import { browser } from '$app/environment'
+import { get_openai_api_key } from '$lib/client/UserInfo.svelte'
 
 export const load = (async ({ params: { youtubeId: youtube_id, mother, learning }, fetch, parent }) => {
   const learning_language = learning.replace(/-.*/, '') as 'zh' | 'en'
@@ -21,9 +22,12 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
   let error = ''
   if (!youtube) {
     const { data, error: addingError } = await post_request<YtAddRequestBody, YouTube>('/api/yt_add', { youtube_id, language_code: learning_language }, fetch)
-    if (error)
+    if (error) {
       error = addingError.message
-    youtube = data
+      youtube = { id: youtube_id } as YouTube
+    } else {
+      youtube = data
+    }
   }
 
   async function getTranscript(): Promise<Transcript | null> {
@@ -67,7 +71,9 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     return sentences
   }
 
-  async function transcribeCaptions(openai_api_key: string) {
+  async function transcribe_captions() {
+    const openai_api_key = get_openai_api_key()
+    if (!openai_api_key) return
     const { data: sentences, error } = await post_request<YtTranscribeRequestBody, Sentence[]>('/api/yt_transcribe', { youtube_id, openai_api_key, language_code: 'zh', duration_seconds: 600 }, fetch)
     if (error)
       throw new Error(error.message)
@@ -91,8 +97,11 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
       })
   })
 
-  function addSummary({openai_api_key, sentences}: {openai_api_key: string, sentences: Sentence[]}): Promise<void> {
+  function addSummary({sentences}: {sentences: Sentence[]}): Promise<void> {
     return new Promise((resolve) => {
+      const openai_api_key = get_openai_api_key()
+      if (!openai_api_key) return resolve()
+
       const model = 'gpt-3.5-turbo-1106'
       const transcript = sentences.map(sentence => sentence.text).join('\n')
 
@@ -204,13 +213,12 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
   }
 
   return {
-    youtube_id, // TODO: remove this by making sure youtube at least exists with id
     youtube,
     summary,
     error,
     check_is_in_my_videos,
     remove_from_my_videos,
-    transcribeCaptions,
+    transcribe_captions,
     addSummary,
     translate,
     analyze_syntax,

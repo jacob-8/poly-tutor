@@ -31,9 +31,9 @@ export const variants: Variant<Component>[] = [
           // @ts-ignore
           summary: new Promise((resolve) => { setTimeout(() => resolve(null), 1000) }),
         },
-        addSummary: async ({openai_api_key, sentences}: {openai_api_key: string, sentences: Sentence[]}) => {
+        addSummary: async ({sentences}: {sentences: Sentence[]}) => {
           await new Promise((resolve) => setTimeout(resolve, 1000))
-          alert(`Would use openai_api_key: ${openai_api_key} for ${sentences.length} sentences}`)
+          alert(`Would transcribe ${sentences.length} sentences}`)
         },
         // @ts-ignore
         remove_from_my_videos: (youtube_id) => { alert(`remove_from_my_videos(${youtube_id})`)},

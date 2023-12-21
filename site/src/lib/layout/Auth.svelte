@@ -6,6 +6,7 @@
   import { Button, Form, Modal } from 'svelte-pieces'
   import { toast } from '$lib/client/Toasts.svelte'
 
+  export let close: () => void
   let email: string
   let sixDigitCodeSent = false
   let sixDigitCode: string
@@ -55,7 +56,7 @@
   }
 </script>
 
-<Modal on:close>
+<Modal on:close={close}>
   <div slot="heading">{$page.data.t.layout.sign_in}
     {#if submitting_code}
       <span class="i-svg-spinners-3-dots-fade align--4px" />

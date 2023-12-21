@@ -50,7 +50,7 @@ test('user can remove video from his videos', async ({ page }) => {
     .filter({ has: page.getByText('自驾游贵州') }))
     .toBeVisible()
   await page.getByText('自驾游贵州').click()
-  await page.getByText('Remove from my videos').click()
+  await page.getByTitle('Remove Video').click()
   await expect(page
     .getByTestId('my-videos')
     .filter({ hasNot: page.getByText('自驾游贵州') }))

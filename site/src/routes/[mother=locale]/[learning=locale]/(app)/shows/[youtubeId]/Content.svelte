@@ -8,7 +8,7 @@
   export let entries: Record<string, CEDictEntry>
   export let content: Section
   export let studySentence: (sentence: Sentence) => void
-  export let transcribeCaptions: (openai_api_key: string) => Promise<void>
+  export let transcribe_captions: () => Promise<void>
   export let currentTimeMs: number
   export let setTime: (ms: number) => void
   export let playerState: YT.PlayerState
@@ -29,9 +29,7 @@
     <Paragraphs {youtubeComponent} {playerState} {entries} {setTime} {currentTimeMs} {studySentence} sentences={content.sentences} />
   {:else}
     <div class="text-base">
-      <Button size="lg" class="mt-2" onclick={() => transcribeCaptions('sk-openai-key-foo')}>{$page.data.t.shows.get_captions} (show price)</Button>
-      <!-- <OpenAiUserKey let:openai_api_key>
-      </OpenAiUserKey> -->
+      <Button size="lg" class="mt-2" onclick={() => transcribe_captions()}>{$page.data.t.shows.get_captions} (show price)</Button>
     </div>
   {/if}
 </div>

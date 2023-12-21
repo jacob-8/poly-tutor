@@ -1,7 +1,7 @@
 import type { Variant, Viewport } from 'kitbook'
 import type Component from './Description.svelte'
 
-export const viewports: Viewport[] = [{width: 400, height: 500}]
+export const viewports: Viewport[] = [{width: 400, height: 200}]
 
 export const variants: Variant<Component>[] = [
   {

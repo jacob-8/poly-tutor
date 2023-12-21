@@ -1,11 +1,12 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { ShowHide, Slideover, portal } from 'svelte-pieces'
-  import type { BaseUser } from './supabase/user'
+  import type { BaseUser } from '$lib/supabase/user'
   import type { Readable } from 'svelte/store'
+  import SideMenuContent from './SideMenuContent.svelte'
 
   export let user: Readable<BaseUser>
-  export let signOut: () => Promise<void>
+  export let sign_out: () => Promise<void>
 </script>
 
 {#if $user}
@@ -23,10 +24,7 @@
           <span slot="title">
             {$user.email}
           </span>
-          <button class="slideover-btn" type="button" on:click={signOut}>
-            <span class="i-material-symbols-logout-rounded vertical--3px" />
-            {$page.data.t.layout.sign_out}
-          </button>
+          <SideMenuContent {sign_out} />
         </Slideover>
       </div>
     {/if}
@@ -38,16 +36,12 @@
       <span class="hidden sm:inline">{$page.data.t.layout.sign_in}</span>
     </button>
     {#if show}
-      {#await import('$lib/Auth.svelte') then { default: Auth }}
-        <Auth on:close={toggle} />
+      {#await import('$lib/layout/Auth.svelte') then { default: Auth }}
+        <Auth close={toggle} />
       {/await}
     {/if}
   </ShowHide>
 {/if}
 
 
-<style>
-  .slideover-btn {
-    --at-apply: px-3 py-2 hover:bg-gray/20 w-full text-left;
-  }
-</style>
+

@@ -1,7 +1,7 @@
 <script lang="ts">
   import './main.css'
   import { page } from '$app/stores'
-  import User from '$lib/User.svelte'
+  import User from '$lib/layout/User.svelte'
   import { ShowHide } from 'svelte-pieces'
   import SelectLanguage from '$lib/i18n/SelectLanguage.svelte'
   import { invalidateAll } from '$app/navigation'
@@ -32,7 +32,7 @@
       {/if}
     </ShowHide>
     <!-- <span class="i-ri-sun-line dark:i-ri-moon-line" /> -->
-    <User user={data.user} signOut={async () => {
+    <User user={data.user} sign_out={async () => {
       await data.supabase?.auth.signOut()
       invalidateAll()
     }} />
@@ -48,6 +48,12 @@
 {#await import('$lib/client/Toasts.svelte') then { default: Toasts }}
   <Toasts />
 {/await}
+
+{#await import('$lib/client/UserInfo.svelte') then { default: UserInfo }}
+  <UserInfo />
+{/await}
+
+
 
 <style>
   a, button {

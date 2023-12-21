@@ -1,9 +1,11 @@
 <script context="module" lang="ts">
   import { writable } from 'svelte/store'
+
   interface IToast {
     message: string;
     id?: number;
   }
+
   function createToastsStore() {
     const { subscribe, update } = writable<IToast[]>([])
     return {

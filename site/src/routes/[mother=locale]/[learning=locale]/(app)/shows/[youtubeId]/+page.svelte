@@ -12,7 +12,7 @@
   import Description from './Description.svelte'
 
   export let data
-  $: ({ youtube_id, youtube, summary, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribeCaptions, addSummary, supabase } = data)
+  $: ({ youtube, summary, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase } = data)
 
   let cedict: Record<string, CEDictEntry> = {}
   $: if (streamed.cedict)
@@ -25,7 +25,7 @@
   let checked_for_video = false
   $: if (browser && $user && !checked_for_video) {
     checked_for_video = true
-    check_is_in_my_videos(youtube_id, supabase)
+    check_is_in_my_videos(youtube?.id, supabase)
   }
 
   let playbackRate = 1
@@ -59,7 +59,7 @@
   <div class="w-1/2 sticky z-1 top-0 h-100vh flex flex-col py-2">
     <Youtube
       bind:this={youtubeComponent}
-      {youtube_id}
+      youtube_id={youtube.id}
       {readState}
       {readCurrentTime}
       {setPlaybackRate}
@@ -87,15 +87,21 @@
       {/if}
     </div>
   </div>
-  <div class="w-1/2 pl-2 text-3xl">
-    {#if youtube}
+  <div class="w-1/2 pl-2">
+    {#if error}
+      Error: {error}
+      {#if !$user}
+        - please sign in
+      {/if}
+    {:else}
       {#if $user}
-        <button type="button" class="text-red p-1" on:click={async () => {
-          await remove_from_my_videos(youtube_id, supabase)
+        <Button color="red" form="simple" title="Remove Video" onclick={async () => {
+          await remove_from_my_videos(youtube.id, supabase)
           goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
-        }}>Remove from my videos</button>
+        }}><span class="i-fa6-regular-trash-can -mb-.5" /></Button>
       {/if}
 
+      {youtube.title}
       <Description description={youtube.description} />
 
       {#if transcript?.transcript.sentences}
@@ -106,18 +112,13 @@
       {#if transcript !== undefined}
         <Content
           entries={cedict}
-          {transcribeCaptions}
+          {transcribe_captions}
           {youtubeComponent}
           {playerState}
           {currentTimeMs}
           {setTime}
           content={transcript?.transcript}
           {studySentence} />
-      {/if}
-    {:else if error}
-      Error: {error}
-      {#if !$user}
-        - please sign in
       {/if}
     {/if}
   </div>
