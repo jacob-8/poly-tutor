@@ -5,6 +5,9 @@ import { unseeded_youtubes } from '$lib/mocks/seed/youtubes'
 test('user can transcribe captions using Whisper when YouTube does not have them and translate them', async ({ page }) => {
   await page.goto(`/en/zh-TW/shows/${unseeded_youtubes.zh_no_captions__ai_camp.id}`)
   await page.getByRole('button', { name: 'Get Captions' }).click()
+  await page.getByPlaceholder('sk-').fill('sk-this-is-a-fake-key-obviously')
+  await page.getByLabel('Close').click()
+  await page.getByRole('button', { name: 'Get Captions' }).click()
   await expect(page.locator('#caption_0').getByText('這是一個模擬的Whisper轉錄')).toBeVisible()
   // remove the following temporary translate section once they can generate captions for other users transcripts
   await page.route('/api/translate', async (route) => {
