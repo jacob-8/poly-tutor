@@ -22,7 +22,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
   let error = ''
   if (!youtube) {
     const { data, error: addingError } = await post_request<YtAddRequestBody, YouTube>('/api/yt_add', { youtube_id, language_code: learning_language }, fetch)
-    if (error) {
+    if (addingError) {
       error = addingError.message
       youtube = { id: youtube_id } as YouTube
     } else {

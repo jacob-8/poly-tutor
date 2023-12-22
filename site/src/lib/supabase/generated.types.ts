@@ -110,23 +110,32 @@ export interface Database {
         Row: {
           description: string | null
           id: string
+          subscriber_count: number | null
           thumbnail_url: string
           title: string
           updated_at: string
+          video_count: number | null
+          view_count: number | null
         }
         Insert: {
           description?: string | null
           id: string
+          subscriber_count?: number | null
           thumbnail_url: string
           title: string
           updated_at?: string
+          video_count?: number | null
+          view_count?: number | null
         }
         Update: {
           description?: string | null
           id?: string
+          subscriber_count?: number | null
           thumbnail_url?: string
           title?: string
           updated_at?: string
+          video_count?: number | null
+          view_count?: number | null
         }
         Relationships: []
       }
@@ -243,7 +252,10 @@ export interface Database {
           duration_seconds: number | null
           id: string
           language: Database['public']['Enums']['language']
+          like_count: number | null
+          published_at: string | null
           title: string
+          view_count: number | null
         }
         Insert: {
           channel_id: string
@@ -252,7 +264,10 @@ export interface Database {
           duration_seconds?: number | null
           id: string
           language: Database['public']['Enums']['language']
+          like_count?: number | null
+          published_at?: string | null
           title: string
+          view_count?: number | null
         }
         Update: {
           channel_id?: string
@@ -261,7 +276,10 @@ export interface Database {
           duration_seconds?: number | null
           id?: string
           language?: Database['public']['Enums']['language']
+          like_count?: number | null
+          published_at?: string | null
           title?: string
+          view_count?: number | null
         }
         Relationships: [
           {

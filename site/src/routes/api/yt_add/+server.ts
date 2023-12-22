@@ -5,6 +5,7 @@ import type { YtAddRequestBody } from '$lib/types'
 import type { Supabase } from '$lib/supabase/database.types'
 import { getAdminSupabaseClient } from '$lib/supabase/admin'
 import { YOUTUBE_API_3_KEY } from '$env/static/private'
+import { youtube_pt_format_duration_to_seconds } from './duration-to-seconds'
 
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
   const { data: session_data, error: _error } = await getSession()
@@ -17,7 +18,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
     throw error(ResponseCodes.BAD_REQUEST, 'No youtube_id found in request body')
 
   try {
-    const { channel_id, title, description, locale } = await get_youtube_info_from_youtube(youtube_id)
+    const { channel_id, title, description, locale, published_at, duration_seconds } = await get_youtube_info_from_youtube(youtube_id)
 
     const adminSupabase = getAdminSupabaseClient()
 
@@ -35,6 +36,8 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
       description,
       channel_id,
       language,
+      published_at,
+      duration_seconds
     })
       .select()
       .single()
@@ -48,11 +51,11 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
 }
 
 async function get_youtube_info_from_youtube(youtube_id: string) {
-  const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${youtube_id}&key=${YOUTUBE_API_3_KEY}`
+  const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=${youtube_id}&key=${YOUTUBE_API_3_KEY}`
 
   const response = await fetch(url)
   const data = await response.json() as YouTubeVideoSnippetData
-  const { items: [{ snippet: { channelId, title, description, publishedAt, defaultLanguage, defaultAudioLanguage } }] } = data
+  const { items: [{ snippet: { channelId: channel_id, title, description, publishedAt: published_at, defaultLanguage, defaultAudioLanguage }, contentDetails: { duration }, statistics: { viewCount, likeCount } }] } = data
 
   const locale = defaultLanguage || defaultAudioLanguage
 
@@ -60,14 +63,20 @@ async function get_youtube_info_from_youtube(youtube_id: string) {
     title: string,
     description: string,
     channel_id: string,
-    published_at: string, // TODO: use this
+    published_at: string,
     locale: string,
+    duration_seconds: number,
+    view_count: number,
+    like_count: number,
   } = {
     title,
     description,
-    channel_id: channelId,
-    published_at: publishedAt,
+    channel_id,
+    published_at,
     locale,
+    duration_seconds: youtube_pt_format_duration_to_seconds(duration),
+    view_count: viewCount ? parseInt(viewCount, 10) : null,
+    like_count: likeCount ? parseInt(likeCount, 10) : null,
   }
   return result
 }
@@ -83,19 +92,22 @@ async function channel_is_in_db(channel_id: string, supabase: Supabase) {
 }
 
 async function add_channel(channel_id: string, supabase: Supabase) {
-  const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channel_id}&key=${YOUTUBE_API_3_KEY}`
+  const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channel_id}&key=${YOUTUBE_API_3_KEY}`
 
   const response = await fetch(url)
-  const { items: [{ snippet: { title, description, thumbnails } }] } = await response.json() as YouTubeChannelSnippetData
-  const BEFORE_EQUAL = /([^=]*)=/
+  const { items: [{ snippet: { title, description, thumbnails }, statistics: { subscriberCount, videoCount, viewCount } }] } = await response.json() as YouTubeChannelSnippetData
+  const BEFORE_EQUAL = /(?<thumbnail_url>[^=]*)=/
   const match = thumbnails.default.url.match(BEFORE_EQUAL)
-  const thumbnail_url = match ? match[1] : ''
+  const thumbnail_url = match?.groups?.thumbnail_url || ''
 
   const { error } = await supabase.from('youtube_channels').insert({
     id: channel_id,
     title,
-    description,
     thumbnail_url,
+    description,
+    subscriber_count: subscriberCount ? parseInt(subscriberCount, 10) : null,
+    video_count: videoCount ? parseInt(videoCount, 10) : null,
+    view_count: viewCount ? parseInt(viewCount, 10) : null,
   })
   if (error)
     throw new Error(error.message)
@@ -151,6 +163,21 @@ interface YouTubeVideoSnippetData {
       };
       defaultAudioLanguage: string;
     };
+    contentDetails: {
+      duration: string;
+      dimension: '2d' | '3d';
+      definition: 'sd' | 'hd';
+      caption: boolean
+      licensedContent: boolean;
+      contentRating: Record<string, unknown>;
+      projection: 'rectangular' | '360';
+    };
+    statistics: { // quoted numbers
+      viewCount: string;
+      likeCount: string;
+      favoriteCount: string;
+      commentCount: string;
+    };
   }[];
   pageInfo: {
     totalResults: number;
@@ -197,5 +224,12 @@ interface YouTubeChannelSnippetData {
       };
       country: string;
     };
+    statistics: {
+      viewCount: string // quoted number
+      subscriberCount: string // quoted number
+      hiddenSubscriberCount: boolean
+      videoCount: string // quoted number
+    }
   }[];
 }
+

@@ -1,16 +1,20 @@
 import { test as setup } from '@playwright/test'
 import { execSync } from 'child_process'
-import { readFileSync } from 'fs'
+import { writeFileSync } from 'fs'
 import DB from './db'
+import { exportToSql } from '$lib/mocks/seed/write-seed'
 
 setup('reseed db', async () => {
   await startSupabase()
   const dataBase = new DB()
+
   await dataBase.executeQuery(`truncate table youtube_channels cascade;`)
   await dataBase.executeQuery(`truncate table auth.users cascade;`)
-  const seedFilePath = '../supabase/seed.sql'
-  const seedSql = readFileSync(seedFilePath, 'utf8')
+
+  const seedSql = exportToSql()
   await dataBase.executeQuery(seedSql)
+  const seedFilePath = '../supabase/seed.sql'
+  writeFileSync(seedFilePath, seedSql)
 })
 
 async function startSupabase() {

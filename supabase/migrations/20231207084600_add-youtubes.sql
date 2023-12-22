@@ -3,6 +3,9 @@ CREATE TABLE youtube_channels (
   title text not null,
   "description" text null,
   thumbnail_url text not null,
+  subscriber_count int null,
+  video_count int null,
+  view_count int null,
   updated_at timestamp with time zone not null default now()
 );
 
@@ -21,6 +24,9 @@ CREATE TABLE youtubes (
   duration_seconds real null,
   "language" language not null,
   channel_id text references youtube_channels(id) not null,
+  published_at timestamp with time zone null,
+  view_count int null,
+  like_count int null,
   created_at timestamp with time zone not null default now()
 );
 

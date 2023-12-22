@@ -32,7 +32,8 @@ async function handleResponse<ExpectedResponse extends Record<string, any>>(resp
     try {
       try {
         const body = await response.json()
-        return { data: null, error: { status, message: body.message || JSON.stringify(body) } }
+        const error = { status, message: body.message || JSON.stringify(body) }
+        return { data: null, error }
       } catch {
         const textBody = await responseClone.text()
         return { data: null, error: { status, message: textBody } }

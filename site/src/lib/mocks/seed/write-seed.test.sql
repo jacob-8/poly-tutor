@@ -1,3 +1,4 @@
-INSERT INTO everything ("array", "int", "jsonb", "real", "text") VALUES
-('{1,2}', 2, '{"a":{"b":1}}'::jsonb, 12.4, 'hello'),
-('{}', 2, '{"array":[]}'::jsonb, 12.4, null);
+INSERT INTO everything ("array", "boolean", "int", "jsonb", "real", "text") VALUES
+('{1,2}', true, 2, '{"a":{"b":1}}'::jsonb, 12.4, 'hello'),
+('{}', false, 0, '{"array":[]}'::jsonb, 12.4, ''),
+(null, null, null, null, null, null);

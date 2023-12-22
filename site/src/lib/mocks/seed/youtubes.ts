@@ -11,13 +11,21 @@ export interface YouTubeWithAllData {
 const xiao_bai_channel: TablesInsert<'youtube_channels'> = {
   id: 'UC-7jKPgRmLBiB1ltbABubNA',
   title: '小白的奇幻旅行',
-  thumbnail_url: 'https://yt3.ggpht.com/ytc/APkrFKav44IZWeQMQttWjk2AsDi8oLkP1Mnf6zgIVu8s'
+  thumbnail_url: 'https://yt3.ggpht.com/ytc/APkrFKav44IZWeQMQttWjk2AsDi8oLkP1Mnf6zgIVu8s',
+  description: null,
+  subscriber_count: null,
+  video_count: null,
+  view_count: null,
 }
 
 const freeCodeCamp_channel: TablesInsert<'youtube_channels'> = {
   id: 'UC8butISFwT-Wl7EV0hUK0BQ',
   title: 'freeCodeCamp.org',
-  thumbnail_url: 'https://yt3.ggpht.com/ytc/APkrFKaqca-xQcJtp1Pqv-APucCa0nToHYGPVT00YBGOSw'
+  thumbnail_url: 'https://yt3.ggpht.com/ytc/APkrFKaqca-xQcJtp1Pqv-APucCa0nToHYGPVT00YBGOSw',
+  description: 'Learn Code',
+  subscriber_count: 8810000,
+  video_count: 1500,
+  view_count: 1003000405,
 }
 
 export const zh_transcribed_summarized: YouTubeWithAllData = {
@@ -29,7 +37,9 @@ export const zh_transcribed_summarized: YouTubeWithAllData = {
     title: '自驾游贵州黔东南，花50元买了个竹篓，是不是特别洋气？【小白的奇幻旅行】',
     description: 'A video that has no captions on YouTube, but captions were transcribed using Whisper. Then a summary was added.',
     duration_seconds: 614.2, // write with decimal for clarity that this is a 'real' number
-    // created_at: '2023-12-13T10:21:03.459834+00:00',
+    published_at: '2023-02-28T04:00:13Z',
+    view_count: 136000,
+    like_count: 7700,
   },
   transcripts: [
     {
