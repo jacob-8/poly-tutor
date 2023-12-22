@@ -86,9 +86,15 @@ importers:
       '@unocss/svelte-scoped':
         specifier: ^0.58.0
         version: 0.58.0
+      comlink:
+        specifier: ^4.4.1
+        version: 4.4.1
       d3-dsv:
         specifier: ^3.0.1
         version: 3.0.1
+      jieba-wasm:
+        specifier: ^0.0.2
+        version: 0.0.2
       kitbook:
         specifier: 1.0.0-beta.11
         version: 1.0.0-beta.11(@sveltejs/kit@1.27.7)(svelte@4.2.8)(typescript@5.3.3)
@@ -2493,6 +2499,10 @@ packages:
       delayed-stream: 1.0.0
     dev: true
 
+  /comlink@4.4.1:
+    resolution: {integrity: sha512-+1dlx0aY5Jo1vHy/tSsIGpSkN4tS9rZSW8FIhG0JH/crs9wwweswIo/POr451r7bZww3hFbPAKnTpimzL/mm4Q==}
+    dev: true
+
   /comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
     dev: true
@@ -3659,6 +3669,10 @@ packages:
 
   /isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
+    dev: true
+
+  /jieba-wasm@0.0.2:
+    resolution: {integrity: sha512-CPmS+U/klii3LWKrccDqm/BvWmgBB3x4HV/WBxC/l7GsitVfzCzsZ8cWz+vh2riv6M5P8rvHJzCz4xsoFA79cw==}
     dev: true
 
   /jiti@1.21.0:

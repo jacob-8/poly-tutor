@@ -6,8 +6,15 @@
   import SelectLanguage from '$lib/i18n/SelectLanguage.svelte'
   import { invalidateAll } from '$app/navigation'
   import { browser } from '$app/environment'
+  import { onMount } from 'svelte'
 
   export let data
+
+  onMount(async () => {
+    const { api } = await import('$lib/client/jieba/expose-analysis-worker')
+    const result = await api.segment('你好世界！')
+    console.info(result)
+  })
 </script>
 
 <div class="flex items-center space-x-1 py-1 pl-1" data-sveltekit-preload-data="tap">

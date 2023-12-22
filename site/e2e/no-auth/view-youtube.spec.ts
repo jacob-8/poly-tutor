@@ -29,3 +29,18 @@ test.skip('Translations and definitions show in sync with currently playing sent
   await page.goto(`/en/zh-TW/shows/${seeded_youtubes.zh_transcribed_summarized.youtube.id}`)
   await expect(page.getByText('贵州')).toBeVisible()
 })
+
+// After cleaning captions into sentences and translating:
+
+// Split into 5 minute sections
+
+// !Split words (if not already)
+// Add helps to words that need it based on my vocab
+
+// Show most common unknown words (don't include ones just needing reading help)
+
+// Benchmark to see if need to process smaller chunks and then stream them in.
+
+// Start playing 1 sentence at a time (c-e-c)
+
+// Show unknown words again without helps to mark the known ones or study them

@@ -95,17 +95,20 @@
         - please sign in
       {/if}
     {:else}
-      {#if $user}
-        <Button color="red" form="simple" title="Remove Video" onclick={async () => {
-          await remove_from_my_videos(youtube.id, supabase)
-          goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
-        }}><span class="i-fa6-regular-trash-can -mb-.5" /></Button>
-      {/if}
 
-      {youtube.title}
-      {#if youtube.duration_seconds}
-        <span class="bg-black rounded text-white text-xs px-1 py.5">{format_time(youtube.duration_seconds)}</span>
-      {/if}
+
+      <div class="max-h-200px overflow-y-auto border-b pb-2 text-lg">
+        {youtube.title}
+        {#if youtube.duration_seconds}
+          <span class="bg-black rounded text-white text-xs px-1 py.5">{format_time(youtube.duration_seconds)}</span>
+        {/if}
+        {#if $user}
+          <Button color="red" form="simple" title="Remove Video" onclick={async () => {
+            await remove_from_my_videos(youtube.id, supabase)
+            goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
+          }}><span class="i-fa6-regular-trash-can -mb-.5" /></Button>
+        {/if}
+      </div>
       <Description description={youtube.description} />
 
       {#if transcript?.transcript.sentences}
