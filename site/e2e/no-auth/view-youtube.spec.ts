@@ -14,9 +14,14 @@ test('visitor opens video with transcripts, summary, and translation in db and s
   await expect(page.getByText(first_sentence.translation['zh-TW'])).toBeVisible()
 })
 
-// TODO: Current
+test('show duration is shown', async ({ page }) => {
+  await page.goto(`/en/zh-TW/shows/${seeded_youtubes.zh_transcribed_summarized.youtube.id}`)
+  await expect(page.getByText('10:14')).toBeVisible()
+})
+
 test.skip('Chinese words are split', async ({ page }) => {
   await page.goto(`/en/zh-TW/shows/${seeded_youtubes.zh_transcribed_summarized.youtube.id}`)
+  await expect(page.getByText('在贵州的第一天')).not.toBeVisible()
   await expect(page.getByText('贵州')).toBeVisible()
 })
 
@@ -24,9 +29,3 @@ test.skip('Translations and definitions show in sync with currently playing sent
   await page.goto(`/en/zh-TW/shows/${seeded_youtubes.zh_transcribed_summarized.youtube.id}`)
   await expect(page.getByText('贵州')).toBeVisible()
 })
-
-test.skip('show duration is shown', async ({ page }) => {
-  await page.goto(`/en/zh-TW/shows/${seeded_youtubes.zh_transcribed_summarized.youtube.id}`)
-  // await expect(page.getByText('贵州')).toBeVisible()
-})
-

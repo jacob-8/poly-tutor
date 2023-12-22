@@ -10,6 +10,7 @@
   import type { Transcript } from '$lib/supabase/database.types'
   import { goto } from '$app/navigation'
   import Description from './Description.svelte'
+  import { format_time } from '$lib/utils/format_time'
 
   export let data
   $: ({ youtube, summary, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase } = data)
@@ -102,6 +103,9 @@
       {/if}
 
       {youtube.title}
+      {#if youtube.duration_seconds}
+        <span class="bg-black rounded text-white text-xs px-1 py.5">{format_time(youtube.duration_seconds)}</span>
+      {/if}
       <Description description={youtube.description} />
 
       {#if transcript?.transcript.sentences}
