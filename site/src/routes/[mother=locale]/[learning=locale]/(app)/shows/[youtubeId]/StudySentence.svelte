@@ -1,15 +1,14 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import type { CEDictEntry, Sentence } from '$lib/types'
+  import type { Sentence } from '$lib/types'
 
-  export let entries: Record<string, CEDictEntry> = {}
   export let sentence: Sentence
   export let onmouseenter: () => void
   export let onmouseleave: () => void
   export let playing = false
 
-  $: knownWords = sentence.words?.filter(({ known, language }) => known && language === 'zh') || []
-  $: unKnownWords = sentence.words?.filter(({ known }) => !known) || []
+// $: knownWords = sentence.words?.filter(({ known, language }) => known && language === 'zh') || []
+  // $: unKnownWords = sentence.words?.filter(({ known }) => !known) || []
 </script>
 
 <!-- on:mouseenter={onmouseenter} on:mouseleave={onmouseleave} -->
@@ -28,7 +27,7 @@
   {/if}
   <div class="border-b border-gray-300 pb-2 mb-2"></div>
 
-  <table class="border-b border-gray-300 pb-2 mb-2 w-full">
+  <!-- <table class="border-b border-gray-300 pb-2 mb-2 w-full">
     {#each unKnownWords as { text, partOfSpeechTag }}
       <tr>
         <td class="v-top text-xl whitespace-nowrap text-green-500">{text}</td>
@@ -52,5 +51,5 @@
         </td>
       </tr>
     {/each}
-  </table>
+  </table> -->
 </div>

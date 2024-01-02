@@ -9,7 +9,7 @@ export const mockLayoutData: LayoutData = {
   supabase: null,
   authResponse: null,
   user: readable(null),
-  user_vocabulary: writable([]),
+  user_vocabulary: writable({}),
 }
 
 export const mockBobUser = readable({ email: 'bob@gmail.com'}) as Readable<BaseUser>

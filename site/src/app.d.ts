@@ -3,6 +3,7 @@ import type { BaseUser } from '$lib/supabase/user'
 import type { AuthResponse } from '@supabase/supabase-js'
 import type { Readable, Writable } from 'svelte/store'
 import type { Supabase } from '$lib/supabase/database.types'
+import type { UserVocabulary } from '$lib/types'
 
 declare global {
 	namespace App {
@@ -18,7 +19,7 @@ declare global {
 			supabase: Supabase
 			authResponse: AuthResponse
 			user: Readable<BaseUser>
-			user_vocabulary: Writable<string[]>
+			user_vocabulary: Writable<UserVocabulary>
     }
 		// interface Error {}
 		// interface Platform {}

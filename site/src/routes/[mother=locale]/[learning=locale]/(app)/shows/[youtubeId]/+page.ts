@@ -3,7 +3,6 @@ import type { AnalyzeSyntaxRequestBody, ChatRequestBody, OpenAiChatStreamRespons
 import { fetchSSE } from '$lib/client/fetchSSE'
 import type { ChatCompletionRequestMessage } from 'openai-edge'
 import { merge_translations } from './merge_translations'
-import { getCEDict } from './getCEDict'
 import { check_is_in_my_videos, remove_from_my_videos, youtube_in_db } from './check-youtube'
 import type { Transcript, YouTube } from '$lib/supabase/database.types'
 import { invalidateAll } from '$app/navigation'
@@ -223,7 +222,6 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     translate,
     analyze_syntax,
     streamed: {
-      cedict: getCEDict(),
       transcript: getTranscript(),
     },
   }

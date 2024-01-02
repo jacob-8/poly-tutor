@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { CEDictEntry, Sentence } from '$lib/types'
+  import type { Sentence } from '$lib/types'
   import { Button } from 'svelte-pieces'
-  import { prepareSentences } from './prepareSentences'
+  // import { prepareSentences } from './prepareSentences'
   import { PlayerState } from './Youtube.svelte'
   // eslint-disable-next-line no-duplicate-imports
   import type Youtube from './Youtube.svelte'
 
-  export let entries: Record<string, CEDictEntry>
+  // export let entries: Record<string, CEDictEntry>
   // export let paragraphs: Paragraph[] = []
   export let sentences: Sentence[] = []
   export let studySentence: (sentence: Sentence) => void
@@ -23,7 +23,8 @@
   let updated_play_position: Date | null = null
   let selected_caption_index = 0
 
-  $: captions = prepareSentences(sentences, entries)
+  // $: captions = prepareSentences(sentences, entries)
+  $: captions = sentences
 
   $: is_playing = playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING
   let current_caption_index = 0

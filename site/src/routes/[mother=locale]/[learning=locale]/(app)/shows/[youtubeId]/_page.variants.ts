@@ -4,7 +4,7 @@ import type Component from './+page.svelte'
 import { mockBobUser, mockLayoutData } from '$lib/mocks/data/page'
 import type { YouTube } from '$lib/supabase/database.types'
 import { writable } from 'svelte/store'
-import type { Sentence } from '$lib/types'
+import { WordStatus, type Sentence } from '$lib/types'
 import { zh_non_seeded, zh_transcribed_summarized } from '$lib/mocks/seed/youtubes'
 
 const youtube: YouTube = {
@@ -34,12 +34,15 @@ export const variants: Variant<Component>[] = [
         error: null,
         summary: writable(zh_transcribed_summarized.summaries[0].summary),
         streamed: {
-          cedict: new Promise((resolve) => { setTimeout(() => resolve({}), 3000) }),
           // @ts-ignore
           transcript: new Promise((resolve) => { setTimeout(() => resolve( zh_transcribed_summarized.transcripts[0]), 1000) }),
         },
         translate,
-        // addSummary,
+        check_is_in_my_videos: null,
+        remove_from_my_videos: null,
+        addSummary: null,
+        analyze_syntax: null,
+        transcribe_captions: null,
       }
     },
   },
@@ -50,11 +53,10 @@ export const variants: Variant<Component>[] = [
       data: {
         ...mockLayoutData,
         user: mockBobUser,
-        user_vocabulary: writable(['你好']),
+        user_vocabulary: writable({'你好': {status: WordStatus.known, views: 1}}),
         youtube,
         summary: writable(zh_transcribed_summarized.summaries[0].summary),
         streamed: {
-          cedict: new Promise((resolve) => { setTimeout(() => resolve({}), 1000) }),
           // @ts-ignore
           transcript: new Promise((resolve) => { setTimeout(() => resolve( zh_transcribed_summarized.transcripts[0]), 1000) }),
         },

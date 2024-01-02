@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import Youtube, { PlayerState } from './Youtube.svelte'
-  import type { CEDictEntry, Sentence } from '$lib/types'
+  import type { Sentence } from '$lib/types'
   import StudySentence from './StudySentence.svelte'
   import { Button } from 'svelte-pieces'
   import Content from './Content.svelte'
@@ -15,9 +15,9 @@
   export let data
   $: ({ youtube, summary, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase } = data)
 
-  let cedict: Record<string, CEDictEntry> = {}
-  $: if (streamed.cedict)
-    streamed.cedict.then((c) => cedict = c)
+  // let cedict: Record<string, CEDictEntry> = {}
+  // $: if (streamed.cedict)
+  //   streamed.cedict.then((c) => cedict = c)
 
   let transcript: Transcript
   $: if (streamed.transcript)
@@ -81,7 +81,7 @@
         </div>
 
         {#if currentStudySentence}
-          <StudySentence playing={playerState === PlayerState.PLAYING} entries={cedict} onmouseenter={() => youtubeComponent.pause()} onmouseleave={() => youtubeComponent.play()} sentence={currentStudySentence} />
+          <StudySentence playing={playerState === PlayerState.PLAYING} onmouseenter={() => youtubeComponent.pause()} onmouseleave={() => youtubeComponent.play()} sentence={currentStudySentence} />
         {:else}
           Hover/click on sentence to study.
         {/if}
@@ -118,7 +118,6 @@
 
       {#if transcript !== undefined}
         <Content
-          entries={cedict}
           {transcribe_captions}
           {youtubeComponent}
           {playerState}

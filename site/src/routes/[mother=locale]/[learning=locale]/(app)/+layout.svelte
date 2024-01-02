@@ -11,7 +11,7 @@
   export let data
 
   onMount(async () => {
-    const { api } = await import('$lib/client/jieba/expose-analysis-worker')
+    const { api } = await import('$lib/analysis/expose-analysis-worker')
     const result = await api.segment('你好世界！')
     console.info(result)
   })

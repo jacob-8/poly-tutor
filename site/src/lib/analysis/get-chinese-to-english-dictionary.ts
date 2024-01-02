@@ -1,0 +1,103 @@
+import type { CEDictEntry } from '$lib/types'
+import { find_tone } from '$lib/utils/find-tone'
+import { csvParse } from 'd3-dsv'
+
+export async function get_chinese_to_english_dictionary() {
+  if (typeof window === 'undefined') return {}
+  const url = '/dictionaries/cedict_pinyin.csv'
+  const response = await fetch(url)
+  const csv = await response.text()
+  const downloaded_entries = csvParse(csv) as unknown as CEDictEntry[]
+  return prepare_entries(downloaded_entries)
+}
+
+function prepare_entries(csv_rows: CEDictEntry[]): Record<string, CEDictEntry> {
+  const entries: Record<string, CEDictEntry> = {}
+  for (const entry of csv_rows) {
+    if (!entries[entry.traditional])
+      entries[entry.traditional] = { ...entry, definitions_array: sort_definitions(entry.definitions)}
+    else
+      entries[entry.traditional].definitions_array = [...entries[entry.traditional].definitions_array, ...sort_definitions(entry.definitions)]
+  }
+
+  for (const entry of Object.values(entries)) {
+    entry.tones = entry.traditional.split('').map(char => {
+      return find_tone(entries[char].pinyin) || 2
+    })
+  }
+
+  for (const entry of Object.values(entries)) {
+    if (entry.simplified && !entries[entry.simplified])
+      entries[entry.simplified] = entry
+  }
+
+  return entries
+}
+
+function sort_definitions(definitions: string): string[] {
+  return definitions.split('/').sort((a, b) => {
+    if (a.includes('surname') || a.startsWith('variant') || a.startsWith('old variant')) return 1
+    if (b.includes('surname') || b.startsWith('variant') || b.startsWith('old variant')) return -1
+    return 0
+  })
+}
+
+if (import.meta.vitest) {
+  describe(prepare_entries, () => {
+    test('combines two entries for the same traditional character', () => {
+      const entries: CEDictEntry[] = [
+        { traditional: '你',
+          pinyin: 'nǐ',
+          definitions: 'you (informal)' },
+        { traditional: '你',
+          pinyin: 'nǐ',
+          definitions: 'you (female)/variant of 你[nǐ]' },
+        { traditional: '好',
+          pinyin: 'hǎo',
+          definitions: 'good/well/proper/good to/easy' },
+      ]
+
+      const result = prepare_entries(entries)
+      expect(result['你'].definitions_array).toEqual([
+        'you (informal)',
+        'you (female)',
+        'variant of 你[nǐ]',
+      ])
+      expect(Object.keys(result)).toEqual(['你', '好'])
+    })
+
+    const entries: CEDictEntry[] = [
+      { traditional: '你們',
+        simplified: '你们',
+        pinyin: 'nǐmen',
+        definitions: 'you (plural)/CL:個|个[gè]' },
+      { traditional: '你',
+        pinyin: 'nǐ',
+        definitions: 'you' },
+      { traditional: '們',
+        pinyin: 'men',
+        definitions: 'plural marker for pronouns, and nouns referring to individuals' },
+    ]
+
+    test('adds entries for simplified form', () => {
+      const result = prepare_entries(entries)
+      expect(result['你們']).toEqual(result['你们'])
+    })
+
+    test('adds tone numbers', () => {
+      const result = prepare_entries(entries)
+      expect(result['你們'].tones).toEqual([3, 5])
+    })
+  })
+
+  describe(sort_definitions, () => {
+    test('places surname at the end', () => {
+      const result = sort_definitions('surname Guo/country/nation/state/national')
+
+      expect(result).toEqual([
+        'country', 'nation', 'state', 'national',
+        'surname Guo',
+      ])
+    })
+  })
+}
