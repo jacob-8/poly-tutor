@@ -15,7 +15,7 @@ import { get_openai_api_key } from '$lib/client/UserInfo.svelte'
 
 export const load = (async ({ params: { youtubeId: youtube_id, mother, learning }, fetch, parent }) => {
   const learning_language = learning.replace(/-.*/, '') as 'zh' | 'en'
-  const { supabase, user } = await parent()
+  const { supabase, user, analyze_sentences, analyze_and_emphasize_sentences } = await parent()
   let youtube = await youtube_in_db(youtube_id, supabase)
 
   let error = ''
@@ -83,7 +83,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     invalidateAll()
   }
 
-  const summary = writable<Section | null>(null, (set) => {
+  const summary = writable<Sentence[] | null>(null, (set) => {
     if (!browser) return
     supabase
       .from('youtube_summaries')
@@ -92,7 +92,8 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
       .then(({ data: [summary], error }) => {
         if (error)
           console.error(error.message)
-        set(summary?.summary)
+        if (summary?.summary?.sentences)
+          analyze_sentences(summary.summary.sentences).then(set)
       })
   })
 
@@ -127,8 +128,8 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
             console.error(error.message)
             alert(error.message)
           }
-          const final_summary = [{ text: streamed_in_summary, translation: { [mother as LocaleCode]: translated_summary.line_separated_translations }}]
-          summary.set({ sentences: final_summary })
+          const final_summary: Sentence[] = [{ text: streamed_in_summary, translation: { [mother as LocaleCode]: translated_summary.line_separated_translations }}]
+          summary.set(await analyze_sentences(final_summary))
 
           const { error: savingError } = await saveSummary(final_summary, model)
           if (savingError) {
@@ -143,7 +144,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
 
         if (delta.content) {
           streamed_in_summary += delta.content
-          summary.set({ sentences: [{ text: streamed_in_summary }] })
+          summary.set([{ text: streamed_in_summary }])
         }
       }
     })
@@ -196,7 +197,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
   // TODO: move this into an endpoint to allow for analyzing others's captions
   async function analyze_syntax(sentences: Sentence[]) {
     const text = sentences.map(sentence => sentence.text).join('\n')
-    const { data, error } = await post_request<AnalyzeSyntaxRequestBody, Sentence['syntax']>('/api/translate', { text, sourceLanguageCode: learning_language }, fetch)
+    const { data, error } = await post_request<AnalyzeSyntaxRequestBody, Sentence['syntax']>('/api/analyze_syntax', { text, sourceLanguageCode: learning_language }, fetch)
     if (error) {
       console.error(error.message)
       return alert(error.message)
@@ -216,13 +217,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     const transcript = await getTranscript()
     if (!transcript) return null
     const { sentences } = transcript.transcript
-
-    // TODO: emphasize English words
-    if (learning !== 'zh-TW' && learning !== 'zh-CN') return { sentences }
-
-    const { api } = await import('$lib/analysis/expose-analysis-worker')
-    api.set_user_vocabulary({})
-    const analyzed_sentences = await api.analyze_and_emphasize_chinese_sentences({sentences, locale: learning})
+    const analyzed_sentences = await analyze_and_emphasize_sentences(sentences)
     return { sentences: analyzed_sentences }
   }
 
@@ -238,6 +233,8 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     analyze_syntax,
     streamed: {
       transcript: prepare_transcript(),
+      title: analyze_sentences([{text: youtube.title}]),
+      description: analyze_sentences([{text: youtube.description}]),
     },
   }
 }) satisfies PageLoad

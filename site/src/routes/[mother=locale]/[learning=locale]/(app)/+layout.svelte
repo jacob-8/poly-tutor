@@ -19,7 +19,7 @@
 </script>
 
 <div class="flex items-center space-x-1 py-1 pl-1" data-sveltekit-preload-data="tap">
-  <div class="text-lg font-semibold flex items-center truncate">
+  <div class="text-lg font-semibold flex items-center truncate py-1">
     {#if $page.data.youtube}
       <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 mr-1" /></a>
       {$page.data.youtube.title}
@@ -60,8 +60,6 @@
 {#await import('$lib/client/UserInfo.svelte') then { default: UserInfo }}
   <UserInfo />
 {/await}
-
-
 
 <style>
   a, button {

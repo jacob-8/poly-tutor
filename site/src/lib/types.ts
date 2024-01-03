@@ -9,7 +9,7 @@ export interface Section {
 }
 
 export interface Sentence {
-  text: string
+  text?: string
   words?: (AnalyzedWordWithEmphasis | AnalyzedChineseWordWithEmphasis)[]
   start_ms?: number
   end_ms?: number

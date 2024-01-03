@@ -36,10 +36,12 @@ export function analyze_chinese_sentence({text, locale, user_vocabulary, diction
 
   function analyze_word(word:string, entry: CEDictEntry) {
     const { traditional, simplified, pinyin, tones, definitions_array } = entry
-    const status = user_vocabulary[word]?.status ?? WordStatus.unknown
+
+    const text = simplified && locale === 'zh-CN' ? simplified : traditional
+    const status = user_vocabulary[text]?.status ?? WordStatus.unknown
 
     const analyzed_word: AnalyzedChineseWord = {
-      text: simplified && locale === 'zh-CN' ? simplified : traditional,
+      text,
       pinyin,
       pronunciation: pinyin.replace(' ', ''),
       definitions_array,
@@ -106,7 +108,7 @@ if (import.meta.vitest) {
       },
     }
 
-    test('你好老師！', () => {
+    test('basic', () => {
       const sentence = '你好老師！'
       const result = analyze_chinese_sentence({text: sentence, locale: 'zh-CN', user_vocabulary, dictionary})
       expect(result).toEqual([
@@ -200,6 +202,20 @@ if (import.meta.vitest) {
         { 'text': '家' },
         { 'text': '好' },
       ])
+    })
+
+    test('status based off script being shown, not underlying word', () => {
+      const sentence = '你好老師！'
+      const result = analyze_chinese_sentence({text: sentence, locale: 'zh-CN', user_vocabulary: { 老师: { status: WordStatus.known } }, dictionary})
+      expect(result[1]).toEqual(
+        {
+          'text': '老师',
+          'opposite_script': '老師',
+          'pinyin': 'lǎo shī',
+          'status': WordStatus.known,
+          'pronunciation': 'lǎoshī',
+          definitions_array: ['teacher', 'instructor'],
+        })
     })
   })
 }

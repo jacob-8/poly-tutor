@@ -5,11 +5,10 @@
   import StudySentence from './StudySentence.svelte'
   import { Button } from 'svelte-pieces'
   import SectionComponent from './Section.svelte'
-  import Summary from './Summary.svelte'
   import { browser } from '$app/environment'
   import { goto } from '$app/navigation'
-  import Description from './Description.svelte'
   import { format_time } from '$lib/utils/format_time'
+  import ShowMeta from './ShowMeta.svelte'
 
   export let data
   $: ({ youtube, summary, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase } = data)
@@ -48,7 +47,7 @@
 </script>
 
 <div class="px-3 flex items-start">
-  <div class="w-1/2 sticky z-1 top-0 h-100vh flex flex-col py-2">
+  <div class="w-1/2 sticky z-1 top-2 h-100vh flex flex-col pb-2">
     <Youtube
       bind:this={youtubeComponent}
       youtube_id={youtube.id}
@@ -58,9 +57,16 @@
       {playbackRate} />
 
     <div class="mt-2 bg-gray-100 p-3 rounded overflow-y-auto grow-1 flex flex-col">
+      {#if $user}
+        <Button color="red" form="simple" title="Remove Video" onclick={async () => {
+          await remove_from_my_videos(youtube.id, supabase)
+          goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
+        }}><span class="i-fa6-regular-trash-can -mb-.5" /></Button>
+      {/if}
+
       {#if transcript}
         <!-- {@const hasSyntaxAnalysis = transcript.sentences[0].syntax} -->
-        {@const hasMachineTranslation = transcript.sentences[0].translation}
+        {@const hasMachineTranslation = transcript.sentences?.[0].translation}
         <div class="mb-1">
           <!-- {#if !hasSyntaxAnalysis}
             <Button onclick={() => data.analyze_syntax(transcript.transcript.sentences)}>{$page.data.t.shows.analyze}</Button>
@@ -86,21 +92,22 @@
         - {$page.data.t.layout.sign_in}
       {/if}
     {:else}
+      {#await streamed.title then [sentence]}
+        <ShowMeta label={$page.data.t.shows.title} {sentence} {studySentence} />
+      {/await}
 
-      <div class="max-h-200px overflow-y-auto border-b pb-2 text-lg font-semibold">
-        {youtube.title}
-        {#if $user}
-          <Button color="red" form="simple" title="Remove Video" onclick={async () => {
-            await remove_from_my_videos(youtube.id, supabase)
-            goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
-          }}><span class="i-fa6-regular-trash-can -mb-.5" /></Button>
-        {/if}
-      </div>
-      <Description description={youtube.description} />
+      {#await streamed.description then [sentence]}
+        <ShowMeta label={$page.data.t.shows.description} {sentence} {studySentence} />
+      {/await}
 
       {#if transcript?.sentences}
-        <Summary {addSummary}
-          {studySentence} sentences={$summary?.sentences} transcript={transcript.sentences} />
+        {#if $summary?.length}
+          <ShowMeta label={$page.data.t.shows.summary} sentence={$summary[0]} {studySentence} />
+        {:else}
+          <div class="text-base">
+            <Button onclick={() => addSummary({sentences: transcript.sentences})}>{$page.data.t.shows.summarize}</Button>
+          </div>
+        {/if}
       {/if}
 
       {#if youtube.duration_seconds}

@@ -17,7 +17,8 @@
     "analyze": "分析",
     "translate": "翻译",
     "captions": "字幕",
-    "description": "描述"
+    "description": "描述",
+    "title": "标题"
   },
   "home": {
     "chat": "闲聊",

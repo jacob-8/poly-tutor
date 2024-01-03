@@ -17,7 +17,8 @@
     "analyze": "Analyze",
     "translate": "Translate",
     "captions": "captions",
-    "description": "Description"
+    "description": "Description",
+    "title": "Title"
   },
   "home": {
     "chat": "Chat",

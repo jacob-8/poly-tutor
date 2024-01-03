@@ -2,8 +2,8 @@
   import type { Sentence } from './types'
   import ChineseWord from '$lib/analysis/ChineseWord.svelte'
 
-  export let onClick: () => void
-  export let onMouseover: () => void
+  export let onClick: () => void = undefined
+  export let onMouseover: () => void = undefined
   export let id: string = undefined
   export let active = false
   export let sentence: Sentence
