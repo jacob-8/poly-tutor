@@ -114,7 +114,7 @@
         <div class="text-gray text-xs mb-2 capitalize">0:00 - {format_time(youtube.duration_seconds)} {$page.data.t.shows.captions}</div>
       {/if}
 
-      {#await new Promise(r => setTimeout(r, 100)) then _}
+      {#await new Promise(r => setTimeout(r, 200)) then _}
         {#if transcript !== undefined}
           {#if transcript?.sentences}
             <Sentences

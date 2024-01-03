@@ -41,6 +41,7 @@ export enum WordStatus {
 
 export interface AnalyzedWord extends VocabularyWordStats {
   text: string
+  user_views?: number
   definitions_array?: string[]
   neighbors_understood?: boolean
 }

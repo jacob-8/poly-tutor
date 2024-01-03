@@ -1,8 +1,9 @@
 import { browser, dev } from '$app/environment'
 import { getSupabase, getSession } from '$lib/supabase'
 import { createUserStore } from '$lib/supabase/user'
-import { WordStatus, type UserVocabulary, type Sentence } from '$lib/types.js'
-import { createPersistedStore } from 'svelte-pieces'
+import  type { Sentence } from '$lib/types.js'
+import { createVocabStore } from '$lib/vocab/vocabulary'
+import { get } from 'svelte/store'
 
 export const load = async ({data: { access_token, refresh_token }, params: { learning }}) => {
   if (browser && dev)
@@ -11,14 +12,12 @@ export const load = async ({data: { access_token, refresh_token }, params: { lea
   const supabase = getSupabase()
   const authResponse = await getSession({ supabase, access_token, refresh_token })
   const user = createUserStore({ supabase, authResponse })
-  const starter_vocab: UserVocabulary = {
-    '貴州': {status: WordStatus.known},
-  }
-  const user_vocabulary = createPersistedStore<UserVocabulary>(`vocabulary_${authResponse?.data?.user?.id || 'no_user'}`, starter_vocab, true)
+  const user_vocabulary = createVocabStore({ supabase, authResponse })
 
   if (browser) {
     const { api } = await import('$lib/analysis/expose-analysis-worker')
-    api.set_user_vocabulary(starter_vocab) // TODO: update on changes
+    const vocab = get(user_vocabulary)
+    api.set_user_vocabulary(vocab) // TODO: update on changes
   }
 
   async function analyze_and_emphasize_sentences(sentences: Sentence[]) {

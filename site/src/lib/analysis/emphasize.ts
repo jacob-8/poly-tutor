@@ -1,6 +1,6 @@
-import { WordStatus, type UserVocabulary, type ChineseEmphasisLimits, type Sentence } from '$lib/types'
+import { WordStatus, type ChineseEmphasisLimits, type Sentence } from '$lib/types'
 
-export function emphasize_chinese_sentences({ sentences, user_vocabulary, limits }: { sentences: Sentence[], user_vocabulary: UserVocabulary, limits?: ChineseEmphasisLimits}): Sentence[] {
+export function emphasize_chinese_sentences({ sentences, limits }: { sentences: Sentence[], limits?: ChineseEmphasisLimits}): Sentence[] {
   const {common_in_this_context_max, high_view_count_max, improve_pronunciation_or_tone_max} = limits || {
     common_in_this_context_max: 5,
     high_view_count_max: 5,
@@ -13,7 +13,7 @@ export function emphasize_chinese_sentences({ sentences, user_vocabulary, limits
 
   for (const {text, status} of words) {
     if (status === undefined) continue // weeds out non-Chinese words
-    if (status === WordStatus.known) continue
+    if (status === WordStatus.known || status === WordStatus.wordlist) continue
 
     if (status === WordStatus.tone || status === WordStatus.pronunciation) {
       if (text in learning_pronunciation_with_count)
@@ -34,10 +34,13 @@ export function emphasize_chinese_sentences({ sentences, user_vocabulary, limits
 
   const top_context_words = sorted_context_words.slice(0, common_in_this_context_max).map(([word]) => word)
 
-  // then add user's view counts and find their top words
-  for (const [word, {views}] of Object.entries(user_vocabulary)) {
-    if (word in unknown_words_with_count && views)
-      unknown_words_with_count[word] += views
+  // then add the user's prior view counts and find their top words
+  const unique_words = words.filter((word, index, self) =>
+    index === self.findIndex((w) => w.text === word.text)
+  )
+  for (const { text, user_views } of unique_words) {
+    if (text in unknown_words_with_count)
+      unknown_words_with_count[text] += user_views
   }
 
   const sorted_user_words = Object.entries(unknown_words_with_count).sort(([,a], [,b]) => b - a)
@@ -72,66 +75,49 @@ export function emphasize_chinese_sentences({ sentences, user_vocabulary, limits
 
 if (import.meta.vitest) {
   describe(emphasize_chinese_sentences, () => {
-    const user_vocabulary: UserVocabulary = {
-      '你好': {
-        // status: WordStatus.unknown,
-        views: 3,
-      },
-      '嗎': {
-        status: WordStatus.tone,
-        views: 10,
-      },
-      '老師': {
-        status: WordStatus.unknown,
-        views: 4,
-      },
-      '大家': {
-        status: WordStatus.unknown,
-        // views: 1,
-      },
-    }
-
     test('marks high_view_count based on user vocab + context, then marks words as common if not already high_view, and also denotes the most common words to improve', () => {
       const result = emphasize_chinese_sentences({ sentences: [
         { text: '你好嗎',
           words: [
-            { text: '你好', status: WordStatus.unknown },
-            { text: '嗎', status: WordStatus.tone },
+            { text: '你好', status: WordStatus.unknown, user_views: 3 },
+            { text: '嗎', status: WordStatus.tone, user_views: 10 },
           ]},
-        { text: '你好，老師！',
+        { text: '你好，我老師！',
           words: [
-            { text: '你好', status: WordStatus.unknown },
+            { text: '你好', status: WordStatus.unknown, user_views: 3 },
             { text: '，' },
-            { text: '老師', status: WordStatus.unknown },
+            { text: '我', status: WordStatus.wordlist, user_views: 20 },
+            { text: '老師', status: WordStatus.unknown, user_views: 4 },
             { text: '！' },
           ]},
         { text: '你好，大家！',
           words: [
-            { text: '你好', status: WordStatus.unknown },
+            { text: '你好', status: WordStatus.unknown, user_views: 3 },
             { text: '，' },
-            { text: '大家', status: WordStatus.unknown },
+            { text: '大家', status: WordStatus.unknown, user_views: 0 },
             { text: '！' },
           ]},
-      ], user_vocabulary, limits: { high_view_count_max: 1, common_in_this_context_max: 2, improve_pronunciation_or_tone_max: 1 }})
+      ], limits: { high_view_count_max: 1, common_in_this_context_max: 2, improve_pronunciation_or_tone_max: 1 }})
 
       const expected: Sentence[] = [
         { text: '你好嗎',
           words: [
-            { text: '你好', status: WordStatus.unknown, high_view_count: true },
-            { text: '嗎', status: WordStatus.tone, improve_pronunciation_or_tone: true },
+            { text: '你好', status: WordStatus.unknown, user_views: 3, high_view_count: true },
+            { text: '嗎', status: WordStatus.tone, user_views: 10, improve_pronunciation_or_tone: true },
           ]},
-        { text: '你好，老師！',
+        { text: '你好，我老師！',
           words: [
-            { text: '你好', status: WordStatus.unknown, high_view_count: true  },
+            { text: '你好', status: WordStatus.unknown, user_views: 3, high_view_count: true  },
             { text: '，' },
-            { text: '老師', status: WordStatus.unknown, common_in_this_context: true },
+            { text: '我', status: WordStatus.wordlist, user_views: 20 },
+            { text: '老師', status: WordStatus.unknown, user_views: 4, common_in_this_context: true },
             { text: '！' },
           ]},
         { text: '你好，大家！',
           words: [
-            { text: '你好', status: WordStatus.unknown, high_view_count: true  },
+            { text: '你好', status: WordStatus.unknown, user_views: 3, high_view_count: true  },
             { text: '，' },
-            { text: '大家', status: WordStatus.unknown },
+            { text: '大家', status: WordStatus.unknown, user_views: 0 },
             { text: '！' },
           ]},
       ]

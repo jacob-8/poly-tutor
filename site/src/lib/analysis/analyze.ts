@@ -39,13 +39,15 @@ export function analyze_chinese_sentence({text, locale, user_vocabulary, diction
 
     const text = simplified && locale === 'zh-CN' ? simplified : traditional
     const status = user_vocabulary[text]?.status ?? WordStatus.unknown
+    const user_views = user_vocabulary[text]?.views || 0
 
     const analyzed_word: AnalyzedChineseWord = {
       text,
       pinyin,
-      pronunciation: pinyin.replace(' ', ''),
+      pronunciation: pinyin.replaceAll(' ', ''),
       definitions_array,
       status,
+      user_views,
     }
 
     if (simplified)
@@ -105,6 +107,7 @@ if (import.meta.vitest) {
     const user_vocabulary: UserVocabulary = {
       '你好': {
         status: WordStatus.tone,
+        views: 3,
       },
     }
 
@@ -119,6 +122,7 @@ if (import.meta.vitest) {
           'pronunciation': 'ˇˇ',
           definitions_array: ['hello'],
           // 'tone_change': true,
+          user_views: 3,
         },
         {
           'text': '老师',
@@ -127,6 +131,7 @@ if (import.meta.vitest) {
           'status': WordStatus.unknown,
           'pronunciation': 'lǎoshī',
           definitions_array: ['teacher', 'instructor'],
+          user_views: 0,
         },
         {
           'text': '！',
@@ -144,6 +149,7 @@ if (import.meta.vitest) {
           'pinyin': 'nǐ hǎo',
           'pronunciation': 'ˇˇ',
           'status': WordStatus.tone,
+          user_views: 3,
         },
         {
           'text': '，',
@@ -154,6 +160,7 @@ if (import.meta.vitest) {
           'pinyin': 'dà',
           'pronunciation': 'dà',
           'status': WordStatus.unknown,
+          user_views: 0,
         },
         {
           'text': '家',
@@ -161,6 +168,7 @@ if (import.meta.vitest) {
           'pinyin': 'jiā',
           'pronunciation': 'jiā',
           'status': WordStatus.unknown,
+          user_views: 0,
         },
         {
           'text': '！',
@@ -178,6 +186,7 @@ if (import.meta.vitest) {
           'pronunciation': 'ˇˇ',
           'status': 2,
           'text': '你好',
+          user_views: 3,
         },
         {
           'text': ',',
@@ -215,6 +224,7 @@ if (import.meta.vitest) {
           'status': WordStatus.known,
           'pronunciation': 'lǎoshī',
           definitions_array: ['teacher', 'instructor'],
+          user_views: 0,
         })
     })
   })
