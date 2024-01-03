@@ -25,10 +25,10 @@ export function createVocabStore({ supabase, authResponse, log = false }: { supa
   if (!browser)
     return { subscribe }
 
-  const vocab_key = `vocabulary_${authResponse?.data?.user?.id || 'no_user'}`
-  const cached = localStorage.getItem(vocab_key)
-  if (cached)
-    set(JSON.parse(cached))
+  // const vocab_key = `vocabulary_${authResponse?.data?.user?.id || 'no_user'}`
+  // const cached = localStorage.getItem(vocab_key)
+  // if (cached)
+  //   set(JSON.parse(cached))
 
   // TODO: fetch from supabase and cache if a response returned
   console.info({supabase, authResponse, log})
