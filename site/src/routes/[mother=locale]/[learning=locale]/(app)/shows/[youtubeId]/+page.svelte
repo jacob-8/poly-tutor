@@ -4,7 +4,7 @@
   import type { Section, Sentence } from '$lib/types'
   import StudySentence from './StudySentence.svelte'
   import { Button } from 'svelte-pieces'
-  import SectionComponent from './Section.svelte'
+  import Sentences from './Sentences.svelte'
   import { browser } from '$app/environment'
   import { goto } from '$app/navigation'
   import { format_time } from '$lib/utils/format_time'
@@ -66,7 +66,7 @@
 
       {#if transcript}
         <!-- {@const hasSyntaxAnalysis = transcript.sentences[0].syntax} -->
-        {@const hasMachineTranslation = transcript.sentences?.[0].translation}
+        {@const hasMachineTranslation = transcript.sentences?.[0]?.translation}
         <div class="mb-1">
           <!-- {#if !hasSyntaxAnalysis}
             <Button onclick={() => data.analyze_syntax(transcript.transcript.sentences)}>{$page.data.t.shows.analyze}</Button>
@@ -104,7 +104,7 @@
         {#if $summary?.length}
           <ShowMeta label={$page.data.t.shows.summary} sentence={$summary[0]} {studySentence} />
         {:else}
-          <div class="text-base">
+          <div class="text-base border-b pb-2 mb-2">
             <Button onclick={() => addSummary({sentences: transcript.sentences})}>{$page.data.t.shows.summarize}</Button>
           </div>
         {/if}
@@ -114,15 +114,22 @@
         <div class="text-gray text-xs mb-2 capitalize">0:00 - {format_time(youtube.duration_seconds)} {$page.data.t.shows.captions}</div>
       {/if}
 
-      {#if transcript !== undefined}
-        <SectionComponent
-          {transcribe_captions}
-          {youtubeComponent}
-          isPlaying={playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING}
-          {currentTimeMs}
-          sentences={transcript?.sentences}
-          {studySentence} />
-      {/if}
+      {#await new Promise(r => setTimeout(r, 100)) then _}
+        {#if transcript !== undefined}
+          {#if transcript?.sentences}
+            <Sentences
+              play={youtubeComponent.play}
+              pause={youtubeComponent.pause}
+              seekToMs={youtubeComponent.seekToMs}
+              isPlaying={playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING} {currentTimeMs} {studySentence} sentences={transcript.sentences} />
+          {:else}
+            <div class="text-base">
+              <Button size="lg" class="mt-2" onclick={() => transcribe_captions()}>{$page.data.t.shows.get_captions}</Button>
+              <!-- TODO: show price -->
+            </div>
+          {/if}
+        {/if}
+      {/await}
     {/if}
   </div>
 </div>
