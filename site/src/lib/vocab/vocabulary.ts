@@ -4,7 +4,6 @@ import type { Supabase } from '../supabase/database.types'
 import type { AuthResponse } from '@supabase/supabase-js'
 import { writable } from 'svelte/store'
 import type { WordList } from './word-lists.interface'
-import { wordLists } from './word-lists'
 import { browser } from '$app/environment'
 
 export const word_lists = createPersistedStore<WordList[]>(
@@ -15,8 +14,11 @@ export const word_lists = createPersistedStore<WordList[]>(
 
 export function createVocabStore({ supabase, authResponse, log = false }: { supabase: Supabase, authResponse: AuthResponse, log?: boolean }) {
   const user_vocabulary: UserVocabulary = {
-    '你': { status: WordStatus.known },
     '我': { status: WordStatus.known },
+    '的': { views: 200 },
+    '是': { views: 200 },
+    '一下': { views: 200 },
+
   }
 
   const { subscribe, set } = writable<UserVocabulary>(user_vocabulary)
@@ -31,9 +33,10 @@ export function createVocabStore({ supabase, authResponse, log = false }: { supa
   // TODO: fetch from supabase and cache if a response returned
   console.info({supabase, authResponse, log})
 
-  word_lists.subscribe((lists) => {
+  word_lists.subscribe(async (lists) => {
+    const { word_lists } = await import('./word-lists')
     lists
-      .map(list => wordLists[list])
+      .map(list => word_lists[list])
       .flat()
       .forEach((word) => {
         if (!user_vocabulary[word])
