@@ -211,6 +211,21 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     invalidateAll()
   }
 
+  async function prepare_transcript(): Promise<Section | null> {
+    if (!browser) return undefined // don't use null as that will mistakenly show option to transcribe for a moment when we just need to wait until the client inits
+    const transcript = await getTranscript()
+    if (!transcript) return null
+    const { sentences } = transcript.transcript
+
+    // TODO: emphasize English words
+    if (learning !== 'zh-TW' && learning !== 'zh-CN') return { sentences }
+
+    const { api } = await import('$lib/analysis/expose-analysis-worker')
+    api.set_user_vocabulary({})
+    const analyzed_sentences = await api.analyze_and_emphasize_chinese_sentences({sentences, locale: learning})
+    return { sentences: analyzed_sentences }
+  }
+
   return {
     youtube,
     summary,
@@ -222,7 +237,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     translate,
     analyze_syntax,
     streamed: {
-      transcript: getTranscript(),
+      transcript: prepare_transcript(),
     },
   }
 }) satisfies PageLoad

@@ -47,7 +47,7 @@ export const zh_transcribed_summarized: YouTubeWithAllData = {
     channel_id: xiao_bai_channel.id,
     id: '9ruqSX_p_48',
     title: '自驾游贵州黔东南，花50元买了个竹篓，是不是特别洋气？【小白的奇幻旅行】',
-    description: 'A video that has no captions on YouTube, but captions were transcribed using Whisper. Then a summary was added.',
+    description: 'YouTube 上沒有字幕的視頻，但字幕是使用 Whisper 轉錄的。 然後補充了一個總結。',
     duration_seconds: 614.2, // write with decimal for clarity that this is a 'real' number
     published_at: '2023-02-28T04:00:13Z',
     view_count: 136000,
@@ -79,7 +79,7 @@ export const zh_transcribed_summarized: YouTubeWithAllData = {
       youtube_id: '9ruqSX_p_48',
       summary: {
         sentences: [
-          { text: 'A very short but fake summary for testing purposes.' }
+          { text: '用於測試目的的非常簡短但虛假的摘要。' }
         ]
       },
       summary_source: 'spoofing',
@@ -97,7 +97,7 @@ export const zh_transcribed: YouTubeWithAllData = {
     channel_id: xiao_bai_channel.id,
     id: 'UnlyETVcDzY',
     title: 'An Elder Transforms a Village by Bringing Back 200 Apple Saplings with a Donkey – Truly Amazing!',
-    description: 'A video that has no captions on YouTube, but captions were transcribed using Whisper.',
+    description: 'YouTube 上沒有字幕的視頻，但字幕是使用 Whisper 轉錄的。 然後補充了一個總結。',
     duration_seconds: 534
   },
   transcripts: [

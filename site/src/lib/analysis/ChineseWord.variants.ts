@@ -20,7 +20,7 @@ const base_variants: Variant<Component>[] = [
         text: '聽見',
         opposite_script: '听见',
         pronunciation: 'tīngjiàn',
-        definition: 'heard',
+        definitions_array: ['heard with the ears and understood'],
         status: WordStatus.unknown,
         high_view_count: true,
       },
@@ -28,14 +28,15 @@ const base_variants: Variant<Component>[] = [
     },
   },
   {
-    name: 'Unknown, notice',
+    name: 'Unknown, neighbors known, notice',
     props: {
       word: {
         text: '好的',
         pronunciation: 'hǎode',
-        definition: 'good',
+        definitions_array: ['good, everything is as it should be'],
         status: WordStatus.unknown,
         common_in_this_context: true,
+        neighbors_understood: true,
       },
       settings
     },
@@ -47,9 +48,8 @@ const base_variants: Variant<Component>[] = [
         text: '你好',
         pronunciation: 'nǐhǎo',
         tone_change: true,
-        definition: 'hello',
+        definitions_array: ['hello'],
         status: WordStatus.pronunciation,
-        neighbor_shows_definition: true,
       },
       settings
     },
@@ -61,7 +61,7 @@ const base_variants: Variant<Component>[] = [
         text: '你好',
         pronunciation: 'ˇˇ',
         tone_change: true,
-        definition: 'hello',
+        definitions_array: ['hello'],
         status: WordStatus.tone,
         improve_pronunciation_or_tone: true,
       },
@@ -74,7 +74,7 @@ const base_variants: Variant<Component>[] = [
       word: {
         text: '好的',
         pronunciation: 'ˇ˙',
-        definition: 'good',
+        definitions_array: ['good'],
         status: WordStatus.tone,
       },
       settings
@@ -85,7 +85,7 @@ const base_variants: Variant<Component>[] = [
     props: {
       word: {
         text: '好的',
-        definition: 'good',
+        definitions_array: ['good'],
         status: WordStatus.known,
       },
       settings

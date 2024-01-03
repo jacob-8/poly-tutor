@@ -4,16 +4,14 @@
   export let settings: Settings
   export let word: AnalyzedChineseWordWithEmphasis
 
-  $: ({text, definition, neighbor_shows_definition, opposite_script, status, pronunciation, tone_change, high_view_count, common_in_this_context, improve_pronunciation_or_tone } = word)
-
-  $: tip_length = neighbor_shows_definition ? 10 : 20
+  $: ({text, definitions_array, neighbors_understood, opposite_script, status, pronunciation, tone_change, high_view_count, common_in_this_context, improve_pronunciation_or_tone } = word)
 </script>
 
-<div class="text-center inline-flex flex-col items-center">
+<div class="text-center inline-flex flex-col items-center mt-2">
   {#if settings.show_pronunciation}
-    <div class="text-xs text-gray-600 h-4 -mb-1 border-yellow" class:border-b={tone_change}>
+    <div class="text-xs text-gray-500/80 h-4 -mb-1 border-yellow" class:border-b={tone_change}>
       <div class:large-tone-markers={status === WordStatus.tone}>
-        {#if status !== WordStatus.known && status !== WordStatus.wordlist}
+        {#if pronunciation && status !== WordStatus.known && status !== WordStatus.wordlist}
           {pronunciation}
         {:else}
           &nbsp;
@@ -32,8 +30,10 @@
     {/if}
   </div>
   {#if settings.show_pronunciation && status === WordStatus.unknown}
-    <div class="text-xs leading-none text-gray-600">
-      {definition.substring(0, tip_length)}
+    <div class="text-base" style="max-width: {settings.font_size_em * text.length}em;">
+      <div class="text-[0.6em] leading-none text-gray-500/80 overflow-hidden max-h-2em" class:-mx-2.75={neighbors_understood}>
+        {definitions_array[0].substring(0, 40)}
+      </div>
     </div>
   {/if}
 </div>

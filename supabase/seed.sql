@@ -6,8 +6,8 @@ INSERT INTO youtube_channels ("description", "id", "subscriber_count", "thumbnai
 ('Learn Code', 'UC8butISFwT-Wl7EV0hUK0BQ', 8810000, 'https://yt3.ggpht.com/ytc/APkrFKaqca-xQcJtp1Pqv-APucCa0nToHYGPVT00YBGOSw', 'freeCodeCamp.org', 1500, 1003000405);
 
 INSERT INTO youtubes ("channel_id", "description", "duration_seconds", "id", "language", "like_count", "published_at", "title", "view_count") VALUES
-('UC-7jKPgRmLBiB1ltbABubNA', 'A video that has no captions on YouTube, but captions were transcribed using Whisper. Then a summary was added.', 614.2, '9ruqSX_p_48', 'zh', 7700, '2023-02-28T04:00:13Z', '自驾游贵州黔东南，花50元买了个竹篓，是不是特别洋气？【小白的奇幻旅行】', 136000),
-('UC-7jKPgRmLBiB1ltbABubNA', 'A video that has no captions on YouTube, but captions were transcribed using Whisper.', 534, 'UnlyETVcDzY', 'zh', null, null, 'An Elder Transforms a Village by Bringing Back 200 Apple Saplings with a Donkey – Truly Amazing!', null),
+('UC-7jKPgRmLBiB1ltbABubNA', 'YouTube 上沒有字幕的視頻，但字幕是使用 Whisper 轉錄的。 然後補充了一個總結。', 614.2, '9ruqSX_p_48', 'zh', 7700, '2023-02-28T04:00:13Z', '自驾游贵州黔东南，花50元买了个竹篓，是不是特别洋气？【小白的奇幻旅行】', 136000),
+('UC-7jKPgRmLBiB1ltbABubNA', 'YouTube 上沒有字幕的視頻，但字幕是使用 Whisper 轉錄的。 然後補充了一個總結。', 534, 'UnlyETVcDzY', 'zh', null, null, 'An Elder Transforms a Village by Bringing Back 200 Apple Saplings with a Donkey – Truly Amazing!', null),
 ('UC-7jKPgRmLBiB1ltbABubNA', 'description here...', 631, 'GlctfUFhbaM', 'zh', null, null, '在黄土高坡上，老奶奶打造出美丽乡村院落，美得像世外桃源啊【小白的奇幻旅行】', null),
 ('UC8butISFwT-Wl7EV0hUK0BQ', 'description here...', 5940, 'HSZ_uaif57o', 'en', null, null, 'Learn LangChain.js - Build LLM apps with JavaScript and OpenAI', null),
 ('UC8butISFwT-Wl7EV0hUK0BQ', 'description here...', 2058, '8mAITcNt710', 'en', null, null, 'Harvard CS50 – Full Computer Science University Course', null);
@@ -18,5 +18,5 @@ INSERT INTO youtube_transcripts ("created_by", "transcript", "transcript_source"
 ('5e040c00-ce26-4f2f-8413-e0985ec1f4b2', '{"sentences":[{"text":"Hello, everyone, and welcome to this video where I will show you how to use LangChain.js to build a language model application.","translation":{"zh-TW":"大家好，歡迎來到這個視頻，在這個視頻中，我將向您展示如何使用LangChain.js來構建語言模型應用程序。"}},{"text":"So we are going to be using JavaScript and OpenAI to build a language model application."},{"text":"This is going to be a lot of fun."},{"text":"Lets get started."},{"text":"So the first thing we need to do is go to the LangChain.js website."},{"text":"So this is LangChain.js."}]}'::jsonb, 'spoofing', 'HSZ_uaif57o');
 
 INSERT INTO youtube_summaries ("created_by", "end_ms", "start_ms", "summary", "summary_source", "youtube_id") VALUES
-('5e040c00-ce26-4f2f-8413-e0985ec1f4b2', 10000, 0, '{"sentences":[{"text":"A very short but fake summary for testing purposes."}]}'::jsonb, 'spoofing', '9ruqSX_p_48'),
+('5e040c00-ce26-4f2f-8413-e0985ec1f4b2', 10000, 0, '{"sentences":[{"text":"用於測試目的的非常簡短但虛假的摘要。"}]}'::jsonb, 'spoofing', '9ruqSX_p_48'),
 ('5e040c00-ce26-4f2f-8413-e0985ec1f4b2', 10000, 0, '{"sentences":[{"text":"A tutorial showing how to use LangChain.js to build a language model application."}]}'::jsonb, 'spoofing', 'HSZ_uaif57o');

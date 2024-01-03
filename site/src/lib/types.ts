@@ -41,27 +41,36 @@ export enum WordStatus {
 
 export interface AnalyzedWord extends VocabularyWordStats {
   text: string
-  definition?: string
-  neighbor_shows_definition?: boolean
+  definitions_array?: string[]
+  neighbors_understood?: boolean
 }
 
 // calculated sentence by sentence
 export interface AnalyzedChineseWord extends AnalyzedWord {
   opposite_script?: string
   pinyin?: string // for word focus view
+  // tones?: number[]
   pronunciation?: string // a combination of pinyin, tone markers or nothing depending on word status
   tone_change?: boolean
 }
 
 // calculated on 2nd pass after analyzing all content
-interface WordEmphasis {
+export interface WordEmphasis {
   high_view_count?: boolean // learn it - true if word ranks in the top ____ of unknown words using rank_amongst_unknown and user's preference for how many unknown words to learn per lesson - when showing preview, put words at the top if they are also common_in_this_context
   common_in_this_context?: boolean // notice it - true if word is unknown ranks
 }
 
-export type AnalyzedWordWithEmphasis = AnalyzedWord & WordEmphasis
-export interface AnalyzedChineseWordWithEmphasis extends AnalyzedChineseWord, WordEmphasis {
+export interface ChineseWordEmphasis extends WordEmphasis {
   improve_pronunciation_or_tone?: boolean // improve it, 1-5 of the highest ranked words that are pronunciation or tone status
+}
+
+export type AnalyzedWordWithEmphasis = AnalyzedWord & WordEmphasis
+export type AnalyzedChineseWordWithEmphasis = AnalyzedChineseWord & ChineseWordEmphasis
+
+export interface ChineseEmphasisLimits {
+  high_view_count_max: number
+  common_in_this_context_max: number
+  improve_pronunciation_or_tone_max: number
 }
 
 export interface CEDictEntry {

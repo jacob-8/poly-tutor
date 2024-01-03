@@ -14,21 +14,24 @@ export function analyze_chinese_sentence({text, locale, user_vocabulary, diction
   const analyzed_words: AnalyzedChineseWord[] = []
   for (const word of words) {
     if (!is_chinese(word)) {
-      analyzed_words.push({
-        text: word,
-      })
+      analyzed_words.push({ text: word })
       continue
     }
 
     const entry = dictionary[word]
-    if (!entry){
-      for (const character of word)
-        analyzed_words.push(analyze_word(character, dictionary[character]))
-
+    if (entry){
+      analyzed_words.push(analyze_word(word, entry))
       continue
     }
 
-    analyzed_words.push(analyze_word(word, entry))
+    for (const character of word) {
+      const entry = dictionary[character]
+      if (entry) {
+        analyzed_words.push(analyze_word(character, entry))
+        continue
+      }
+      analyzed_words.push({ text: character })
+    }
   }
 
   function analyze_word(word:string, entry: CEDictEntry) {
@@ -38,8 +41,8 @@ export function analyze_chinese_sentence({text, locale, user_vocabulary, diction
     const analyzed_word: AnalyzedChineseWord = {
       text: simplified && locale === 'zh-CN' ? simplified : traditional,
       pinyin,
-      pronunciation: pinyin,
-      definition: definitions_array.join(' • '),
+      pronunciation: pinyin.replace(' ', ''),
+      definitions_array,
       status,
     }
 
@@ -68,7 +71,7 @@ if (import.meta.vitest) {
     const dictionary: Record<string, CEDictEntry> = {
       '你好': {
         traditional: '你好',
-        pinyin: 'nǐhǎo',
+        pinyin: 'nǐ hǎo',
         tones: [3, 3],
         definitions: 'hello',
         definitions_array: ['hello'],
@@ -76,7 +79,7 @@ if (import.meta.vitest) {
       '老師': {
         traditional: '老師',
         simplified: '老师',
-        pinyin: 'lǎoshī',
+        pinyin: 'lǎo shī',
         tones: [3, 1],
         definitions: 'teacher/instructor',
         definitions_array: ['teacher', 'instructor'],
@@ -109,19 +112,19 @@ if (import.meta.vitest) {
       expect(result).toEqual([
         {
           'text': '你好',
-          'pinyin': 'nǐhǎo',
+          'pinyin': 'nǐ hǎo',
           'status': WordStatus.tone,
           'pronunciation': 'ˇˇ',
-          'definition': 'hello',
+          definitions_array: ['hello'],
           // 'tone_change': true,
         },
         {
           'text': '老师',
           'opposite_script': '老師',
-          'pinyin': 'lǎoshī',
+          'pinyin': 'lǎo shī',
           'status': WordStatus.unknown,
           'pronunciation': 'lǎoshī',
-          'definition': 'teacher • instructor',
+          definitions_array: ['teacher', 'instructor'],
         },
         {
           'text': '！',
@@ -135,8 +138,8 @@ if (import.meta.vitest) {
       expect(result).toEqual([
         {
           'text': '你好',
-          'definition': 'hello',
-          'pinyin': 'nǐhǎo',
+          definitions_array: ['hello'],
+          'pinyin': 'nǐ hǎo',
           'pronunciation': 'ˇˇ',
           'status': WordStatus.tone,
         },
@@ -145,14 +148,14 @@ if (import.meta.vitest) {
         },
         {
           'text': '大',
-          'definition': 'big • huge',
+          definitions_array: ['big', 'huge'],
           'pinyin': 'dà',
           'pronunciation': 'dà',
           'status': WordStatus.unknown,
         },
         {
           'text': '家',
-          'definition': 'home • family',
+          definitions_array: ['home', 'family'],
           'pinyin': 'jiā',
           'pronunciation': 'jiā',
           'status': WordStatus.unknown,
@@ -168,8 +171,8 @@ if (import.meta.vitest) {
       const result = analyze_chinese_sentence({text: sentence, locale: 'zh-CN', user_vocabulary, dictionary})
       expect(result).toEqual([
         {
-          'definition': 'hello',
-          'pinyin': 'nǐhǎo',
+          definitions_array: ['hello'],
+          'pinyin': 'nǐ hǎo',
           'pronunciation': 'ˇˇ',
           'status': 2,
           'text': '你好',
@@ -186,6 +189,16 @@ if (import.meta.vitest) {
         {
           'text': '!',
         },
+      ])
+    })
+
+    test('Handles words/characters not in dictionary', () => {
+      const sentence = '大家好'
+      const result = analyze_chinese_sentence({text: sentence, locale: 'zh-CN', user_vocabulary, dictionary: {}})
+      expect(result).toEqual([
+        { 'text': '大' },
+        { 'text': '家' },
+        { 'text': '好' },
       ])
     })
   })

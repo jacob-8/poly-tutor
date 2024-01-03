@@ -10,11 +10,12 @@
 
   export let data
 
-  onMount(async () => {
+  onMount(warm_up_analysis_worker)
+
+  async function warm_up_analysis_worker() {
     const { api } = await import('$lib/analysis/expose-analysis-worker')
-    const result = await api.segment('你好世界！')
-    console.info(result)
-  })
+    api.segment('你好世界！')
+  }
 </script>
 
 <div class="flex items-center space-x-1 py-1 pl-1" data-sveltekit-preload-data="tap">

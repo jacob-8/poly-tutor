@@ -1,13 +1,12 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import Youtube, { PlayerState } from './Youtube.svelte'
-  import type { Sentence } from '$lib/types'
+  import type { Section, Sentence } from '$lib/types'
   import StudySentence from './StudySentence.svelte'
   import { Button } from 'svelte-pieces'
-  import Content from './Content.svelte'
+  import SectionComponent from './Section.svelte'
   import Summary from './Summary.svelte'
   import { browser } from '$app/environment'
-  import type { Transcript } from '$lib/supabase/database.types'
   import { goto } from '$app/navigation'
   import Description from './Description.svelte'
   import { format_time } from '$lib/utils/format_time'
@@ -15,11 +14,7 @@
   export let data
   $: ({ youtube, summary, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase } = data)
 
-  // let cedict: Record<string, CEDictEntry> = {}
-  // $: if (streamed.cedict)
-  //   streamed.cedict.then((c) => cedict = c)
-
-  let transcript: Transcript
+  let transcript: Section
   $: if (streamed.transcript)
     streamed.transcript.then((t) => transcript = t)
 
@@ -45,10 +40,6 @@
     playbackRate = rate
     youtubeComponent.setPlaybackRate(rate)
   }
-  function setTime(ms: number) {
-    youtubeComponent.seekToMs(ms)
-    youtubeComponent.play()
-  }
 
   let currentStudySentence: Sentence
   function studySentence(sentence: Sentence) {
@@ -68,15 +59,15 @@
 
     <div class="mt-2 bg-gray-100 p-3 rounded overflow-y-auto grow-1 flex flex-col">
       {#if transcript}
-        <!-- {@const hasSyntaxAnalysis = transcript.transcript.sentences[0].syntax} -->
-        {@const hasMachineTranslation = transcript.transcript.sentences[0].translation}
+        <!-- {@const hasSyntaxAnalysis = transcript.sentences[0].syntax} -->
+        {@const hasMachineTranslation = transcript.sentences[0].translation}
         <div class="mb-1">
           <!-- {#if !hasSyntaxAnalysis}
             <Button onclick={() => data.analyze_syntax(transcript.transcript.sentences)}>{$page.data.t.shows.analyze}</Button>
           {/if} -->
 
           {#if !hasMachineTranslation}
-            <Button onclick={() => data.translate(transcript.transcript.sentences)}>{$page.data.t.shows.translate}</Button>
+            <Button onclick={() => data.translate(transcript.sentences)}>{$page.data.t.shows.translate}</Button>
           {/if}
         </div>
 
@@ -90,18 +81,14 @@
   </div>
   <div class="w-1/2 pl-2">
     {#if error}
-      Error: {error}
+      {$page.data.t.layout.error}: {error}
       {#if !$user}
-        - please sign in
+        - {$page.data.t.layout.sign_in}
       {/if}
     {:else}
 
-
-      <div class="max-h-200px overflow-y-auto border-b pb-2 text-lg">
+      <div class="max-h-200px overflow-y-auto border-b pb-2 text-lg font-semibold">
         {youtube.title}
-        {#if youtube.duration_seconds}
-          <span class="bg-black rounded text-white text-xs px-1 py.5">{format_time(youtube.duration_seconds)}</span>
-        {/if}
         {#if $user}
           <Button color="red" form="simple" title="Remove Video" onclick={async () => {
             await remove_from_my_videos(youtube.id, supabase)
@@ -111,19 +98,22 @@
       </div>
       <Description description={youtube.description} />
 
-      {#if transcript?.transcript.sentences}
+      {#if transcript?.sentences}
         <Summary {addSummary}
-          {studySentence} sentences={$summary?.sentences} transcript={transcript.transcript.sentences} />
+          {studySentence} sentences={$summary?.sentences} transcript={transcript.sentences} />
+      {/if}
+
+      {#if youtube.duration_seconds}
+        <div class="text-gray text-xs mb-2 capitalize">0:00 - {format_time(youtube.duration_seconds)} {$page.data.t.shows.captions}</div>
       {/if}
 
       {#if transcript !== undefined}
-        <Content
+        <SectionComponent
           {transcribe_captions}
           {youtubeComponent}
-          {playerState}
+          isPlaying={playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING}
           {currentTimeMs}
-          {setTime}
-          content={transcript?.transcript}
+          sentences={transcript?.sentences}
           {studySentence} />
       {/if}
     {/if}

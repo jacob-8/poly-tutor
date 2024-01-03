@@ -3,7 +3,6 @@ import { find_tone } from '$lib/utils/find-tone'
 import { csvParse } from 'd3-dsv'
 
 export async function get_chinese_to_english_dictionary() {
-  if (typeof window === 'undefined') return {}
   const url = '/dictionaries/cedict_pinyin.csv'
   const response = await fetch(url)
   const csv = await response.text()
@@ -21,8 +20,8 @@ function prepare_entries(csv_rows: CEDictEntry[]): Record<string, CEDictEntry> {
   }
 
   for (const entry of Object.values(entries)) {
-    entry.tones = entry.traditional.split('').map(char => {
-      return find_tone(entries[char].pinyin) || 2
+    entry.tones = entry.pinyin.split(' ').map(syllable => {
+      return find_tone(syllable)
     })
   }
 
@@ -69,7 +68,7 @@ if (import.meta.vitest) {
     const entries: CEDictEntry[] = [
       { traditional: '你們',
         simplified: '你们',
-        pinyin: 'nǐmen',
+        pinyin: 'nǐ men',
         definitions: 'you (plural)/CL:個|个[gè]' },
       { traditional: '你',
         pinyin: 'nǐ',
