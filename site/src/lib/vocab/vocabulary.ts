@@ -17,8 +17,8 @@ export function createVocabStore({ supabase, authResponse, log = false }: { supa
   const user_vocabulary: UserVocabulary = {
     // '我': { status: WordStatus.known },
     // '的': { views: 200 },
-    // '是': { views: 200 },
-    // '一下': { views: 200 },
+    '評價': { views: 25 },
+    '店家': { views: 20 },
   }
 
   const { subscribe, set } = writable<UserVocabulary>(user_vocabulary)

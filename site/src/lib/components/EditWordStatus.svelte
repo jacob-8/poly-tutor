@@ -3,8 +3,11 @@
   import { sort_definitions } from '$lib/utils/sort-definitions'
 
   export let word: AnalyzedChineseWordWithEmphasis
+  export let high_view_count = false
+  export let common_in_this_context = false
+  export let improve_pronunciation_or_tone = false
 
-  $: ({text, definitions, pinyin, status, high_view_count, common_in_this_context, improve_pronunciation_or_tone } = word)
+  $: ({text, definitions, pinyin, status } = word)
 </script>
 
 {#if pinyin}

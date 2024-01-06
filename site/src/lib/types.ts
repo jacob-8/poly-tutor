@@ -81,6 +81,12 @@ export interface StudyWords {
   improve_pronunciation_or_tone?: AnalyzedChineseWordWithEmphasis[]
 }
 
+export interface StudyWordsObject {
+  high_view_count: Record<string, boolean>
+  common_in_this_context: Record<string, boolean>
+  improve_pronunciation_or_tone?: Record<string, boolean>
+}
+
 export interface CEDictEntry {
   traditional: string
   simplified?: string

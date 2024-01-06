@@ -1,5 +1,4 @@
 import type { CEDictEntry } from '$lib/types'
-// import { find_tone } from '$lib/utils/find-tone'
 import { csvParse } from 'd3-dsv'
 
 export async function get_chinese_to_english_dictionary() {

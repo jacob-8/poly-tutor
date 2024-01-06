@@ -12,12 +12,14 @@
   import StudyLesson from '$lib/components/StudyLesson.svelte'
   import Viewport from './Viewport.svelte'
   import { onMount } from 'svelte'
+  import { get_study_words_object } from '$lib/utils/study-words-object'
 
   export let data
   $: ({ youtube, summary, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase, settings } = data)
 
   let sentences: Sentence[]
   let study_words: StudyWords
+  $: study_words_object = get_study_words_object(study_words)
 
   onMount(() => {
     streamed.content.then((content) => {
@@ -91,29 +93,25 @@
       {/if}
     {:else}
       {#await streamed.title then [sentence]}
-        <ShowMeta label={$page.data.t.shows.title} settings={$settings} {sentence} {studySentence} />
+        <ShowMeta {study_words_object} label={$page.data.t.shows.title} settings={$settings} {sentence} {studySentence} />
       {/await}
 
-      <div class="border-b pb-2 mb-2">
-        {#if $user}
+      {#if $user}
+        <div class="border-b pb-2 mb-2">
           <Button color="red" form="simple" title={$page.data.t.shows.remove_video} onclick={async () => {
             await remove_from_my_videos(youtube.id, supabase)
             goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
           }}><span class="i-fa6-regular-trash-can -mb-.5" /></Button>
-        {/if}
-
-        {#if !sentences?.[0]?.translation}
-          <Button onclick={() => data.translate(sentences)}>{$page.data.t.shows.translate}</Button>
-        {/if}
-      </div>
+        </div>
+      {/if}
 
       {#await streamed.description then [sentence]}
-        <ShowMeta label={$page.data.t.shows.description} settings={$settings} {sentence} {studySentence} />
+        <ShowMeta {study_words_object} label={$page.data.t.shows.description} settings={$settings} {sentence} {studySentence} />
       {/await}
 
       {#if sentences}
         {#if $summary?.length}
-          <ShowMeta label={$page.data.t.shows.summary} settings={$settings} sentence={$summary[0]} {studySentence} />
+          <ShowMeta {study_words_object} label={$page.data.t.shows.summary} settings={$settings} sentence={$summary[0]} {studySentence} />
         {:else}
           <div class="text-base border-b pb-2 mb-2">
             <Button onclick={() => addSummary({sentences})}>{$page.data.t.shows.summarize}</Button>
@@ -121,14 +119,20 @@
         {/if}
       {/if}
 
-      {#if youtube.duration_seconds}
-        <div class="text-gray text-xs mb-2 capitalize">0:00 - {format_time(youtube.duration_seconds)} {$page.data.t.shows.captions}</div>
-      {/if}
+      <div class="flex">
+        {#if youtube.duration_seconds}
+          <div class="text-gray text-xs mb-2 capitalize">0:00 - {format_time(youtube.duration_seconds)} {$page.data.t.shows.captions}</div>
+        {/if}
 
+        {#if !sentences?.[0]?.translation}
+          <Button class="ml-auto" form="simple" size="sm" onclick={() => data.translate(sentences)}>{$page.data.t.shows.translate}</Button>
+        {/if}
+      </div>
       {#await new Promise(r => setTimeout(r, 200)) then _}
         {#if sentences !== undefined}
           {#if sentences}
             <Sentences
+              {study_words_object}
               hideTranslation={() => translation_on_mobile = false}
               showTranslation={() => translation_on_mobile = true}
               toggleStudy={() => {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Sentence, Settings } from '$lib/types'
+  import type { Sentence, Settings, StudyWordsObject } from '$lib/types'
   import ChineseWord from '$lib/components/ChineseWord.svelte'
   import { IntersectionObserverShared } from 'svelte-pieces'
 
@@ -8,6 +8,7 @@
   export let active = false
   export let sentence: Sentence
   export let settings: Settings
+  export let study_words_object: StudyWordsObject
 </script>
 
 <IntersectionObserverShared bottom={1000} top={1000} once let:intersecting>
@@ -19,7 +20,7 @@
     {#if intersecting}
       {#if sentence.words}
         {#each sentence.words as word}
-          <ChineseWord {word} {settings} />
+          <ChineseWord {study_words_object} {word} {settings} />
         {/each}
       {:else}
         <div>{sentence.text}</div>

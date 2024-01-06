@@ -1,12 +1,13 @@
 <script lang="ts">
-  import { WordStatus, type AnalyzedChineseWordWithEmphasis, type Settings } from '$lib/types'
+  import { WordStatus, type AnalyzedChineseWordWithEmphasis, type Settings, type StudyWordsObject } from '$lib/types'
   import { find_tone, tone_marker } from '$lib/utils/find-tone'
   import { sort_definitions } from '$lib/utils/sort-definitions'
 
   export let settings: Settings
   export let word: AnalyzedChineseWordWithEmphasis
+  export let study_words_object: StudyWordsObject
 
-  $: ({text, definitions, neighbors_understood, opposite_script, status, pinyin, tone_change, high_view_count, common_in_this_context, improve_pronunciation_or_tone } = word)
+  $: ({text, definitions, neighbors_understood, opposite_script, status, pinyin, tone_change } = word)
 </script>
 
 <div class="text-center inline-flex flex-col items-center mt-2">
@@ -26,9 +27,9 @@
     </div>
   {/if}
   <div class="relative"
-    class:text-orange-500={high_view_count}
-    class:text-blue-500={common_in_this_context}
-    class:text-green-500={improve_pronunciation_or_tone}
+    class:text-orange-500={study_words_object?.high_view_count[text]}
+    class:text-blue-500={study_words_object?.common_in_this_context[text]}
+    class:text-green-500={study_words_object?.improve_pronunciation_or_tone[text]}
     style="font-size: {settings.font_size_em}em;">
     {text}
     {#if opposite_script}

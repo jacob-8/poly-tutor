@@ -1,8 +1,9 @@
 <script lang="ts">
-  import type { Sentence, Settings } from '$lib/types'
+  import type { Sentence, Settings, StudyWordsObject } from '$lib/types'
   import SentenceComponent from '$lib/components/Sentence.svelte'
 
   export let sentences: Sentence[] = []
+  export let study_words_object: StudyWordsObject
   export let studySentence: (sentence: Sentence) => void
   export let settings: Settings
   export let currentTimeMs: number
@@ -137,7 +138,7 @@
 </script>
 
 {#each sentences as sentence, index}
-  <SentenceComponent id="caption_{index}" {settings} {sentence} active={index === current_caption_index}
+  <SentenceComponent {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index}
     onClick={() => {
       if (stop_time_ms)
         play_and_select({ start_ms: sentence.start_ms, index, end_ms: sentence.end_ms })
