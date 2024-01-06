@@ -18,7 +18,9 @@
     "translate": "Translate",
     "captions": "captions",
     "description": "Description",
-    "title": "Title"
+    "title": "Title",
+    "remove_video": "Remove Video",
+    "click_to_study": "Click on sentence to study."
   },
   "home": {
     "chat": "Chat",

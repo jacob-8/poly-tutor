@@ -1,9 +1,9 @@
 import init from 'jieba-wasm/pkg/web/jieba_rs_wasm.js'
 import { expose } from 'comlink'
 import { jieba_cut } from './jieba-wasm'
-import { analyze_chinese_sentence } from './analyze'
-import type { ChineseEmphasisLimits, Sentence, UserVocabulary } from '$lib/types'
-import { emphasize_chinese_sentences } from './emphasize'
+import { analyze_chinese_sentence } from './analyze-chinese-sentence'
+import { analyze_chinese_sentences } from './analyze-chinese-sentences'
+import type { CEDictEntry, ChineseEmphasisLimits, Sentence, UserVocabulary } from '$lib/types'
 import { get_chinese_to_english_dictionary } from './get-chinese-to-english-dictionary'
 
 const jieba_ready = init('/jieba_rs_wasm_bg.wasm')
@@ -39,38 +39,39 @@ function vocabulary_ready(): Promise<boolean> {
   })
 }
 
-async function analyze_chinese_string(text: string, locale: 'zh-TW' | 'zh-CN') {
+async function worker_ready(): Promise<Record<string, CEDictEntry>> {
   const [dictionary] = await Promise.all([
     chinese_to_english_dictionary,
     jieba_ready,
     vocabulary_ready(),
   ])
+  return dictionary
+}
+
+async function split_chinese_string(text: string, locale: 'zh-TW' | 'zh-CN') {
+  const dictionary = await worker_ready()
   return analyze_chinese_sentence({text, locale, user_vocabulary, dictionary})
 }
 
-async function analyze_chinese_sentences(sentences: Sentence[], locale: 'zh-TW' | 'zh-CN'): Promise<Sentence[]> {
-  const [dictionary] = await Promise.all([
-    chinese_to_english_dictionary,
-    jieba_ready,
-    vocabulary_ready(),
-  ])
-  return sentences.map(sentence => {
-    sentence.words = analyze_chinese_sentence({text: sentence.text, locale, user_vocabulary, dictionary})
-    return sentence
-  })
+async function split_chinese_sentences({sentences, locale}: { sentences: Sentence[], locale: 'zh-TW' | 'zh-CN' }): Promise<Sentence[]> {
+  const dictionary = await worker_ready()
+  return sentences.map(sentence => ({
+    ...sentence,
+    words: analyze_chinese_sentence({text: sentence.text, locale, user_vocabulary, dictionary})
+  }))
 }
 
-async function analyze_and_emphasize_chinese_sentences({sentences, locale, limits}: { sentences: Sentence[], locale: 'zh-TW' | 'zh-CN', limits?: ChineseEmphasisLimits}) {
-  const analyzed_sentences = await analyze_chinese_sentences(sentences, locale)
-  return emphasize_chinese_sentences({sentences: analyzed_sentences, limits, user_vocabulary})
+async function _analyze_chinese_sentences({sentences, locale, emphasis_limits}: { sentences: Sentence[], locale: 'zh-TW' | 'zh-CN', emphasis_limits: ChineseEmphasisLimits}) {
+  const dictionary = await worker_ready()
+  return analyze_chinese_sentences({sentences, locale, user_vocabulary, dictionary, emphasis_limits})
 }
 
 export const api = {
   set_user_vocabulary,
   segment,
-  analyze_chinese_string,
-  analyze_chinese_sentences,
-  analyze_and_emphasize_chinese_sentences,
+  split_chinese_string,
+  split_chinese_sentences,
+  analyze_chinese_sentences: _analyze_chinese_sentences,
 }
 
 expose(api)

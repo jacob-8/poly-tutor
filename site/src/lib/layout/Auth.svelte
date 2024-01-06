@@ -38,6 +38,7 @@
 
     toast(`Signed in with ${email}`, FOUR_SECONDS)
     invalidateAll()
+    close()
   }
 
   $: code_is_6_digits = /^[0-9]{6}$/.test(sixDigitCode)

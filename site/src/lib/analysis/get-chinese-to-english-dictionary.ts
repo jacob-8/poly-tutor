@@ -1,5 +1,5 @@
 import type { CEDictEntry } from '$lib/types'
-import { find_tone } from '$lib/utils/find-tone'
+// import { find_tone } from '$lib/utils/find-tone'
 import { csvParse } from 'd3-dsv'
 
 export async function get_chinese_to_english_dictionary() {
@@ -10,19 +10,19 @@ export async function get_chinese_to_english_dictionary() {
   return prepare_entries(downloaded_entries)
 }
 
-function prepare_entries(csv_rows: CEDictEntry[]): Record<string, CEDictEntry> {
+export function prepare_entries(csv_rows: CEDictEntry[]): Record<string, CEDictEntry> {
   const entries: Record<string, CEDictEntry> = {}
   for (const entry of csv_rows) {
-    if (!entries[entry.traditional])
-      entries[entry.traditional] = { ...entry, definitions_array: sort_definitions(entry.definitions)}
-    else
-      entries[entry.traditional].definitions_array = [...entries[entry.traditional].definitions_array, ...sort_definitions(entry.definitions)]
-  }
-
-  for (const entry of Object.values(entries)) {
-    entry.tones = entry.pinyin.split(' ').map(syllable => {
-      return find_tone(syllable)
-    })
+    if (!entries[entry.traditional]) {
+      entries[entry.traditional] = {
+        ...entry,
+        // definitions_array: sort_definitions(entry.definitions), (100% slower)
+        // tones: entry.pinyin.split(' ').map(syllable => find_tone(syllable)), (30% slower)
+      }
+    } else {
+      entries[entry.traditional].definitions = `${entries[entry.traditional].definitions}/${entry.definitions}`
+      // entries[entry.traditional].definitions_array = [...entries[entry.traditional].definitions_array, ...sort_definitions(entry.definitions)]
+    }
   }
 
   for (const entry of Object.values(entries)) {
@@ -33,13 +33,7 @@ function prepare_entries(csv_rows: CEDictEntry[]): Record<string, CEDictEntry> {
   return entries
 }
 
-function sort_definitions(definitions: string): string[] {
-  return definitions.split('/').sort((a, b) => {
-    if (a.includes('surname') || a.startsWith('variant') || a.startsWith('old variant')) return 1
-    if (b.includes('surname') || b.startsWith('variant') || b.startsWith('old variant')) return -1
-    return 0
-  })
-}
+
 
 if (import.meta.vitest) {
   describe(prepare_entries, () => {
@@ -57,11 +51,7 @@ if (import.meta.vitest) {
       ]
 
       const result = prepare_entries(entries)
-      expect(result['你'].definitions_array).toEqual([
-        'you (informal)',
-        'you (female)',
-        'variant of 你[nǐ]',
-      ])
+      expect(result['你'].definitions).toEqual('you (informal)/you (female)/variant of 你[nǐ]')
       expect(Object.keys(result)).toEqual(['你', '好'])
     })
 
@@ -83,20 +73,9 @@ if (import.meta.vitest) {
       expect(result['你們']).toEqual(result['你们'])
     })
 
-    test('adds tone numbers', () => {
-      const result = prepare_entries(entries)
-      expect(result['你們'].tones).toEqual([3, 5])
-    })
-  })
-
-  describe(sort_definitions, () => {
-    test('places surname at the end', () => {
-      const result = sort_definitions('surname Guo/country/nation/state/national')
-
-      expect(result).toEqual([
-        'country', 'nation', 'state', 'national',
-        'surname Guo',
-      ])
-    })
+    // test('adds tone numbers', () => {
+    //   const result = prepare_entries(entries)
+    //   expect(result['你們'].tones).toEqual([3, 5])
+    // })
   })
 }

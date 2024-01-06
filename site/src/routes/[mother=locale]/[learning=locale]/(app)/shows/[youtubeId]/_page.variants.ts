@@ -23,6 +23,13 @@ const translate = async (sentences: Sentence[]) => {
   alert(`Would translate ${sentences.length} sentences`)
 }
 
+const streamed: Variant<Component>['props']['data']['streamed'] = {
+  title: new Promise((resolve) => { setTimeout(() => resolve([{text: zh_transcribed_summarized.youtube.title}]), 500) }),
+  description: new Promise((resolve) => { setTimeout(() => resolve([{text: zh_transcribed_summarized.youtube.description}]), 500) }),
+  // @ts-ignore
+  content: new Promise((resolve) => { setTimeout(() => resolve({transcript: zh_transcribed_summarized.transcripts[0], emphasized_sentences: [], emphasized_words: []}), 500) }),
+}
+
 export const variants: Variant<Component>[] = [
   {
     name: 'no user',
@@ -32,11 +39,8 @@ export const variants: Variant<Component>[] = [
         ...mockLayoutData,
         youtube,
         error: null,
-        summary: writable(zh_transcribed_summarized.summaries[0].summary),
-        streamed: {
-          // @ts-ignore
-          transcript: new Promise((resolve) => { setTimeout(() => resolve( zh_transcribed_summarized.transcripts[0]), 1000) }),
-        },
+        summary: writable(zh_transcribed_summarized.summaries[0].summary.sentences),
+        streamed,
         translate,
         check_is_in_my_videos: null,
         remove_from_my_videos: null,
@@ -48,18 +52,15 @@ export const variants: Variant<Component>[] = [
   },
   {
     name: 'user',
-    languages: [],
+    // languages: [],
     props: {
       data: {
         ...mockLayoutData,
         user: mockBobUser,
         user_vocabulary: writable({'你好': {status: WordStatus.known, views: 1}}),
         youtube,
-        summary: writable(zh_transcribed_summarized.summaries[0].summary),
-        streamed: {
-          // @ts-ignore
-          transcript: new Promise((resolve) => { setTimeout(() => resolve( zh_transcribed_summarized.transcripts[0]), 1000) }),
-        },
+        summary: writable(zh_transcribed_summarized.summaries[0].summary.sentences),
+        streamed,
         translate,
         // @ts-ignore
         check_is_in_my_videos: (youtube_id) => { console.info(`check_is_in_my_videos(${youtube_id})`)},

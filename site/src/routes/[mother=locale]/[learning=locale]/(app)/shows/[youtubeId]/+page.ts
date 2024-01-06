@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types'
-import type { AnalyzeSyntaxRequestBody, ChatRequestBody, OpenAiChatStreamResponse, Section, Sentence, TranslateRequestBody, YtAddRequestBody, YtCaptionsRequestBody, YtTranscribeRequestBody } from '$lib/types'
+import type { AnalyzeSyntaxRequestBody, ChatRequestBody, OpenAiChatStreamResponse, Sentence, StudyWords, TranslateRequestBody, YtAddRequestBody, YtCaptionsRequestBody, YtTranscribeRequestBody } from '$lib/types'
 import { fetchSSE } from '$lib/client/fetchSSE'
 import type { ChatCompletionRequestMessage } from 'openai-edge'
 import { merge_translations } from './merge_translations'
@@ -11,11 +11,11 @@ import type { LocaleCode } from '$lib/i18n/locales'
 import { post_request } from '$lib/utils/post-request'
 import { merge_syntax } from './merge_syntax'
 import { browser } from '$app/environment'
-import { get_openai_api_key } from '$lib/client/UserInfo.svelte'
+import { get_openai_api_key, open_auth } from '$lib/client/UserInfo.svelte'
 
 export const load = (async ({ params: { youtubeId: youtube_id, mother, learning }, fetch, parent }) => {
   const learning_language = learning.replace(/-.*/, '') as 'zh' | 'en'
-  const { supabase, user, analyze_sentences, analyze_and_emphasize_sentences } = await parent()
+  const { supabase, user, split_sentences, analyze_sentences } = await parent()
   let youtube = await youtube_in_db(youtube_id, supabase)
 
   let error = ''
@@ -93,7 +93,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
         if (error)
           console.error(error.message)
         if (summary?.summary?.sentences)
-          analyze_sentences(summary.summary.sentences).then(set)
+          split_sentences(summary.summary.sentences).then(set)
       })
   })
 
@@ -129,7 +129,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
             alert(error.message)
           }
           const final_summary: Sentence[] = [{ text: streamed_in_summary, translation: { [mother as LocaleCode]: translated_summary.line_separated_translations }}]
-          summary.set(await analyze_sentences(final_summary))
+          summary.set(await split_sentences(final_summary))
 
           const { error: savingError } = await saveSummary(final_summary, model)
           if (savingError) {
@@ -166,6 +166,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
 
   // TODO: move this into an endpoint to allow for translating others's captions
   async function translate(sentences: Sentence[]) {
+    if (!get(user)) return open_auth()
     const text = sentences.map(sentence => sentence.text).join('\n')
     const { data, error } = await post_request<TranslateRequestBody, {line_separated_translations: string}>('/api/translate', { text, sourceLanguageCode: learning as LocaleCode, targetLanguageCode: mother as LocaleCode }, fetch)
     if (error) {
@@ -212,13 +213,12 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     invalidateAll()
   }
 
-  async function prepare_transcript(): Promise<Section | null> {
+  async function prepare_content(): Promise<{ transcript?: Transcript, sentences: Sentence[], study_words: StudyWords}> {
     if (!browser) return undefined // don't use null as that will mistakenly show option to transcribe for a moment when we just need to wait until the client inits
     const transcript = await getTranscript()
-    if (!transcript) return null
-    const { sentences } = transcript.transcript
-    const analyzed_sentences = await analyze_and_emphasize_sentences(sentences)
-    return { sentences: analyzed_sentences }
+    if (!transcript) return { sentences: null, study_words: null }
+    const { sentences, study_words } = await analyze_sentences(transcript.transcript.sentences)
+    return { transcript, sentences, study_words }
   }
 
   return {
@@ -232,9 +232,9 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     translate,
     analyze_syntax,
     streamed: {
-      transcript: prepare_transcript(),
-      title: analyze_sentences([{text: youtube.title}]),
-      description: analyze_sentences([{text: youtube.description}]),
+      title: split_sentences([{text: youtube.title}]),
+      description: split_sentences([{text: youtube.description}]),
+      content: prepare_content(),
     },
   }
 }) satisfies PageLoad

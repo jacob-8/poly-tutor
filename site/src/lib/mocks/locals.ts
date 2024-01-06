@@ -13,7 +13,7 @@ const user: User = {
 
 export const authenticatedLocal: App.Locals = {
   getSession: async () => ({
-    data: {user, session: null},
+    data: { user, session: null },
     error: null
   })
 }

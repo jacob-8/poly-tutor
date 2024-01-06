@@ -1,18 +1,24 @@
 <script lang="ts">
   import { WordStatus, type AnalyzedChineseWordWithEmphasis, type Settings } from '$lib/types'
+  import { find_tone, tone_marker } from '$lib/utils/find-tone'
+  import { sort_definitions } from '$lib/utils/sort-definitions'
 
   export let settings: Settings
   export let word: AnalyzedChineseWordWithEmphasis
 
-  $: ({text, definitions_array, neighbors_understood, opposite_script, status, pronunciation, tone_change, high_view_count, common_in_this_context, improve_pronunciation_or_tone } = word)
+  $: ({text, definitions, neighbors_understood, opposite_script, status, pinyin, tone_change, high_view_count, common_in_this_context, improve_pronunciation_or_tone } = word)
 </script>
 
 <div class="text-center inline-flex flex-col items-center mt-2">
   {#if settings.show_pronunciation}
     <div class="text-xs text-gray-500/80 h-4 -mb-1 border-yellow" class:border-b={tone_change}>
       <div class:large-tone-markers={status === WordStatus.tone}>
-        {#if pronunciation && status !== WordStatus.known && status !== WordStatus.wordlist}
-          {pronunciation}
+        {#if pinyin && status !== WordStatus.known && status !== WordStatus.wordlist}
+          {#if status === WordStatus.tone}
+            {pinyin.split(' ').map(find_tone).map(tone_marker)}
+          {:else}
+            {pinyin.replaceAll(' ', '')}
+          {/if}
         {:else}
           &nbsp;
         {/if}
@@ -32,7 +38,7 @@
   {#if settings.show_pronunciation && status === WordStatus.unknown}
     <div class="text-base" style="max-width: {settings.font_size_em * text.length}em;">
       <div class="text-[0.6em] leading-none text-gray-500/80 overflow-hidden max-h-2em" class:-mx-2.75={neighbors_understood}>
-        {definitions_array[0].substring(0, 40)}
+        {sort_definitions(definitions).join(', ').substring(0, 40)}
       </div>
     </div>
   {/if}

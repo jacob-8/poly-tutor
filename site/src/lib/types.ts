@@ -42,7 +42,8 @@ export enum WordStatus {
 export interface AnalyzedWord extends VocabularyWordStats {
   text: string
   user_views?: number
-  definitions_array?: string[]
+  context_sentence_indexes?: number[]
+  definitions?: string
   neighbors_understood?: boolean
 }
 
@@ -51,7 +52,7 @@ export interface AnalyzedChineseWord extends AnalyzedWord {
   opposite_script?: string
   pinyin?: string // for word focus view
   // tones?: number[]
-  pronunciation?: string // a combination of pinyin, tone markers or nothing depending on word status
+  // pronunciation?: string // a combination of pinyin, tone markers or nothing depending on word status
   tone_change?: boolean
 }
 
@@ -74,14 +75,17 @@ export interface ChineseEmphasisLimits {
   improve_pronunciation_or_tone_max: number
 }
 
+export interface StudyWords {
+  high_view_count: AnalyzedChineseWordWithEmphasis[]
+  common_in_this_context: AnalyzedChineseWordWithEmphasis[]
+  improve_pronunciation_or_tone?: AnalyzedChineseWordWithEmphasis[]
+}
+
 export interface CEDictEntry {
   traditional: string
   simplified?: string
   pinyin: string
   definitions: string
-  // added
-  tones?: number[]
-  definitions_array?: string[]
 }
 
 export interface Settings {

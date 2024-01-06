@@ -19,8 +19,9 @@ const base_variants: Variant<Component>[] = [
       word: {
         text: '聽見',
         opposite_script: '听见',
+        pinyin: 'tīngjiàn',
         pronunciation: 'tīngjiàn',
-        definitions_array: ['heard with the ears and understood'],
+        definitions: 'heard with the ears and understood',
         status: WordStatus.unknown,
         high_view_count: true,
       },
@@ -32,8 +33,9 @@ const base_variants: Variant<Component>[] = [
     props: {
       word: {
         text: '好的',
+        pinyin: 'hǎode',
         pronunciation: 'hǎode',
-        definitions_array: ['good, everything is as it should be'],
+        definitions: 'good, everything is as it should be',
         status: WordStatus.unknown,
         common_in_this_context: true,
         neighbors_understood: true,
@@ -46,9 +48,10 @@ const base_variants: Variant<Component>[] = [
     props: {
       word: {
         text: '你好',
+        pinyin: 'nǐhǎo',
         pronunciation: 'nǐhǎo',
         tone_change: true,
-        definitions_array: ['hello'],
+        definitions: 'hello',
         status: WordStatus.pronunciation,
       },
       settings
@@ -59,9 +62,10 @@ const base_variants: Variant<Component>[] = [
     props: {
       word: {
         text: '你好',
+        pinyin: 'nǐhǎo',
         pronunciation: 'ˇˇ',
         tone_change: true,
-        definitions_array: ['hello'],
+        definitions: 'hello',
         status: WordStatus.tone,
         improve_pronunciation_or_tone: true,
       },
@@ -73,8 +77,9 @@ const base_variants: Variant<Component>[] = [
     props: {
       word: {
         text: '好的',
+        pinyin: 'hǎode',
         pronunciation: 'ˇ˙',
-        definitions_array: ['good'],
+        definitions: 'good',
         status: WordStatus.tone,
       },
       settings
@@ -85,7 +90,8 @@ const base_variants: Variant<Component>[] = [
     props: {
       word: {
         text: '好的',
-        definitions_array: ['good'],
+        pinyin: 'hǎode',
+        definitions: 'good',
         status: WordStatus.known,
       },
       settings

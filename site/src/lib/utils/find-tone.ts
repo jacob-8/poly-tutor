@@ -1,11 +1,12 @@
 /* eslint-disable no-magic-numbers */
-// const enum ToneMarkers {
-//   'ˉ' = 1,
-//   'ˊ' = 2,
-//   'ˇ' = 3,
-//   'ˋ' = 4,
-//   '˙' = 5,
-// }
+
+export function tone_marker(tone: number): string {
+  if (tone === 1) return 'ˉ'
+  if (tone === 2) return 'ˊ'
+  if (tone === 3) return 'ˇ'
+  if (tone === 4) return 'ˋ'
+  if (tone === 5) return '˙'
+}
 
 export function find_tone(word: string): number {
   const normalized = word.normalize('NFD')

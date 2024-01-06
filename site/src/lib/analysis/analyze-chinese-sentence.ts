@@ -20,22 +20,22 @@ export function analyze_chinese_sentence({text, locale, user_vocabulary, diction
 
     const entry = dictionary[word]
     if (entry){
-      analyzed_words.push(analyze_word(word, entry))
+      analyzed_words.push(analyze_word(entry))
       continue
     }
 
     for (const character of word) {
       const entry = dictionary[character]
       if (entry) {
-        analyzed_words.push(analyze_word(character, entry))
+        analyzed_words.push(analyze_word(entry))
         continue
       }
       analyzed_words.push({ text: character })
     }
   }
 
-  function analyze_word(word:string, entry: CEDictEntry) {
-    const { traditional, simplified, pinyin, tones, definitions_array } = entry
+  function analyze_word(entry: CEDictEntry) {
+    const { traditional, simplified, pinyin, definitions } = entry
 
     const text = simplified && locale === 'zh-CN' ? simplified : traditional
     const status = user_vocabulary[text]?.status ?? WordStatus.unknown
@@ -44,8 +44,7 @@ export function analyze_chinese_sentence({text, locale, user_vocabulary, diction
     const analyzed_word: AnalyzedChineseWord = {
       text,
       pinyin,
-      pronunciation: pinyin.replaceAll(' ', ''),
-      definitions_array,
+      definitions,
       status,
       user_views,
     }
@@ -53,15 +52,6 @@ export function analyze_chinese_sentence({text, locale, user_vocabulary, diction
     if (simplified)
       analyzed_word.opposite_script = locale === 'zh-CN' ? traditional : simplified
 
-    if (status === WordStatus.tone) {
-      analyzed_word.pronunciation = tones.map(number => {
-        if (number === 1) return 'ˉ'
-        if (number === 2) return 'ˊ'
-        if (number === 3) return 'ˇ'
-        if (number === 4) return 'ˋ'
-        if (number === 5) return '˙'
-      }).join('')
-    }
     return analyzed_word
   }
 
@@ -76,31 +66,23 @@ if (import.meta.vitest) {
       '你好': {
         traditional: '你好',
         pinyin: 'nǐ hǎo',
-        tones: [3, 3],
         definitions: 'hello',
-        definitions_array: ['hello'],
       },
       '老師': {
         traditional: '老師',
         simplified: '老师',
         pinyin: 'lǎo shī',
-        tones: [3, 1],
         definitions: 'teacher/instructor',
-        definitions_array: ['teacher', 'instructor'],
       },
       '大': {
         traditional: '大',
         pinyin: 'dà',
-        tones: [4],
         definitions: 'big/huge',
-        definitions_array: ['big', 'huge'],
       },
       '家': {
         traditional: '家',
         pinyin: 'jiā',
-        tones: [1],
         definitions: 'home/family',
-        definitions_array: ['home', 'family'],
       },
     }
 
@@ -114,13 +96,12 @@ if (import.meta.vitest) {
     test('basic', () => {
       const sentence = '你好老師！'
       const result = analyze_chinese_sentence({text: sentence, locale: 'zh-CN', user_vocabulary, dictionary})
-      expect(result).toEqual([
+      const expected: AnalyzedChineseWord[] = [
         {
           'text': '你好',
           'pinyin': 'nǐ hǎo',
           'status': WordStatus.tone,
-          'pronunciation': 'ˇˇ',
-          definitions_array: ['hello'],
+          definitions: 'hello',
           // 'tone_change': true,
           user_views: 3,
         },
@@ -129,25 +110,24 @@ if (import.meta.vitest) {
           'opposite_script': '老師',
           'pinyin': 'lǎo shī',
           'status': WordStatus.unknown,
-          'pronunciation': 'lǎoshī',
-          definitions_array: ['teacher', 'instructor'],
+          definitions: 'teacher/instructor',
           user_views: 0,
         },
         {
           'text': '！',
         },
-      ])
+      ]
+      expect(result).toEqual(expected)
     })
 
     test('word not found in dictionary is split into characters', () => {
       const sentence = '你好，大家！'
       const result = analyze_chinese_sentence({text: sentence, locale: 'zh-CN', user_vocabulary, dictionary})
-      expect(result).toEqual([
+      const expected: AnalyzedChineseWord[] = [
         {
           'text': '你好',
-          definitions_array: ['hello'],
+          definitions: 'hello',
           'pinyin': 'nǐ hǎo',
-          'pronunciation': 'ˇˇ',
           'status': WordStatus.tone,
           user_views: 3,
         },
@@ -156,24 +136,23 @@ if (import.meta.vitest) {
         },
         {
           'text': '大',
-          definitions_array: ['big', 'huge'],
+          definitions: 'big/huge',
           'pinyin': 'dà',
-          'pronunciation': 'dà',
           'status': WordStatus.unknown,
           user_views: 0,
         },
         {
           'text': '家',
-          definitions_array: ['home', 'family'],
+          definitions: 'home/family',
           'pinyin': 'jiā',
-          'pronunciation': 'jiā',
           'status': WordStatus.unknown,
           user_views: 0,
         },
         {
           'text': '！',
         },
-      ])
+      ]
+      expect(result).toEqual(expected)
     })
 
     test('English intermixed', () => {
@@ -181,9 +160,8 @@ if (import.meta.vitest) {
       const result = analyze_chinese_sentence({text: sentence, locale: 'zh-CN', user_vocabulary, dictionary})
       expect(result).toEqual([
         {
-          definitions_array: ['hello'],
+          definitions: 'hello',
           'pinyin': 'nǐ hǎo',
-          'pronunciation': 'ˇˇ',
           'status': 2,
           'text': '你好',
           user_views: 3,
@@ -222,8 +200,7 @@ if (import.meta.vitest) {
           'opposite_script': '老師',
           'pinyin': 'lǎo shī',
           'status': WordStatus.known,
-          'pronunciation': 'lǎoshī',
-          definitions_array: ['teacher', 'instructor'],
+          definitions: 'teacher/instructor',
           user_views: 0,
         })
     })

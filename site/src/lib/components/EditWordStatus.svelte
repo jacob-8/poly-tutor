@@ -1,0 +1,40 @@
+<script lang="ts">
+  import { WordStatus, type AnalyzedChineseWordWithEmphasis } from '$lib/types'
+  import { sort_definitions } from '$lib/utils/sort-definitions'
+
+  export let word: AnalyzedChineseWordWithEmphasis
+
+  $: ({text, definitions, pinyin, status, high_view_count, common_in_this_context, improve_pronunciation_or_tone } = word)
+</script>
+
+{#if pinyin}
+  <div class="flex mb-3 items-start">
+    <div class="flex flex-col items-center mr-2">
+      <div class="text-nowrap text-xl"
+        class:text-orange-500={high_view_count}
+        class:text-blue-500={common_in_this_context}
+        class:text-green-500={improve_pronunciation_or_tone}>
+        {text}
+      </div>
+      <div class="text-nowrap text-sm">{pinyin.replaceAll(' ', '')}</div>
+    </div>
+
+    <div class="text-xs">
+      {sort_definitions(definitions).join(', ') || ''}
+    </div>
+
+    <div class="ml-auto mr-1"></div>
+    <button type="button" class:active={status === WordStatus.pronunciation}><span class="i-material-symbols-hearing" /></button>
+    <button type="button" class:active={status === WordStatus.tone}><span class="i-material-symbols-chevron-right-rounded rotate-90 text-xl" /></button>
+    <button type="button" class:active={status === WordStatus.known}><span class="i-material-symbols-check-small-rounded text-xl" /></button>
+  </div>
+{/if}
+
+<style>
+  button {
+    --at-apply: flex items-center p-2 hover:bg-gray/30 rounded;
+  }
+  .active {
+    --at-apply: border-green-600 border text-green-600;
+  }
+</style>

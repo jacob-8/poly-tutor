@@ -4,7 +4,8 @@ import type { Supabase } from '../supabase/database.types'
 import type { AuthResponse } from '@supabase/supabase-js'
 import { writable } from 'svelte/store'
 import type { WordList } from './word-lists.interface'
-import { browser } from '$app/environment'
+import { browser, dev } from '$app/environment'
+import { jacob_known } from './word-lists'
 
 export const word_lists = createPersistedStore<WordList[]>(
   'word_lists_01.03.24',
@@ -14,11 +15,10 @@ export const word_lists = createPersistedStore<WordList[]>(
 
 export function createVocabStore({ supabase, authResponse, log = false }: { supabase: Supabase, authResponse: AuthResponse, log?: boolean }) {
   const user_vocabulary: UserVocabulary = {
-    '我': { status: WordStatus.known },
-    '的': { views: 200 },
-    '是': { views: 200 },
-    '一下': { views: 200 },
-
+    // '我': { status: WordStatus.known },
+    // '的': { views: 200 },
+    // '是': { views: 200 },
+    // '一下': { views: 200 },
   }
 
   const { subscribe, set } = writable<UserVocabulary>(user_vocabulary)
@@ -33,17 +33,25 @@ export function createVocabStore({ supabase, authResponse, log = false }: { supa
   // TODO: fetch from supabase and cache if a response returned
   console.info({supabase, authResponse, log})
 
-  word_lists.subscribe(async (lists) => {
-    const { word_lists } = await import('./word-lists')
-    lists
-      .map(list => word_lists[list])
-      .flat()
-      .forEach((word) => {
-        if (!user_vocabulary[word])
-          user_vocabulary[word] = { status: WordStatus.wordlist }
-      })
-    set(user_vocabulary)
-  })
+  if (dev || authResponse?.data?.user?.email === 'jacob@polylingual.dev') {
+    jacob_known.forEach((word) => {
+      if (!user_vocabulary[word])
+        user_vocabulary[word] = { status: WordStatus.known }
+      set(user_vocabulary)
+    })
+  } else {
+    word_lists.subscribe(async (lists) => {
+      const { word_lists } = await import('./word-lists')
+      lists
+        .map(list => word_lists[list])
+        .flat()
+        .forEach((word) => {
+          if (!user_vocabulary[word])
+            user_vocabulary[word] = { status: WordStatus.wordlist }
+        })
+      set(user_vocabulary)
+    })
+  }
 
   return { subscribe }
 }

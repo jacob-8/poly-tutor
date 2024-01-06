@@ -1,5 +1,6 @@
 <script context="module" lang="ts">
   import { get, writable } from 'svelte/store'
+  import { page } from '$app/stores'
 
   const show_auth = writable(false)
   export function open_auth() {
@@ -13,6 +14,9 @@
   }
 
   export function get_openai_api_key() {
+    const { data: { user} } = get(page)
+    if (!get(user)) return open_auth()
+
     const key = get(openai_api_key)
     if (key)
       return key

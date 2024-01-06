@@ -1,13 +1,13 @@
 import type { Supabase, YouTube } from '$lib/supabase/database.types'
 
 export async function youtube_in_db(youtube_id: string, supabase: Supabase): Promise<YouTube> {
-  const { data: [youtube], error } = await supabase
+  const { data, error } = await supabase
     .from('youtubes')
     .select()
     .eq('id', youtube_id)
   if (error)
     throw new Error(error.message)
-  return youtube
+  return data[0]
 }
 
 export async function check_is_in_my_videos(youtube_id: string, supabase: Supabase) {

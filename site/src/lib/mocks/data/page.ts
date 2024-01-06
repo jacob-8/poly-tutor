@@ -10,6 +10,10 @@ export const mockLayoutData: LayoutData = {
   authResponse: null,
   user: readable(null),
   user_vocabulary: writable({}),
+  settings: writable({font_size_em: 1.5, show_definition: true, show_pronunciation: true}),
+  split_string: null,
+  split_sentences: null,
+  analyze_sentences: null,
 }
 
 export const mockBobUser = readable({ email: 'bob@gmail.com'}) as Readable<BaseUser>

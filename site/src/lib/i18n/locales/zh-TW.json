@@ -18,7 +18,9 @@
     "translate": "翻譯",
     "captions": "字幕",
     "description": "描述",
-    "title": "標題"
+    "title": "標題",
+    "remove_video": "刪除影片",
+    "click_to_study": "點擊句子進行學習。"
   },
   "home": {
     "chat": "聊天",

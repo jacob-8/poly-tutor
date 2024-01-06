@@ -1,17 +1,19 @@
 <script lang="ts">
-  import type { Sentence } from '$lib/types'
-  import { Button } from 'svelte-pieces'
-  import SentenceComponent from '$lib/Sentence.svelte'
+  import type { Sentence, Settings } from '$lib/types'
+  import SentenceComponent from '$lib/components/Sentence.svelte'
 
   export let sentences: Sentence[] = []
   export let studySentence: (sentence: Sentence) => void
-
+  export let settings: Settings
   export let currentTimeMs: number
   export let isPlaying: boolean
   export let paddingMilliseconds = 250
   export let play: () => void
   export let pause: () => void
   export let seekToMs: (ms: number) => void
+  export let showTranslation: () => void
+  export let hideTranslation: () => void
+  export let toggleStudy: () => void
 
   let loop_caption = false
   let stop_time_ms: number
@@ -102,21 +104,23 @@
     current_caption_index = Math.max(0, current_caption_index - 1)
     const previousCaption = sentences[current_caption_index]
     const end_ms = stop_time_ms ? previousCaption.end_ms : null
-    if (isPlaying)
+    if (isPlaying) {
       play_and_select({ start_ms: previousCaption.start_ms, index: current_caption_index, end_ms })
-    else
+    } else {
       seekToMs(previousCaption.start_ms)
-
+      studySentence(sentences[current_caption_index])
+    }
   }
   function seekToNext() {
     current_caption_index = Math.min(sentences.length, current_caption_index + 1)
     const nextCaption = sentences[current_caption_index]
     const end_ms = stop_time_ms ? nextCaption.end_ms : null
-    if (isPlaying)
+    if (isPlaying) {
       play_and_select({ start_ms: nextCaption.start_ms, index: current_caption_index, end_ms })
-    else
+    } else {
       seekToMs(nextCaption.start_ms)
-
+      studySentence(sentences[current_caption_index])
+    }
   }
   function playCaptionOnLoop() {
     const currentCaption = sentences[current_caption_index]
@@ -133,7 +137,7 @@
 </script>
 
 {#each sentences as sentence, index}
-  <SentenceComponent id="caption_{index}" {sentence} active={index === current_caption_index} onMouseover={() => studySentence(sentence)}
+  <SentenceComponent id="caption_{index}" {settings} {sentence} active={index === current_caption_index}
     onClick={() => {
       if (stop_time_ms)
         play_and_select({ start_ms: sentence.start_ms, index, end_ms: sentence.end_ms })
@@ -144,41 +148,47 @@
 
 <div class="pb-20" />
 
-<div class="fixed bottom-0 left-0 right-0 bg-white border-t p-2 flex space-x-1">
+<div class="fixed bottom-0 left-0 sm:left-50% right-0 bg-white border-t p-1 sm:p-2 flex sm:space-x-1">
   <div class="ml-auto" />
-  {#if mode === 'repeat' && isPlaying}
-    <Button form="filled" color="black" onclick={() => pause()}>
+  <button type="button" class="sm:hidden!" on:click={toggleStudy}>
+    <span class="i-ic-baseline-manage-search text-xl" />
+  </button>
+  <button type="button" class="sm:hidden!" on:mousedown={showTranslation} on:touchstart={showTranslation} on:mouseup={hideTranslation} on:touchend={hideTranslation}>
+    <span class="i-mdi-google-translate text-xl" />
+  </button>
+  <!-- {#if mode === 'play-once' && isPlaying}
+    <button type="button" class="active" on:click={pause}>
       <span class="i-carbon-pause-filled text-xl" />
-    </Button>
+    </button>
   {:else}
-    <Button title="Repeat (shortcut: r)" form={mode === 'repeat' ? 'filled' : 'outline'} color="black" onclick={playCaptionOnLoop}>
-      <span class="i-ic-baseline-loop text-xl" />
-    </Button>
-  {/if}
-  {#if mode === 'play-once' && isPlaying}
-    <Button form="filled" color="black" onclick={() => pause()}>
-      <span class="i-carbon-pause-filled text-xl" />
-    </Button>
-  {:else}
-    <Button title="Play once (shortcut: 1)" form={mode === 'play-once' ? 'filled' : 'outline'} color="black" onclick={playCaptionOnce}>
+    <button type="button" title="Play once (shortcut: 1)" class:active={mode === 'play-once'} on:click={playCaptionOnce}>
       <div>1x</div>
-    </Button>
+    </button>
+  {/if} -->
+  {#if mode === 'repeat' && isPlaying}
+    <button type="button" class="active" on:click={pause}>
+      <span class="i-carbon-pause-filled text-xl" />
+    </button>
+  {:else}
+    <button type="button" title="Repeat (shortcut: r)" class:active={mode === 'repeat'} on:click={playCaptionOnLoop}>
+      <span class="i-ic-baseline-loop text-xl" />
+    </button>
   {/if}
   {#if mode === 'normal-play' && isPlaying}
-    <Button form="filled" color="black" onclick={() => pause()}>
+    <button type="button" class="active" on:click={pause}>
       <span class="i-carbon-pause-filled text-xl" />
-    </Button>
+    </button>
   {:else}
-    <Button title="Play normal (shortcut: n)" form={mode === 'normal-play' ? 'filled' : 'outline'} color="black" onclick={playNormal}>
+    <button type="button" title="Play normal (shortcut: n)" class:active={mode === 'normal-play'} on:click={playNormal}>
       <span class="i-carbon-play-filled-alt text-xl" />
-    </Button>
+    </button>
   {/if}
-  <Button title="Shortcut key: up or right-arrow" form="outline" color="black" onclick={seekToPrevious}>
+  <button type="button" class="hidden! sm:flex!" title="Shortcut key: up or right-arrow" on:click={seekToPrevious}>
     <span class="i-carbon-arrow-up text-xl" />
-  </Button>
-  <Button title="Shortcut key: down or left-arrow" form="outline" color="black" onclick={seekToNext}>
+  </button>
+  <button type="button" class="hidden! sm:flex!" title="Shortcut key: down or left-arrow" on:click={seekToNext}>
     <span class="i-carbon-arrow-down text-xl" />
-  </Button>
+  </button>
 </div>
 
 <svelte:window
@@ -213,3 +223,13 @@
       event.preventDefault()
     }
   }} />
+
+<style>
+  button {
+    --at-apply: px-3 py-2 hover:bg-gray/20 rounded flex items-center;
+  }
+
+  .active {
+    --at-apply: bg-black hover:bg-black/70 text-white;
+  }
+</style>
