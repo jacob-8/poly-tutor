@@ -1,12 +1,12 @@
-import { WordStatus, type AnalyzedChineseWordWithEmphasis, type CEDictEntry, type ChineseEmphasisLimits, type Sentence, type UserVocabulary, type StudyWords } from '$lib/types'
+import { WordStatus, type AnalyzedChineseWord, type CEDictEntry, type ChineseEmphasisLimits, type Sentence, type UserVocabulary, type StudyWords } from '$lib/types'
 import { analyze_chinese_sentence } from './analyze-chinese-sentence'
 
 export function analyze_chinese_sentences({ sentences, user_vocabulary, dictionary, locale, emphasis_limits }: { sentences: Sentence[], user_vocabulary: UserVocabulary, dictionary: Record<string, CEDictEntry>, locale: 'zh-TW' | 'zh-CN', emphasis_limits: ChineseEmphasisLimits }): { sentences: Sentence[], study_words: StudyWords } {
   const {common_in_this_context_max, high_view_count_max, improve_pronunciation_or_tone_max} = emphasis_limits
   // benchmark do user_views add just when first placing in a count object instead of in analyzing chinese sentences?
 
-  const learning_pronunciation_with_count = {} as Record<string, AnalyzedChineseWordWithEmphasis>
-  const unknown_words_with_count = {} as Record<string, AnalyzedChineseWordWithEmphasis>
+  const learning_pronunciation_with_count = {} as Record<string, AnalyzedChineseWord>
+  const unknown_words_with_count = {} as Record<string, AnalyzedChineseWord>
 
   const analyzed_sentences = sentences.map((sentence, index) => {
     const words = analyze_chinese_sentence({text: sentence.text, locale, user_vocabulary, dictionary})
@@ -15,7 +15,7 @@ export function analyze_chinese_sentences({ sentences, user_vocabulary, dictiona
     return { ...sentence, words }
   })
 
-  function add_to_counts(word: AnalyzedChineseWordWithEmphasis, sentence_index: number) {
+  function add_to_counts(word: AnalyzedChineseWord, sentence_index: number) {
     if (word.status === undefined || word.status === WordStatus.known || word.status === WordStatus.wordlist) return // skip non-Chinese word and known words
 
     if (word.status === WordStatus.tone || word.status === WordStatus.pronunciation) {
@@ -53,7 +53,7 @@ export function analyze_chinese_sentences({ sentences, user_vocabulary, dictiona
   return { sentences: analyzed_sentences, study_words: { high_view_count, common_in_this_context, improve_pronunciation_or_tone }}
 }
 
-// .reduce<Record<string, AnalyzedChineseWordWithEmphasis>>((acc, [key, value]) => {
+// .reduce<Record<string, AnalyzedChineseWord>>((acc, [key, value]) => {
 //   acc[key] = { ...value, high_view_count: true }
 //   return acc
 // }, {})

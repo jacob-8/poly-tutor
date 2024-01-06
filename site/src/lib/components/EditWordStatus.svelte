@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { WordStatus, type AnalyzedChineseWordWithEmphasis } from '$lib/types'
+  import { WordStatus, type AnalyzedChineseWord } from '$lib/types'
   import { sort_definitions } from '$lib/utils/sort-definitions'
 
-  export let word: AnalyzedChineseWordWithEmphasis
+  export let word: AnalyzedChineseWord
   export let high_view_count = false
   export let common_in_this_context = false
   export let improve_pronunciation_or_tone = false

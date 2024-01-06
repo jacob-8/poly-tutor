@@ -1,10 +1,11 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import SentenceComponent from '$lib/components/Sentence.svelte'
-  import { WordStatus, type Sentence } from '$lib/types'
+  import { WordStatus, type Sentence, type StudyWordsObject } from '$lib/types'
   import EditWordStatus from '$lib/components/EditWordStatus.svelte'
 
   export let sentence: Sentence
+  export let study_words_object: StudyWordsObject
 
   $: unique_words = sentence.words?.filter((word, index, array) =>
     array.findIndex(w => w.text === word.text) === index
@@ -14,7 +15,7 @@
   $: known_words = unique_words.filter(({ status }) => status === WordStatus.known)
 </script>
 
-<SentenceComponent {sentence} settings={{font_size_em: 1.5, show_definition: false, show_pronunciation: false}} />
+<SentenceComponent {study_words_object} {sentence} settings={{font_size_em: 1.5, show_definition: false, show_pronunciation: true}} />
 {#if sentence.translation?.[$page.data.mother]}
   {sentence.translation[$page.data.mother]}
 {/if}
@@ -27,7 +28,7 @@
   </div>
 {/if}
 {#each unknown_words as word}
-  <EditWordStatus {word} />
+  <EditWordStatus high_view_count={study_words_object?.high_view_count[word.text]} common_in_this_context={study_words_object?.common_in_this_context[word.text]} {word} />
 {/each}
 
 {#if word_list_words.length}
@@ -38,19 +39,22 @@
 {/if}
 
 {#each word_list_words as word}
-  <EditWordStatus {word} />
+  <EditWordStatus high_view_count={study_words_object?.high_view_count[word.text]} common_in_this_context={study_words_object?.common_in_this_context[word.text]} {word} />
 {/each}
 
-{#if known_words.length}
-  <hr>
-  <div class="text-xs text-gray mb-2">
-    Known:
-  </div>
-{/if}
+<div class="opacity-20 hover:opacity-100">
 
-{#each known_words as word}
-  <EditWordStatus {word} />
-{/each}
+  {#if known_words.length}
+    <hr>
+    <div class="text-xs text-gray mb-2">
+      Known:
+    </div>
+  {/if}
+
+  {#each known_words as word}
+    <EditWordStatus {word} />
+  {/each}
+</div>
 
 <style>
   hr {

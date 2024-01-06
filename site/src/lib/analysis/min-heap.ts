@@ -78,3 +78,22 @@ export class MinHeap<T> {
     return [...this.heap]
   }
 }
+
+// how to use
+
+// function getTopWords(wordsWithCount: Record<string, AnalyzedChineseWord>, maxCount: number, comparator: (a: AnalyzedChineseWord, b: AnalyzedChineseWord) => number, label: string) {
+//   const heap = new MinHeap<AnalyzedChineseWord>(comparator)
+//   Object.values(wordsWithCount).forEach(word => {
+//     heap.insert(word)
+//     if (heap.size() > maxCount)
+//       heap.extractMin()
+//   })
+//   return heap.toArray().reduce<Record<string, AnalyzedChineseWord>>((acc, word) => {
+//     acc[word.text] = { ...word, [label]: true }
+//     return acc
+//   }, {})
+// }
+
+// const top_context_words = getTopWords(unknown_words_with_count, common_in_this_context_max, (a, b) => a.context_views - b.context_views, 'common_in_this_context')
+// const top_user_words = getTopWords(unknown_words_with_count, high_view_count_max, (a, b) => (a.context_views + a.user_views) - (b.context_views + b.user_views), 'high_view_count')
+// const top_improve_words = getTopWords(learning_pronunciation_with_count, improve_pronunciation_or_tone_max, (a, b) => (a.context_views + a.user_views) - (b.context_views + b.user_views),

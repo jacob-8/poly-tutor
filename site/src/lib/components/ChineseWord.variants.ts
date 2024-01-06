@@ -19,13 +19,16 @@ const base_variants: Variant<Component>[] = [
       word: {
         text: '聽見',
         opposite_script: '听见',
-        pinyin: 'tīngjiàn',
-        pronunciation: 'tīngjiàn',
+        pinyin: 'tīng jiàn',
         definitions: 'heard with the ears and understood',
         status: WordStatus.unknown,
-        high_view_count: true,
       },
-      settings
+      settings,
+      study_words_object: {
+        high_view_count: {'聽見': true},
+        common_in_this_context: {},
+        improve_pronunciation_or_tone: {},
+      }
     },
   },
   {
@@ -33,14 +36,17 @@ const base_variants: Variant<Component>[] = [
     props: {
       word: {
         text: '好的',
-        pinyin: 'hǎode',
-        pronunciation: 'hǎode',
+        pinyin: 'hǎo de',
         definitions: 'good, everything is as it should be',
         status: WordStatus.unknown,
-        common_in_this_context: true,
         neighbors_understood: true,
       },
-      settings
+      settings,
+      study_words_object: {
+        high_view_count: {},
+        common_in_this_context: {'好的': true},
+        improve_pronunciation_or_tone: {},
+      }
     },
   },
   {
@@ -48,13 +54,13 @@ const base_variants: Variant<Component>[] = [
     props: {
       word: {
         text: '你好',
-        pinyin: 'nǐhǎo',
-        pronunciation: 'nǐhǎo',
+        pinyin: 'nǐ hǎo',
         tone_change: true,
         definitions: 'hello',
         status: WordStatus.pronunciation,
       },
-      settings
+      settings,
+      study_words_object: null,
     },
   },
   {
@@ -62,14 +68,17 @@ const base_variants: Variant<Component>[] = [
     props: {
       word: {
         text: '你好',
-        pinyin: 'nǐhǎo',
-        pronunciation: 'ˇˇ',
+        pinyin: 'nǐ hǎo',
         tone_change: true,
         definitions: 'hello',
         status: WordStatus.tone,
-        improve_pronunciation_or_tone: true,
       },
-      settings
+      settings,
+      study_words_object: {
+        high_view_count: {},
+        common_in_this_context: {},
+        improve_pronunciation_or_tone: {'你好': true},
+      },
     },
   },
   {
@@ -77,12 +86,12 @@ const base_variants: Variant<Component>[] = [
     props: {
       word: {
         text: '好的',
-        pinyin: 'hǎode',
-        pronunciation: 'ˇ˙',
+        pinyin: 'hǎo de',
         definitions: 'good',
         status: WordStatus.tone,
       },
-      settings
+      settings,
+      study_words_object: null,
     },
   },
   {
@@ -90,11 +99,12 @@ const base_variants: Variant<Component>[] = [
     props: {
       word: {
         text: '好的',
-        pinyin: 'hǎode',
+        pinyin: 'hǎo de',
         definitions: 'good',
         status: WordStatus.known,
       },
-      settings
+      settings,
+      study_words_object: null,
     },
   }
 ]

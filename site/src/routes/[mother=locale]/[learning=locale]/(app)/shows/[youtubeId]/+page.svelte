@@ -75,7 +75,7 @@
       {#if width >= 640}
         <div class="mt-2 overflow-y-auto grow-1 flex flex-col">
           {#if currentStudySentence}
-            <StudySentence sentence={currentStudySentence} />
+            <StudySentence {study_words_object} sentence={currentStudySentence} />
           {:else}
             <StudyLesson {study_words} />
             {$page.data.t.shows.click_to_study}
@@ -162,7 +162,7 @@
 
 {#if study_on_mobile && currentStudySentence}
   <div class="bg-white fixed top-0 bottom-11.25 left-0 right-0 p-2 z-1 overflow-y-scroll">
-    <StudySentence sentence={currentStudySentence} />
+    <StudySentence {study_words_object} sentence={currentStudySentence} />
   </div>
 {/if}
 

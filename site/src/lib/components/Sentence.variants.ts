@@ -16,34 +16,33 @@ export const variants: Variant<Component>[] = [
         words: [
           {
             text: '我',
-            pronunciation: 'wǒ',
+            pinyin: 'wǒ',
             definitions: ['I, me, my'].join('/'),
             status: WordStatus.known,
           },
           {
             text: '听见',
-            pronunciation: 'tīngjiàn',
+            pinyin: 'tīng jiàn',
             definitions: ['heard with 22 ears and understood'].join('/'),
             status: WordStatus.unknown,
             neighbors_understood: true,
           },
           {
             text: '你',
-            pronunciation: 'nǐ',
+            pinyin: 'nǐ',
             definitions: ['you'].join('/'),
             status: WordStatus.known,
           },
           {
             text: '说话',
-            pronunciation: 'shuōhuà',
+            pinyin: 'shuō huà',
             definitions: ['to speak, to say, to talk'].join('/'),
             status: WordStatus.unknown,
             neighbors_understood: true,
-            common_in_this_context: true,
           },
           {
             text: '了',
-            pronunciation: 'le',
+            pinyin: 'le',
             definitions: ['(particle signifying the change of situation)'].join('/'),
             status: WordStatus.known,
           },
@@ -51,7 +50,11 @@ export const variants: Variant<Component>[] = [
             text: '。',
           },
         ],
-      }
+      },
+      study_words_object: {
+        high_view_count: {},
+        common_in_this_context: {'说话': true},
+      },
     },
   },
 ]

@@ -1,10 +1,9 @@
-import { WordStatus, type AnalyzedChineseWordWithEmphasis, type Sentence } from '$lib/types'
+import { WordStatus, type AnalyzedChineseWord, type Sentence } from '$lib/types'
 
-const words: AnalyzedChineseWordWithEmphasis[] = [
+const words: AnalyzedChineseWord[] = [
   {
     'text': '自',
     'pinyin': 'zì',
-    'pronunciation': 'zì',
     'definitions': [
       'self',
       'oneself',
@@ -14,12 +13,11 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
       'surely'
     ].join('/'),
     'status': WordStatus.wordlist,
-    common_in_this_context: true,
+    // common_in_this_context: true,
   },
   {
     'text': '駕',
     'pinyin': 'jià',
-    'pronunciation': 'jià',
     'definitions': [
       'surname Jia',
       'to harness',
@@ -29,12 +27,11 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
     ].join('/'),
     'status': WordStatus.unknown,
     'opposite_script': '驾',
-    high_view_count: true,
+    // high_view_count: true,
   },
   {
     'text': '游',
     'pinyin': 'yóu',
-    'pronunciation': 'yóu',
     'definitions': [
       'to swim',
       'variant of 遊|游[yóu]',
@@ -45,7 +42,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '貴州',
     'pinyin': 'guì zhōu',
-    'pronunciation': 'guìzhōu',
     'definitions': [
       'Guizhou province (Kweichow) in south central China, abbr. to 黔[qián] or 貴|贵[guì], capital Guiyang 貴陽|贵阳[guì yáng]'
     ].join('/'),
@@ -55,7 +51,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '黔',
     'pinyin': 'qián',
-    'pronunciation': 'qián',
     'definitions': [
       'abbr. for Guizhou province 貴州|贵州[guì zhōu]'
     ].join('/'),
@@ -64,7 +59,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '東',
     'pinyin': 'dōng',
-    'pronunciation': 'dōng',
     'definitions': [
       'east',
       'host (i.e. sitting on east side of guest)',
@@ -77,7 +71,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '南',
     'pinyin': 'nán',
-    'pronunciation': 'nán',
     'definitions': [
       'south',
       'surname Nan'
@@ -90,7 +83,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '花',
     'pinyin': 'huā',
-    'pronunciation': 'huā',
     'definitions': [
       'flower',
       'blossom',
@@ -107,7 +99,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '元',
     'pinyin': 'yuán',
-    'pronunciation': 'yuán',
     'definitions': [
       'currency unit (esp. Chinese yuan)',
       'first',
@@ -122,7 +113,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '買',
     'pinyin': 'mǎi',
-    'pronunciation': 'mǎi',
     'definitions': [
       'to buy',
       'to purchase'
@@ -133,7 +123,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '了',
     'pinyin': 'le',
-    'pronunciation': 'le',
     'definitions': [
       '(modal particle intensifying preceding clause)',
       '(completed action marker)',
@@ -147,7 +136,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '個',
     'pinyin': 'gè',
-    'pronunciation': 'gè',
     'definitions': [
       'individual',
       'this',
@@ -161,7 +149,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '竹',
     'pinyin': 'zhú',
-    'pronunciation': 'zhú',
     'definitions': [
       'bamboo',
       'CL:棵[kē],支[zhī],根[gēn]',
@@ -172,7 +159,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '簍',
     'pinyin': 'lǒu',
-    'pronunciation': 'lǒu',
     'definitions': [
       'basket'
     ].join('/'),
@@ -185,7 +171,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '是不是',
     'pinyin': 'shì bù shì',
-    'pronunciation': 'shìbù shì',
     'definitions': [
       'is or isn\'t',
       'yes or no',
@@ -196,7 +181,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '特別',
     'pinyin': 'tè bié',
-    'pronunciation': 'tèbié',
     'definitions': [
       'especially',
       'special',
@@ -209,7 +193,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '洋氣',
     'pinyin': 'yáng qì',
-    'pronunciation': 'yángqì',
     'definitions': [
       'trendy',
       'fashionable',
@@ -227,7 +210,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '小白',
     'pinyin': 'xiǎo bái',
-    'pronunciation': 'xiǎobái',
     'definitions': [
       '(slang) novice',
       'greenhorn',
@@ -237,7 +219,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '的',
     'pinyin': 'de',
-    'pronunciation': 'de',
     'definitions': [
       'of',
       '~\'s (possessive particle)',
@@ -254,7 +235,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '奇幻',
     'pinyin': 'qí huàn',
-    'pronunciation': 'qíhuàn',
     'definitions': [
       'fantasy (fiction)'
     ].join('/'),
@@ -263,7 +243,6 @@ const words: AnalyzedChineseWordWithEmphasis[] = [
   {
     'text': '旅行',
     'pinyin': 'lǚ xíng',
-    'pronunciation': 'lǚxíng',
     'definitions': [
       'to travel',
       'journey',

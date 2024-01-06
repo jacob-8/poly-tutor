@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { WordStatus, type AnalyzedChineseWordWithEmphasis, type Settings, type StudyWordsObject } from '$lib/types'
+  import { WordStatus, type AnalyzedChineseWord, type Settings, type StudyWordsObject } from '$lib/types'
   import { find_tone, tone_marker } from '$lib/utils/find-tone'
   import { sort_definitions } from '$lib/utils/sort-definitions'
 
   export let settings: Settings
-  export let word: AnalyzedChineseWordWithEmphasis
+  export let word: AnalyzedChineseWord
   export let study_words_object: StudyWordsObject
 
   $: ({text, definitions, neighbors_understood, opposite_script, status, pinyin, tone_change } = word)
@@ -36,7 +36,7 @@
       <div class="absolute right-0 top-1 w-1 h-1 bg-blue rounded" />
     {/if}
   </div>
-  {#if settings.show_pronunciation && status === WordStatus.unknown}
+  {#if settings.show_definition && status === WordStatus.unknown}
     <div class="text-base" style="max-width: {settings.font_size_em * text.length}em;">
       <div class="text-[0.6em] leading-none text-gray-500/80 overflow-hidden max-h-2em" class:-mx-2.75={neighbors_understood}>
         {sort_definitions(definitions).join(', ').substring(0, 40)}

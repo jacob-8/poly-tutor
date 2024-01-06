@@ -12,6 +12,7 @@ export const variants: Variant<Component>[] = [
       sentence: {text: 'This is just a plain text string.'},
       studySentence: (sentence) => console.info({sentence}),
       settings: {font_size_em: 1.5, show_definition: true, show_pronunciation: true},
+      study_words_object: null,
     },
   },
   {
@@ -22,6 +23,7 @@ export const variants: Variant<Component>[] = [
       sentence: title_sentence,
       studySentence: (sentence) => console.info({sentence}),
       settings: {font_size_em: 1.5, show_definition: true, show_pronunciation: true},
+      study_words_object: null,
     },
   },
 ]

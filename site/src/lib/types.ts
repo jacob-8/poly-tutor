@@ -10,7 +10,7 @@ export interface Section {
 
 export interface Sentence {
   text?: string
-  words?: (AnalyzedWordWithEmphasis | AnalyzedChineseWordWithEmphasis)[]
+  words?: (AnalyzedWord | AnalyzedChineseWord)[]
   start_ms?: number
   end_ms?: number
   translation?: Translation
@@ -56,19 +56,6 @@ export interface AnalyzedChineseWord extends AnalyzedWord {
   tone_change?: boolean
 }
 
-// calculated on 2nd pass after analyzing all content
-export interface WordEmphasis {
-  high_view_count?: boolean // learn it - true if word ranks in the top ____ of unknown words using rank_amongst_unknown and user's preference for how many unknown words to learn per lesson - when showing preview, put words at the top if they are also common_in_this_context
-  common_in_this_context?: boolean // notice it - true if word is unknown ranks
-}
-
-export interface ChineseWordEmphasis extends WordEmphasis {
-  improve_pronunciation_or_tone?: boolean // improve it, 1-5 of the highest ranked words that are pronunciation or tone status
-}
-
-export type AnalyzedWordWithEmphasis = AnalyzedWord & WordEmphasis
-export type AnalyzedChineseWordWithEmphasis = AnalyzedChineseWord & ChineseWordEmphasis
-
 export interface ChineseEmphasisLimits {
   high_view_count_max: number
   common_in_this_context_max: number
@@ -76,9 +63,9 @@ export interface ChineseEmphasisLimits {
 }
 
 export interface StudyWords {
-  high_view_count: AnalyzedChineseWordWithEmphasis[]
-  common_in_this_context: AnalyzedChineseWordWithEmphasis[]
-  improve_pronunciation_or_tone?: AnalyzedChineseWordWithEmphasis[]
+  high_view_count: AnalyzedChineseWord[]
+  common_in_this_context: AnalyzedChineseWord[]
+  improve_pronunciation_or_tone?: AnalyzedChineseWord[]
 }
 
 export interface StudyWordsObject {
