@@ -16,17 +16,22 @@ server.events.on('response:bypass', ({ request, response }) => {
   if (request.url.startsWith(LOCAL_SUPABASE_URL) || request.url.startsWith(DEPLOYED_SUPABASE_URL))
     return
 
-  if (response.headers.get('content-type')?.includes('event-stream'))
+  if (!response.status.toString().startsWith('2'))
+    return console.error(`${request.method} ${request.url} had a ${response.status} ${response.statusText} response. The Error response was not saved to disk.`)
+
+  if (response.headers.get('content-type')?.includes('event-stream')) {
     saveStreamedResponse(response)
+    return console.info(`${request.method} ${request.url} had a ${response.status} ${response.statusText} response. The stream was received live and saved to disk.`)
+  }
 
-  if (response.headers.get('content-type')?.includes('json'))
+  if (response.headers.get('content-type')?.includes('json')) {
     saveJsonResponse(response)
-
-  console.info(`${request.method}:${request.url} received live and saved to disk if stream or json ${response.status} ${response.statusText}`)
+    return console.info(`${request.method} ${request.url} had a ${response.status} ${response.statusText} response. The json was received live and saved to disk.`)
+  }
 })
 
 server.events.on('response:mocked', ({ request, response }) => {
-  console.info(`${request.method}:${request.url} received and mocked: ${response.status} ${response.statusText}`)
+  console.info(`MOCKED: ${request.method} ${request.url} with ${response.status} ${response.statusText}`)
 })
 
 function saveJsonResponse(response: Response) {

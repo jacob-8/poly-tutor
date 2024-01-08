@@ -1,7 +1,9 @@
 import type { TablesInsert } from '$lib/supabase/generated.types'
 export const seeded_user_id = '5e040c00-ce26-4f2f-8413-e0985ec1f4b2'
 
-export const fake_transcript_to_be_mock_translated = '這是模仿翻譯的假抄本。'
+export const mocked_prefix = 'Mocked: '
+export const fake_ch__penguin_summary = mocked_prefix + '企鹅(qǐ\'é)。你喜欢企鹅吗？为什么？'
+export const fake_ch_transcript = mocked_prefix + '這是模仿翻譯的假抄本。'
 
 export interface YouTubeWithAllData {
   channel: TablesInsert<'youtube_channels'>
@@ -105,7 +107,7 @@ export const zh_transcribed: YouTubeWithAllData = {
   transcripts: [
     {
       youtube_id: 'UnlyETVcDzY',
-      transcript: { sentences: [{ text: fake_transcript_to_be_mock_translated }] },
+      transcript: { sentences: [{ text: fake_ch_transcript }] },
       transcript_source: 'spoofing',
       created_by: seeded_user_id
     }
@@ -192,15 +194,17 @@ export const seeded_youtubes: Record<string, YouTubeWithAllData> = {
   en_nothing,
 }
 
-export const unseeded_youtubes: Record<'zh_captions_on_youtube__llama' | 'zh_no_captions__ai_camp', { id: string, language: 'zh' | 'en'}> = {
+export const unseeded_youtubes: Record<'zh_captions_on_youtube__llama' | 'zh_no_captions__ai_camp', { id: string, language: 'zh' | 'en', channel_id?: string}> = {
   zh_captions_on_youtube__llama: {
     id: 'lpyKfNjTZi8',
     language: 'zh',
+    channel_id: 'UCs53vwIrtmBTr-NAfqYYt6w',
     // title: '臉書 LLaMA 2 7b 中文大型語言模型 !',
   }, // https://www.youtube.com/watch?v=lpyKfNjTZi8
   zh_no_captions__ai_camp: {
     id: '9OkddyYQBec',
     language: 'zh',
+    channel_id: 'UCkceO_uT0eWlMhX-04rxAMQ'
   }, // https://www.youtube.com/watch?v=9OkddyYQBec
 }
 

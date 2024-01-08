@@ -9,7 +9,7 @@ import { unseeded_youtubes } from '$lib/mocks/seed/youtubes'
 vi.mock('$env/static/private', () => {
   // const { TEST_CAPTIONS_URL } = await import('$lib/mocks/env')
   return {
-    CAPTIONS_URL: 'https://mocked.captions.url',
+    CAPTIONS_URL: 'https://cors-proxy.mocked',
   }
 })
 

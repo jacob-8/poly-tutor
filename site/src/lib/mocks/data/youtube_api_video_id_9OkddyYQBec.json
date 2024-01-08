@@ -1,0 +1,70 @@
+{
+  "kind": "youtube#videoListResponse",
+  "etag": "BwbD4zShuogjZlKulSfGFQ4zrDQ",
+  "items": [
+    {
+      "kind": "youtube#video",
+      "etag": "rZir4OrdyYyB7r-qE6MM-k1ojsA",
+      "id": "9OkddyYQBec",
+      "snippet": {
+        "publishedAt": "2023-05-30T05:06:57Z",
+        "channelId": "UCkceO_uT0eWlMhX-04rxAMQ",
+        "title": "「AI數學文化營」前進霧台 學童趣味玩數學｜每日熱點新聞｜原住民族電視台",
+        "description": "#國立屏東大學 教育學系學生，帶著 #AI 機器人前進南區各原住民學校，舉辦「AI數學文化營」。這次來到屏東霧台勵古百合分校，不同以往的互動學習，讓學生在遊戲中找到 #數學 的樂趣。\n\n掌握即時消息就在 #原視新聞網\r\n【官方網站】 https://news.ipcf.org.tw/ \r\n【Facebook】 https://www.facebook.com/titv.news.16 \r\n【YouTube】 https://www.youtube.com/c/TITVNews16",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/9OkddyYQBec/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/9OkddyYQBec/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/9OkddyYQBec/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          },
+          "standard": {
+            "url": "https://i.ytimg.com/vi/9OkddyYQBec/sddefault.jpg",
+            "width": 640,
+            "height": 480
+          },
+          "maxres": {
+            "url": "https://i.ytimg.com/vi/9OkddyYQBec/maxresdefault.jpg",
+            "width": 1280,
+            "height": 720
+          }
+        },
+        "channelTitle": "原視新聞網 TITV News",
+        "categoryId": "25",
+        "liveBroadcastContent": "none",
+        "localized": {
+          "title": "「AI數學文化營」前進霧台 學童趣味玩數學｜每日熱點新聞｜原住民族電視台",
+          "description": "#國立屏東大學 教育學系學生，帶著 #AI 機器人前進南區各原住民學校，舉辦「AI數學文化營」。這次來到屏東霧台勵古百合分校，不同以往的互動學習，讓學生在遊戲中找到 #數學 的樂趣。\n\n掌握即時消息就在 #原視新聞網\r\n【官方網站】 https://news.ipcf.org.tw/ \r\n【Facebook】 https://www.facebook.com/titv.news.16 \r\n【YouTube】 https://www.youtube.com/c/TITVNews16"
+        }
+      },
+      "contentDetails": {
+        "duration": "PT2M6S",
+        "dimension": "2d",
+        "definition": "hd",
+        "caption": "false",
+        "licensedContent": false,
+        "contentRating": {},
+        "projection": "rectangular"
+      },
+      "statistics": {
+        "viewCount": "220",
+        "likeCount": "2",
+        "favoriteCount": "0",
+        "commentCount": "0"
+      }
+    }
+  ],
+  "pageInfo": {
+    "totalResults": 1,
+    "resultsPerPage": 1
+  }
+}

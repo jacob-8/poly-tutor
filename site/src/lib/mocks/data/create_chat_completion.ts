@@ -55,6 +55,6 @@ export function create_chat_completion_data(contents: string[]): ChatCompletionC
 if (import.meta.vitest) {
   test(create_chat_completion_data, () => {
     const contents = '企鹅(qǐ\'é)。你喜欢企鹅吗？为什么？'.split('')
-    expect(create_chat_completion_data(contents)).toMatchFileSnapshot('./penguin_chat_completion.snap.json5')
+    expect(create_chat_completion_data(contents)).toMatchFileSnapshot('./create_chat_completion.snap.json5')
   })
 }

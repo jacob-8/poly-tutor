@@ -1,15 +1,15 @@
-import { http, HttpResponse, passthrough } from 'msw'
-import lpyKfNjTZi8_getTracks from '../data/get-tracks-lpyKfNjTZi8.json'
-import lpyKfNjTZi8_getCaptions from '../data/get-captions-zh-TW-lpyKfNjTZi8.json'
-// import HRenI3LURNk_getTracks from './data/get-tracks-HRenI3LURNk.json'
-// import HRenI3LURNk_getCaptions from './data/get-captions-zh-TW-HRenI3LURNk.json'
-// import Ukr40eBfeyg_getTracks from './data/get-tracks-Ukr40eBfeyg.json'
-// import Ukr40eBfeyg_getCaptions from './data/get-captions-zh-TW-Ukr40eBfeyg.json'
-// import _9OkddyYQBec_getCaptions from './data/get-captions-zh-TW-9OkddyYQBec.json'
-import { unseeded_youtubes } from '../seed/youtubes'
 import type { WhisperTranscript, ExternalYoutubeTranscribeRequestBody, ChatRequestBody } from '$lib/types'
+import { http, HttpResponse, passthrough } from 'msw'
 import { ResponseCodes } from '$lib/responseCodes'
 import { create_chat_completion_data } from '../data/create_chat_completion'
+import { fake_ch__penguin_summary, unseeded_youtubes } from '../seed/youtubes'
+
+import lpyKfNjTZi8_getTracks from '../data/get-tracks-lpyKfNjTZi8.json'
+import lpyKfNjTZi8_getCaptions from '../data/get-captions-zh-TW-lpyKfNjTZi8.json'
+import youtube_api_video_id_9OkddyYQBec from '../data/youtube_api_video_id_9OkddyYQBec.json'
+import youtube_api_channel_id_UCkceO_uT0eWlMhX from '../data/youtube_api_channel_id_UCkceO_uT0eWlMhX-04rxAMQ.json'
+import youtube_api_video_id_lpyKfNjTZi8 from '../data/youtube_api_video_id_lpyKfNjTZi8.json'
+import youtube_api_channel_id_UCs53vwIrtmBTr from '../data/youtube_api_channel_id_UCs53vwIrtmBTr-NAfqYYt6w.json'
 
 export const handlers = [
   http.post('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', async ({request}) => {
@@ -44,49 +44,50 @@ export const handlers = [
     return HttpResponse.json(body)
   }),
 
-  http.get('https://mocked.captions.url', ({request}) => {
+  http.get('https://www.googleapis.com/youtube/v3/videos', ({request}) => {
     const url = new URL(request.url)
-    const youtube_id = url.searchParams.get('v')
+    const part = url.searchParams.get('part')
+    const youtube_id = url.searchParams.get('id')
+    if (part === 'snippet,contentDetails,statistics' && youtube_id === unseeded_youtubes.zh_no_captions__ai_camp.id)
+      return HttpResponse.json(youtube_api_video_id_9OkddyYQBec)
+    if (part === 'snippet,contentDetails,statistics' && youtube_id === unseeded_youtubes.zh_captions_on_youtube__llama.id)
+      return HttpResponse.json(youtube_api_video_id_lpyKfNjTZi8)
+    return passthrough()
+  }),
+
+  http.get('https://www.googleapis.com/youtube/v3/channels', ({request}) => {
+    const url = new URL(request.url)
+    const part = url.searchParams.get('part')
+    const channel_id = url.searchParams.get('id')
+    if (part === 'snippet,statistics' && channel_id === unseeded_youtubes.zh_no_captions__ai_camp.channel_id)
+      return HttpResponse.json(youtube_api_channel_id_UCkceO_uT0eWlMhX)
+    if (part === 'snippet,statistics' && channel_id === unseeded_youtubes.zh_captions_on_youtube__llama.channel_id)
+      return HttpResponse.json(youtube_api_channel_id_UCs53vwIrtmBTr)
+    return passthrough()
+  }),
+
+  http.get('https://cors-proxy.*', ({request}) => {
+    const url = new URL(request.url)
     const isTracksRequest = url.searchParams.get('type') === 'list'
     const isCaptionsRequest = url.searchParams.get('fmt') === 'srv3'
 
-    if (youtube_id === unseeded_youtubes.zh_captions_on_youtube__llama.id) {
+    if (url.search.includes(unseeded_youtubes.zh_captions_on_youtube__llama.id)) {
       if (isTracksRequest)
         return HttpResponse.json(lpyKfNjTZi8_getTracks)
       if (isCaptionsRequest)
         return HttpResponse.json(lpyKfNjTZi8_getCaptions)
     }
 
-    if (youtube_id === unseeded_youtubes.zh_no_captions__ai_camp.id) {
+    if (url.search.includes(unseeded_youtubes.zh_no_captions__ai_camp.id)) {
       return new HttpResponse('Internal Server Error', { status: 500, headers: {
         'Content-Type': 'text/plain',
       } })
     }
 
-    if (youtube_id === 'throw-network-error')
+    if (url.search.includes('throw-network-error'))
       return HttpResponse.error()
 
     return passthrough()
-  }),
-
-  http.post('https://example.com/stream', () => {
-    const encode = createChunkEncoder()
-    const msg1 = encode('data: hello\r\n\r\n')
-    const msg2 = encode('data: world\r\n\r\n')
-
-    const stream = new ReadableStream({
-      start(controller) {
-        controller.enqueue(msg1)
-        controller.enqueue(msg2)
-        controller.close()
-      },
-    })
-
-    return new HttpResponse(stream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-      },
-    })
   }),
 
   http.post('https://api.openai.com/v1/chat/completions', async ({request}) => {
@@ -98,7 +99,7 @@ export const handlers = [
     const stream = new ReadableStream({
       async start(controller) {
         await new Promise(resolve => setTimeout(resolve, 1000))
-        const message = '企鹅(qǐ\'é)。你喜欢企鹅吗？为什么？'.split('')
+        const message = fake_ch__penguin_summary.split('')
 
         for (const msg of create_chat_completion_data(message)) {
           controller.enqueue(encode(`data: ${JSON.stringify(msg)}\n\n`))
