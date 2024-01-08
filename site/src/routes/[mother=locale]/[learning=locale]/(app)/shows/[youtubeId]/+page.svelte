@@ -78,7 +78,7 @@
             <StudySentence {study_words_object} sentence={currentStudySentence} />
           {:else}
             <StudyLesson {study_words} />
-            {$page.data.t.shows.click_to_study}
+            <!-- {$page.data.t.shows.click_to_study} -->
           {/if}
         </div>
       {/if}

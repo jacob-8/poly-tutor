@@ -39,9 +39,10 @@ export function analyze_chinese_sentences({ sentences, user_vocabulary, dictiona
 
   const high_view_count = unknown_sorted_by_user_views
     .slice(0, high_view_count_max)
+    .filter((word) => word.user_views > 1)
 
   const common_in_this_context = unknown_sorted_by_user_views
-    .slice(high_view_count_max)
+    .slice(high_view_count.length)
     .sort((a, b) => b.context_sentence_indexes.length - a.context_sentence_indexes.length)
     .slice(0, common_in_this_context_max)
 
@@ -112,19 +113,50 @@ if (import.meta.vitest) {
         views: 10,
       },
     }
+    test('words are only placed into high view count if they have previously been seen at least twice', () => {
+      const result = analyze_chinese_sentences({ sentences: [
+        { text: '大家！'},
+        { text: '大家！'},
+      ], emphasis_limits: { high_view_count_max: 1, common_in_this_context_max: 1, improve_pronunciation_or_tone_max: 1 },
+      dictionary, user_vocabulary, locale: 'zh-TW'
+      })
 
-    const result = analyze_chinese_sentences({ sentences: [
-      { text: '你好嗎'},
-      { text: '你好嗎'},
-      { text: '你好，我老師！'},
-      { text: '你好，老師！'},
-      { text: '你好，大家！'},
-      { text: '你好，大家！'},
-    ], emphasis_limits: { high_view_count_max: 1, common_in_this_context_max: 2, improve_pronunciation_or_tone_max: 1 },
-    dictionary, user_vocabulary, locale: 'zh-TW'
+      expect(result.study_words.high_view_count).toHaveLength(0)
+      expect(result.study_words.common_in_this_context).toHaveLength(1)
+
+      // expect(result.study_words).toMatchInlineSnapshot(`
+      //   {
+      //     "common_in_this_context": [],
+      //     "high_view_count": [
+      //       {
+      //         "context_sentence_indexes": [
+      //           0,
+      //           1,
+      //         ],
+      //         "definitions": "everyone",
+      //         "pinyin": "dà jiā",
+      //         "status": 0,
+      //         "text": "大家",
+      //         "user_views": 0,
+      //       },
+      //     ],
+      //     "improve_pronunciation_or_tone": [],
+      //   }
+      // `)
     })
 
     test('high view count from previous user views, common in this context next, and then improve pronunciation', () => {
+      const result = analyze_chinese_sentences({ sentences: [
+        { text: '你好嗎'},
+        { text: '你好嗎'},
+        { text: '你好，我老師！'},
+        { text: '你好，老師！'},
+        { text: '你好，大家！'},
+        { text: '你好，大家！'},
+      ], emphasis_limits: { high_view_count_max: 1, common_in_this_context_max: 2, improve_pronunciation_or_tone_max: 1 },
+      dictionary, user_vocabulary, locale: 'zh-TW'
+      })
+
       expect(result.study_words).toMatchInlineSnapshot(`
         {
           "common_in_this_context": [

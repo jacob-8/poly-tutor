@@ -13,8 +13,6 @@
   {/if}
   {#each study_words.high_view_count as word}
     <EditWordStatus high_view_count {word} />
-    User: {word.user_views}, context:
-    {word.context_sentence_indexes.length}
   {/each}
 
   {#if study_words.common_in_this_context.length}
@@ -26,8 +24,6 @@
 
   {#each study_words.common_in_this_context as word}
     <EditWordStatus common_in_this_context {word} />
-    {word.context_sentence_indexes.length},
-
   {/each}
 
   {#if study_words.improve_pronunciation_or_tone?.length}

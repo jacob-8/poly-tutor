@@ -11,7 +11,7 @@ export const load = async ({data: { access_token, refresh_token }, params: { lea
     await enableMocking()
 
   const settings = createPersistedStore<Settings>('settings_01.03.24', {font_size_em: 1.5, show_definition: true, show_pronunciation: true}, true)
-  const emphasis_limits = createPersistedStore<ChineseEmphasisLimits>('emphasis_limits_01.03.24', {high_view_count_max: 10, common_in_this_context_max: 4, improve_pronunciation_or_tone_max: 2}, true)
+  const emphasis_limits = createPersistedStore<ChineseEmphasisLimits>('emphasis_limits_01.03.24', {high_view_count_max: 10, common_in_this_context_max: 10, improve_pronunciation_or_tone_max: 2}, true)
   const supabase = getSupabase()
   const authResponse = await getSession({ supabase, access_token, refresh_token })
   const user = createUserStore({ supabase, authResponse })

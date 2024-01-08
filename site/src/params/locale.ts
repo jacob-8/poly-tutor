@@ -1,6 +1,6 @@
 import type { ParamMatcher } from '@sveltejs/kit'
-import { Locales } from '$lib/i18n/locales'
+import { Locales, type LocaleCode } from '$lib/i18n/locales'
 
-export const match = ((param) => {
-  return Object.keys(Locales).includes(param)
+export const match = ((locale): locale is LocaleCode => {
+  return Object.keys(Locales).includes(locale)
 }) satisfies ParamMatcher
