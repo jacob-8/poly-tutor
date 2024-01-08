@@ -1,6 +1,8 @@
 import type { TablesInsert } from '$lib/supabase/generated.types'
 export const seeded_user_id = '5e040c00-ce26-4f2f-8413-e0985ec1f4b2'
 
+export const fake_transcript_to_be_mock_translated = '這是模仿翻譯的假抄本。'
+
 export interface YouTubeWithAllData {
   channel: TablesInsert<'youtube_channels'>
   youtube: TablesInsert<'youtubes'>
@@ -103,7 +105,7 @@ export const zh_transcribed: YouTubeWithAllData = {
   transcripts: [
     {
       youtube_id: 'UnlyETVcDzY',
-      transcript: { sentences: [{ text: 'This is a fake transcript...' }] },
+      transcript: { sentences: [{ text: fake_transcript_to_be_mock_translated }] },
       transcript_source: 'spoofing',
       created_by: seeded_user_id
     }

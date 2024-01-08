@@ -70,17 +70,21 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     return sentences
   }
 
-  async function transcribe_captions() {
+  async function transcribe_captions(): Promise<{ sentences: Sentence[], study_words: StudyWords} | void> {
     const openai_api_key = get_openai_api_key()
     if (!openai_api_key) return
     const { data: sentences, error } = await post_request<YtTranscribeRequestBody, Sentence[]>('/api/yt_transcribe', { youtube_id, openai_api_key, language_code: 'zh', duration_seconds: 600 }, fetch)
-    if (error)
-      throw new Error(error.message)
+    if (error) {
+      console.error(error.message)
+      return alert(error.message)
+    }
 
     const { error: savingError } = await saveTranscript(sentences)
-    if (savingError)
-      throw new Error(savingError.message)
-    invalidateAll()
+    if (savingError) {
+      console.error(savingError.message)
+      return alert(savingError.message)
+    }
+    return await analyze_sentences(sentences)
   }
 
   const summary = writable<Sentence[] | null>(null, (set) => {
@@ -165,7 +169,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
   }
 
   // TODO: move this into an endpoint to allow for translating others's captions
-  async function translate(sentences: Sentence[]) {
+  async function translate(sentences: Sentence[]): Promise<Sentence[] | void> {
     if (!get(user)) return open_auth()
     const text = sentences.map(sentence => sentence.text).join('\n')
     const { data, error } = await post_request<TranslateRequestBody, {line_separated_translations: string}>('/api/translate', { text, sourceLanguageCode: learning as LocaleCode, targetLanguageCode: mother as LocaleCode }, fetch)
@@ -181,7 +185,8 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
       console.error(savingError.message)
       return alert(savingError.message)
     }
-    invalidateAll()
+
+    return sentencesWithTranslation
   }
 
   function updateTranscript(sentences: Sentence[]) {
@@ -213,12 +218,11 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     invalidateAll()
   }
 
-  async function prepare_content(): Promise<{ transcript?: Transcript, sentences: Sentence[], study_words: StudyWords}> {
+  async function prepare_content(): Promise<{ sentences: Sentence[], study_words: StudyWords}> {
     if (!browser) return undefined // don't use null as that will mistakenly show option to transcribe for a moment when we just need to wait until the client inits
     const transcript = await getTranscript()
     if (!transcript) return { sentences: null, study_words: null }
-    const { sentences, study_words } = await analyze_sentences(transcript.transcript.sentences)
-    return { transcript, sentences, study_words }
+    return await analyze_sentences(transcript.transcript.sentences)
   }
 
   return {

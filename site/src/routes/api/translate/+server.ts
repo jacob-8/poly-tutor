@@ -5,6 +5,7 @@ import { GOOGLE_TRANSLATE_NLP_CREDENTIALS } from '$env/static/private'
 import { ResponseCodes } from '$lib/responseCodes'
 import { dev } from '$app/environment'
 import type { TranslateRequestBody } from '$lib/types'
+import { fake_transcript_to_be_mock_translated } from '$lib/mocks/seed/youtubes'
 
 const CREDENTIALS = JSON.parse(GOOGLE_TRANSLATE_NLP_CREDENTIALS)
 const translationClient = new TranslationServiceClient({
@@ -29,7 +30,11 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
   if (!text)
     throw error(ResponseCodes.BAD_REQUEST, 'No text property found in request body')
 
-  console.info({ length: text.length })
+  console.info({ translate_text_request_length: text.length })
+
+  // Mock for E2E
+  if (dev && text.startsWith(fake_transcript_to_be_mock_translated))
+    return json({ line_separated_translations: text.split('\n').map(t => 'Mocked translation: ' + t).join('\n') })
 
   try {
     const textSections = splitText(text)

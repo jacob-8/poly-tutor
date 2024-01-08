@@ -22,7 +22,7 @@
   <div class="text-lg font-semibold flex items-center truncate py-1">
     {#if $page.data.youtube}
       <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 mr-1" /></a>
-      {$page.data.youtube.title}
+      {$page.data.youtube.title || ''}
     {:else if $page.url.pathname.includes('shows')}
       <a href="/">
         <span class="i-iconamoon-arrow-left-1 mr-1" /></a>

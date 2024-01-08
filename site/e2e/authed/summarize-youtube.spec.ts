@@ -7,5 +7,5 @@ test('user can generate a summary for an entire clip', async ({ page }) => {
   await page.getByPlaceholder('sk-').fill('sk-this-is-a-fake-key-obviously')
   await page.getByLabel('Close').click()
   await page.getByRole('button', { name: 'Summarize' }).click()
-  await expect(page.getByText('企鹅(qǐ\'é)。你喜欢企鹅吗？为什么？')).toBeVisible()
+  await expect(page.getByText('qǐé 企鵝 penguin').first()).toBeVisible()
 })

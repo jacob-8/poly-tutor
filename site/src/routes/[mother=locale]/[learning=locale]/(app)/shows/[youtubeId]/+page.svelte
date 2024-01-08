@@ -124,8 +124,13 @@
           <div class="text-gray text-xs mb-2 capitalize">0:00 - {format_time(youtube.duration_seconds)} {$page.data.t.shows.captions}</div>
         {/if}
 
-        {#if !sentences?.[0]?.translation}
-          <Button class="ml-auto" form="simple" size="sm" onclick={() => data.translate(sentences)}>{$page.data.t.shows.translate}</Button>
+        {#if sentences && !sentences?.[0]?.translation}
+          <Button class="ml-auto" form="simple" size="sm" onclick={async () => {
+            const sentences_with_translations = await data.translate(sentences)
+            if (sentences_with_translations)
+              // eslint-disable-next-line require-atomic-updates
+              sentences = sentences_with_translations
+          }}>{$page.data.t.shows.translate}</Button>
         {/if}
       </div>
       {#await new Promise(r => setTimeout(r, 200)) then _}
@@ -151,7 +156,11 @@
               isPlaying={playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING} {currentTimeMs} {studySentence} {sentences} />
           {:else}
             <div class="text-base">
-              <Button size="lg" class="mt-2" onclick={() => transcribe_captions()}>{$page.data.t.shows.get_captions}</Button>
+              <Button size="lg" class="mt-2" onclick={async () => {
+                const result = await transcribe_captions()
+                if (result)
+                  ({ sentences, study_words } = result)
+              }}>{$page.data.t.shows.get_captions}</Button>
             </div>
           {/if}
         {/if}

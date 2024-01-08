@@ -1,4 +1,4 @@
-import { browser, dev } from '$app/environment'
+import { browser } from '$app/environment'
 import { getSupabase, getSession } from '$lib/supabase'
 import { createUserStore } from '$lib/supabase/user'
 import  type { ChineseEmphasisLimits, Sentence, Settings } from '$lib/types'
@@ -7,9 +7,6 @@ import { createPersistedStore } from 'svelte-pieces/index'
 import { get } from 'svelte/store'
 
 export const load = async ({data: { access_token, refresh_token }, params: { learning }}) => {
-  if (browser && dev)
-    await enableMocking()
-
   const settings = createPersistedStore<Settings>('settings_01.03.24', {font_size_em: 1.5, show_definition: true, show_pronunciation: true}, true)
   const emphasis_limits = createPersistedStore<ChineseEmphasisLimits>('emphasis_limits_01.03.24', {high_view_count_max: 10, common_in_this_context_max: 10, improve_pronunciation_or_tone_max: 2}, true)
   const supabase = getSupabase()
@@ -48,10 +45,4 @@ export const load = async ({data: { access_token, refresh_token }, params: { lea
   }
 
   return { settings, supabase, authResponse, user, user_vocabulary, split_string, split_sentences, analyze_sentences }
-}
-
-async function enableMocking() {
-  // TODO: only enable for actual dev, not for playwright tests
-  // const { worker } = await import('$lib/mocks/msw/browser')
-  // return worker.start({onUnhandledRequest: 'bypass'})
 }

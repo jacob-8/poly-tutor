@@ -9,6 +9,8 @@ export function analyze_chinese_sentence({text, locale, user_vocabulary, diction
     user_vocabulary: UserVocabulary,
     dictionary: Record<string, CEDictEntry>,
   }): AnalyzedChineseWord[] {
+  if (!text) return []
+
   const words = jieba_cut(text, true)
 
   const analyzed_words: AnalyzedChineseWord[] = []
