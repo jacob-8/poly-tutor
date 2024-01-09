@@ -1,4 +1,4 @@
-import { userString, youtube_channels, youtubes, youtube_transcripts, youtube_summaries } from './tables'
+import { userString, youtube_channels, youtubes, youtube_transcripts, youtube_summaries, word_updates } from './tables'
 
 function convert_to_sql_string(value: string | number | object) {
   if (typeof value === 'boolean')
@@ -70,6 +70,8 @@ ${write_sql_file_string('youtubes', youtubes)}
 ${write_sql_file_string('youtube_transcripts', youtube_transcripts)}
 
 ${write_sql_file_string('youtube_summaries', youtube_summaries)}
+
+${write_sql_file_string('word_updates', word_updates)}
 `
   return sql
 }

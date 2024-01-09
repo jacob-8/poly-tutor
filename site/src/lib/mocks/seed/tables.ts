@@ -21,3 +21,10 @@ export const youtube_transcripts: TablesInsert<'youtube_transcripts'>[] = Object
 
 export const youtube_summaries: TablesInsert<'youtube_summaries'>[] = Object.values(seeded_youtubes)
   .flatMap(({summaries}) => summaries ?? [])
+
+export const word_updates: TablesInsert<'word_updates'>[] = [
+  { word: 'hello', language: 'en', status: 0, views: 5, created_by: seeded_user_id },
+  { word: 'world', language: 'en', status: 1, views: 2, created_by: seeded_user_id },
+  { word: '你好', language: 'zh', status: 2, views: 3, created_by: seeded_user_id },
+  { word: '世界', language: 'zh', status: 3, views: 4, created_by: seeded_user_id },
+]

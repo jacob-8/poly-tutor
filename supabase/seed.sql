@@ -20,3 +20,9 @@ INSERT INTO youtube_transcripts ("created_by", "transcript", "transcript_source"
 INSERT INTO youtube_summaries ("created_by", "end_ms", "start_ms", "summary", "summary_source", "youtube_id") VALUES
 ('5e040c00-ce26-4f2f-8413-e0985ec1f4b2', 10000, 0, '{"sentences":[{"text":"用於測試目的的非常簡短但虛假的摘要。"}]}'::jsonb, 'spoofing', '9ruqSX_p_48'),
 ('5e040c00-ce26-4f2f-8413-e0985ec1f4b2', 10000, 0, '{"sentences":[{"text":"A tutorial showing how to use LangChain.js to build a language model application."}]}'::jsonb, 'spoofing', 'HSZ_uaif57o');
+
+INSERT INTO word_updates ("created_by", "language", "status", "views", "word") VALUES
+('5e040c00-ce26-4f2f-8413-e0985ec1f4b2', 'en', 0, 5, 'hello'),
+('5e040c00-ce26-4f2f-8413-e0985ec1f4b2', 'en', 1, 2, 'world'),
+('5e040c00-ce26-4f2f-8413-e0985ec1f4b2', 'zh', 2, 3, '你好'),
+('5e040c00-ce26-4f2f-8413-e0985ec1f4b2', 'zh', 3, 4, '世界');

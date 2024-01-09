@@ -106,6 +106,44 @@ export interface Database {
           }
         ]
       }
+      word_updates: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          language: Database['public']['Enums']['language']
+          status: number
+          views: number
+          word: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          language: Database['public']['Enums']['language']
+          status: number
+          views: number
+          word: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          language?: Database['public']['Enums']['language']
+          status?: number
+          views?: number
+          word?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'word_updates_created_by_fkey'
+            columns: ['created_by']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       youtube_channels: {
         Row: {
           description: string | null
@@ -293,7 +331,13 @@ export interface Database {
       }
     }
     Views: {
-      [_ in never]: never
+      user_vocabulary: {
+        Row: {
+          language: Database['public']['Enums']['language'] | null
+          vocabulary: Json | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

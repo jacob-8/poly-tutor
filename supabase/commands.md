@@ -1,25 +1,25 @@
 # Local Supabase dev
 
-https://supabase.com/docs/guides/cli
+I recommend you read https://supabase.com/docs/guides/cli and install supabase cli locally, but if you have not installed it you can also prepend `pnpx ` to the commands below.
 
 ## Development
 
-- `pnpx supabase start`
-- `pnpx supabase stop`
-- `pnpx supabase migration new adding-foo`
-- `pnpx supabase db reset`
+- `supabase start`
+- `supabase stop`
+- `supabase migration new adding-foo`
+- `supabase db reset`
 
 ## Types
 
-- `pnpx supabase gen types typescript --local --schema public > site/src/lib/supabase/generated.types.ts`
-- `pnpx supabase gen types typescript --project-id=zfxvyodqwvigxarorgjx --schema public > packages/site/src/lib/supabase/generated.types.ts`
+- `supabase gen types typescript --local --schema public > site/src/lib/supabase/generated.types.ts`
+- `supabase gen types typescript --project-id=zfxvyodqwvigxarorgjx --schema public > packages/site/src/lib/supabase/generated.types.ts`
 
 ## Push changes to cloud project
 
-- `pnpx supabase login`
-- `pnpx supabase link --project-ref=zfxvyodqwvigxarorgjx --password=<DB password>`
-- `pnpx supabase db push`
+- `supabase login`
+- `supabase link --project-ref=zfxvyodqwvigxarorgjx --password=<DB password>`
+- `supabase db push`
 
 ## Misc
 
-- `pnpx supabase status`
+- `supabase status`
