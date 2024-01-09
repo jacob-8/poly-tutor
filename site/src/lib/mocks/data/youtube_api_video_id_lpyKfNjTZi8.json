@@ -1,0 +1,106 @@
+{
+  "kind": "youtube#videoListResponse",
+  "etag": "mUb9PRiJjYACVcGqQRoGL7hLnpk",
+  "items": [
+    {
+      "kind": "youtube#video",
+      "etag": "-JeqkF15VXlzlNycIsQwss5T_24",
+      "id": "lpyKfNjTZi8",
+      "snippet": {
+        "publishedAt": "2023-07-29T11:39:03Z",
+        "channelId": "UCs53vwIrtmBTr-NAfqYYt6w",
+        "title": "[ 分享 ] 臉書 LLaMA 2 7b 中文大型語言模型 ! 在 Windows Nvidia 運行 ！",
+        "description": "[ 分享 ] 臉書 LLaMA 2 7b 中文大型語言模型 ! 在 Windows Nvidia 運行 ！\n\n歡迎各大廠商與各式創作者合作\n\n請 email 到以下信箱\nappfromape@gmail.com\n\n成為這個頻道的會員並獲得獎勵：\nhttps://www.youtube.com/channel/UCs53vwIrtmBTr-NAfqYYt6w/join\n\n歡迎訂閱我的頻道\nhttps://reurl.cc/59Qqy\n\n歡迎訂閱我的 podcast 頻道\n”程式猿說科技“\n\nAnchor podcast\nhttps://anchor.fm/appfromape\n\n大家好！我是程式猿！\n很開心今天又來跟大家介紹\nLLaMA2 中文類似 ChatGPT 語言模型使用方式\n\nllama macos  教學  \nhttps://youtu.be/vNmMxrnnkAI\n\nLlama2 meta\nhttps://ai.meta.com/llama/\n\n線上玩模型\nhttps://labs.perplexity.ai/\n\ntext generation webui\nhttps://github.com/oobabooga/text-generation-webui\n\nllama2 7b 中文模型\nhttps://huggingface.co/LinkSoul/Chinese-Llama-2-7b-ggml/tree/main\n\n如果喜歡我的影片內容\n\n可以幫我按個讚並且訂閱我的頻道\n\n這樣我的新影片可以第一時間通知你！",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/lpyKfNjTZi8/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/lpyKfNjTZi8/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/lpyKfNjTZi8/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          },
+          "standard": {
+            "url": "https://i.ytimg.com/vi/lpyKfNjTZi8/sddefault.jpg",
+            "width": 640,
+            "height": 480
+          },
+          "maxres": {
+            "url": "https://i.ytimg.com/vi/lpyKfNjTZi8/maxresdefault.jpg",
+            "width": 1280,
+            "height": 720
+          }
+        },
+        "channelTitle": "程式猿",
+        "tags": [
+          "分享",
+          "推薦",
+          "介紹",
+          "\b程式",
+          "app",
+          "application",
+          "程式猿",
+          "好用",
+          "實用",
+          "好康",
+          "方便",
+          "howto",
+          "如何",
+          "手把手",
+          "教程",
+          "教學",
+          "教育",
+          "科技",
+          "appfromape",
+          "apps",
+          "applications",
+          "程式",
+          "Llama2",
+          "llama",
+          "meta",
+          "ai",
+          "AI",
+          "人工智慧",
+          "FB",
+          "facebook",
+          "生程式AI",
+          "webui",
+          "7b"
+        ],
+        "categoryId": "28",
+        "liveBroadcastContent": "none",
+        "localized": {
+          "title": "[ 分享 ] 臉書 LLaMA 2 7b 中文大型語言模型 ! 在 Windows Nvidia 運行 ！",
+          "description": "[ 分享 ] 臉書 LLaMA 2 7b 中文大型語言模型 ! 在 Windows Nvidia 運行 ！\n\n歡迎各大廠商與各式創作者合作\n\n請 email 到以下信箱\nappfromape@gmail.com\n\n成為這個頻道的會員並獲得獎勵：\nhttps://www.youtube.com/channel/UCs53vwIrtmBTr-NAfqYYt6w/join\n\n歡迎訂閱我的頻道\nhttps://reurl.cc/59Qqy\n\n歡迎訂閱我的 podcast 頻道\n”程式猿說科技“\n\nAnchor podcast\nhttps://anchor.fm/appfromape\n\n大家好！我是程式猿！\n很開心今天又來跟大家介紹\nLLaMA2 中文類似 ChatGPT 語言模型使用方式\n\nllama macos  教學  \nhttps://youtu.be/vNmMxrnnkAI\n\nLlama2 meta\nhttps://ai.meta.com/llama/\n\n線上玩模型\nhttps://labs.perplexity.ai/\n\ntext generation webui\nhttps://github.com/oobabooga/text-generation-webui\n\nllama2 7b 中文模型\nhttps://huggingface.co/LinkSoul/Chinese-Llama-2-7b-ggml/tree/main\n\n如果喜歡我的影片內容\n\n可以幫我按個讚並且訂閱我的頻道\n\n這樣我的新影片可以第一時間通知你！"
+        },
+        "defaultAudioLanguage": "zh-TW"
+      },
+      "contentDetails": {
+        "duration": "PT5M20S",
+        "dimension": "2d",
+        "definition": "hd",
+        "caption": "true",
+        "licensedContent": true,
+        "contentRating": {},
+        "projection": "rectangular"
+      },
+      "statistics": {
+        "viewCount": "8233",
+        "likeCount": "154",
+        "favoriteCount": "0",
+        "commentCount": "16"
+      }
+    }
+  ],
+  "pageInfo": {
+    "totalResults": 1,
+    "resultsPerPage": 1
+  }
+}

@@ -3,7 +3,7 @@
   import { page } from '$app/stores'
 </script>
 
-<div class="w-full lg:max-w-1250px mx-auto p-2 sm:p-3">
+<div class="w-full lg:max-w-1250px mx-auto p-3">
   <h1 class="text-3xl mb-3 font-bold">Poly {$page.data.t.layout.tutor}</h1>
 
   <p class="sm:text-lg mb-6 sm:mb-10">
@@ -12,12 +12,12 @@
 
   <div class="grid sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
     <a class="box group" href="/{$page.data.mother}/{$page.data.learning}/shows">
-      <span class="i-logos-youtube-icon text-200% opacity-50 block mb-1" />
+      <span class="i-logos-youtube-icon text-200% opacity-50 block mb-1 view-transition-yt-icon" />
       <span class="text-lg font-semibold">
         YouTube
       </span>
       <span class="text-sm my-1">{$page.data.t.home.youtube_description}</span>
-      <span class="text-sm font-semibold">
+      <span class="text-sm font-semibold text-red">
         {$page.data.t.home.watch_shows}
         <span class="i-material-symbols-arrow-right-alt vertical--3px transform group-hover:translate-x-1 transition-all duration-600" />
       </span>

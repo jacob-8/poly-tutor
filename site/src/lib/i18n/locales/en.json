@@ -6,7 +6,8 @@
     "email_address": "Email address",
     "send_code": "Send 6-Digit Code",
     "enter_6_digit_code": "Enter 6-digit code",
-    "sent_code": "Sent code"
+    "sent_code": "Sent code",
+    "error": "Error"
   },
   "shows": {
     "paste_youtube_url": "Paste YouTube URL",
@@ -14,7 +15,12 @@
     "summarize": "Summarize",
     "get_captions": "Get Captions",
     "analyze": "Analyze",
-    "translate": "Translate"
+    "translate": "Translate",
+    "captions": "captions",
+    "description": "Description",
+    "title": "Title",
+    "remove_video": "Remove Video",
+    "click_to_study": "Click on sentence to study."
   },
   "home": {
     "chat": "Chat",

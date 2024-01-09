@@ -2,9 +2,11 @@
   import { Modal } from 'svelte-pieces'
   import { page } from '$app/stores'
   import { changeLocale } from './changeLocale'
+
+  export let close: () => void
 </script>
 
-<Modal on:close>
+<Modal on:close={close}>
   <span slot="heading">
     What language are you learning?
   </span>
@@ -15,10 +17,10 @@
   {@const cnEN = $page.data.mother === 'zh-CN' && $page.data.learning === 'en'}
 
   <div class="flex flex-col space-y-1 mt-4">
-    <button class:active={enTW} disabled={enTW} type="button" on:click={() => changeLocale('en', 'zh-TW')}>Traditional Chinese</button>
-    <button class:active={enCN} disabled={enCN} type="button" on:click={() => changeLocale('en', 'zh-CN')}>Simplified Chinese</button>
-    <button class:active={twEN} disabled={twEN} type="button" on:click={() => changeLocale('zh-TW', 'en')}>使用繁體學習英文</button>
-    <button class:active={cnEN} disabled={cnEN} type="button" on:click={() => changeLocale('zh-CN', 'en')}>使用简体学习英文</button>
+    <button class:active={enTW} disabled={enTW} type="button" on:click={() => { changeLocale('en', 'zh-TW'); close() }}>Traditional Chinese</button>
+    <button class:active={enCN} disabled={enCN} type="button" on:click={() => { changeLocale('en', 'zh-CN'); close() }}>Simplified Chinese</button>
+    <button class:active={twEN} disabled={twEN} type="button" on:click={() => { changeLocale('zh-TW', 'en'); close() }}>使用繁體學習英文</button>
+    <button class:active={cnEN} disabled={cnEN} type="button" on:click={() => { changeLocale('zh-CN', 'en'); close() }}>使用简体学习英文</button>
   </div>
 </Modal>
 

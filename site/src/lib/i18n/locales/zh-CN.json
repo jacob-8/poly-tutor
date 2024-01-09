@@ -6,7 +6,8 @@
     "email_address": "电子邮件",
     "send_code": "发送验证码",
     "enter_6_digit_code": "输入 6 位数字代码",
-    "sent_code": "发送代码"
+    "sent_code": "发送代码",
+    "error": "错误"
   },
   "shows": {
     "paste_youtube_url": "粘贴 YouTube 视频网址",
@@ -14,7 +15,12 @@
     "summarize": "摘要",
     "get_captions": "取得字幕",
     "analyze": "分析",
-    "translate": "翻译"
+    "translate": "翻译",
+    "captions": "字幕",
+    "description": "描述",
+    "title": "标题",
+    "remove_video": "删除视频",
+    "click_to_study": "点击句子进行学习。"
   },
   "home": {
     "chat": "闲聊",

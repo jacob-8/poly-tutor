@@ -86,13 +86,13 @@ if (import.meta.vitest) {
 
       const sentences: Sentence[] = [{
         text: '今天我的導師is tall',
-        machine_translation: {
+        translation: {
           en: 'My tutor is tall today',
         }
       },
       {
         text: '今天他的導師is tall',
-        machine_translation: {
+        translation: {
           en: 'His tutor is tall today',
         }
       }]
@@ -108,7 +108,7 @@ if (import.meta.vitest) {
             { text: { content: 'tall' }, partOfSpeech: { tag: 'NOUN' } },
           ]
         },
-        machine_translation: {
+        translation: {
           en: 'My tutor is tall today',
         }
       },
@@ -123,7 +123,7 @@ if (import.meta.vitest) {
             { text: { content: 'tall' }, partOfSpeech: { tag: 'NOUN' } },
           ]
         },
-        machine_translation: {
+        translation: {
           en: 'His tutor is tall today',
         }
       }]

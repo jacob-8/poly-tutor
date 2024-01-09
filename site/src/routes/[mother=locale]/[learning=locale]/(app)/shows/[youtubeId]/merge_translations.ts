@@ -10,7 +10,7 @@ export function merge_translations(lineSeparatedTranslations: string, sentences:
 
     const mergedSentence: Sentence = {
       ...sentence,
-      machine_translation: {
+      translation: {
         en: translation,
       },
     }
@@ -23,7 +23,7 @@ export function merge_translations(lineSeparatedTranslations: string, sentences:
 
 if (import.meta.vitest) {
   describe(merge_translations, () => {
-    test('adds on machine_translation', () => {
+    test('adds on translation', () => {
       const lineSeparatedTranslations = `My tutor is busy today.
 My tutor is busy tomorrow.
 `
@@ -38,13 +38,13 @@ My tutor is busy tomorrow.
       const expected: Sentence[] = [{
         text: '今天我的導師很忙。',
         syntax: {},
-        machine_translation: {
+        translation: {
           en: 'My tutor is busy today.',
         }
       },
       {
         text: '明天我的導師很忙。',
-        machine_translation: {
+        translation: {
           en: 'My tutor is busy tomorrow.',
         }
       }]
