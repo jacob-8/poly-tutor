@@ -3,7 +3,7 @@ import { analyze_chinese_sentence } from './analyze-chinese-sentence'
 
 export function analyze_chinese_sentences({ sentences, user_vocabulary, dictionary, locale, emphasis_limits }: { sentences: Sentence[], user_vocabulary: UserVocabulary, dictionary: Record<string, CEDictEntry>, locale: 'zh-TW' | 'zh-CN', emphasis_limits: ChineseEmphasisLimits }): { sentences: Sentence[], study_words: StudyWords } {
   const {common_in_this_context_max, high_view_count_max, improve_pronunciation_or_tone_max} = emphasis_limits
-  // benchmark do user_views add just when first placing in a count object instead of in analyzing chinese sentences?
+  // benchmark do views add just when first placing in a count object instead of in analyzing chinese sentences?
 
   const learning_pronunciation_with_count = {} as Record<string, AnalyzedChineseWord>
   const unknown_words_with_count = {} as Record<string, AnalyzedChineseWord>
@@ -33,13 +33,13 @@ export function analyze_chinese_sentences({ sentences, user_vocabulary, dictiona
   }
 
   const unknown_more_than_once = Object.values(unknown_words_with_count)
-    .filter((word) => word.context_sentence_indexes.length > 1 || word.user_views > 1)
+    .filter((word) => word.context_sentence_indexes.length > 1 || word.views > 1)
 
-  const unknown_sorted_by_user_views = unknown_more_than_once.sort((a, b) => b.user_views - a.user_views)
+  const unknown_sorted_by_user_views = unknown_more_than_once.sort((a, b) => b.views - a.views)
 
   const high_view_count = unknown_sorted_by_user_views
     .slice(0, high_view_count_max)
-    .filter((word) => word.user_views > 1)
+    .filter((word) => word.views > 1)
 
   const common_in_this_context = unknown_sorted_by_user_views
     .slice(high_view_count.length)
@@ -48,7 +48,7 @@ export function analyze_chinese_sentences({ sentences, user_vocabulary, dictiona
 
   const improve_pronunciation_or_tone = Object.values(learning_pronunciation_with_count)
     .filter((word) => word.context_sentence_indexes.length > 1)
-    .sort((a ,b) => b.user_views - a.user_views)
+    .sort((a ,b) => b.views - a.views)
     .slice(0, improve_pronunciation_or_tone_max)
 
   return { sentences: analyzed_sentences, study_words: { high_view_count, common_in_this_context, improve_pronunciation_or_tone }}
@@ -137,7 +137,7 @@ if (import.meta.vitest) {
       //         "pinyin": "dà jiā",
       //         "status": 0,
       //         "text": "大家",
-      //         "user_views": 0,
+      //         "views": 0,
       //       },
       //     ],
       //     "improve_pronunciation_or_tone": [],
@@ -173,7 +173,7 @@ if (import.meta.vitest) {
               "pinyin": "nǐ hǎo",
               "status": 0,
               "text": "你好",
-              "user_views": 3,
+              "views": 3,
             },
             {
               "context_sentence_indexes": [
@@ -184,7 +184,7 @@ if (import.meta.vitest) {
               "pinyin": "dà jiā",
               "status": 0,
               "text": "大家",
-              "user_views": 0,
+              "views": 0,
             },
           ],
           "high_view_count": [
@@ -198,7 +198,7 @@ if (import.meta.vitest) {
               "pinyin": "lǎo shī",
               "status": 0,
               "text": "老師",
-              "user_views": 4,
+              "views": 4,
             },
           ],
           "improve_pronunciation_or_tone": [
@@ -212,7 +212,7 @@ if (import.meta.vitest) {
               "pinyin": "ma",
               "status": 2,
               "text": "嗎",
-              "user_views": 10,
+              "views": 10,
             },
           ],
         }

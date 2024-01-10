@@ -10,6 +10,13 @@ export enum Locales {
 
 export type LocaleCode = keyof typeof Locales
 
+export enum Languages {
+  'en' = 'English',
+  'zh' = '中文',
+}
+
+export type LanguageCode = keyof typeof Languages
+
 export function findSupportedLocaleFromAcceptedLanguages(acceptedLanguageHeader: string | null) {
   const locales = acceptedLanguageHeader
     ?.split(',')

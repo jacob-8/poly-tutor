@@ -1,4 +1,5 @@
 import { browser } from '$app/environment'
+import type { LanguageCode } from '$lib/i18n/locales.js'
 import { getSupabase, getSession } from '$lib/supabase'
 import { createUserStore } from '$lib/supabase/user'
 import  type { ChineseEmphasisLimits, Sentence, Settings } from '$lib/types'
@@ -12,7 +13,7 @@ export const load = async ({data: { access_token, refresh_token }, params: { lea
   const supabase = getSupabase()
   const authResponse = await getSession({ supabase, access_token, refresh_token })
   const user = createUserStore({ supabase, authResponse })
-  const user_vocabulary = createVocabStore({ supabase, authResponse })
+  const user_vocabulary = createVocabStore({ supabase, authResponse, language: learning.replace(/-.*/, '') as LanguageCode })
 
   if (browser) {
     const { api } = await import('$lib/analysis/expose-analysis-worker')

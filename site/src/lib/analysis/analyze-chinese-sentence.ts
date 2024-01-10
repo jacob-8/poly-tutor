@@ -41,14 +41,14 @@ export function analyze_chinese_sentence({text, locale, user_vocabulary, diction
 
     const text = simplified && locale === 'zh-CN' ? simplified : traditional
     const status = user_vocabulary[text]?.status ?? WordStatus.unknown
-    const user_views = user_vocabulary[text]?.views || 0
+    const views = user_vocabulary[text]?.views || 0
 
     const analyzed_word: AnalyzedChineseWord = {
       text,
       pinyin,
       definitions,
       status,
-      user_views,
+      views,
     }
 
     if (simplified)
@@ -105,7 +105,7 @@ if (import.meta.vitest) {
           'status': WordStatus.tone,
           definitions: 'hello',
           // 'tone_change': true,
-          user_views: 3,
+          views: 3,
         },
         {
           'text': '老师',
@@ -113,7 +113,7 @@ if (import.meta.vitest) {
           'pinyin': 'lǎo shī',
           'status': WordStatus.unknown,
           definitions: 'teacher/instructor',
-          user_views: 0,
+          views: 0,
         },
         {
           'text': '！',
@@ -131,7 +131,7 @@ if (import.meta.vitest) {
           definitions: 'hello',
           'pinyin': 'nǐ hǎo',
           'status': WordStatus.tone,
-          user_views: 3,
+          views: 3,
         },
         {
           'text': '，',
@@ -141,14 +141,14 @@ if (import.meta.vitest) {
           definitions: 'big/huge',
           'pinyin': 'dà',
           'status': WordStatus.unknown,
-          user_views: 0,
+          views: 0,
         },
         {
           'text': '家',
           definitions: 'home/family',
           'pinyin': 'jiā',
           'status': WordStatus.unknown,
-          user_views: 0,
+          views: 0,
         },
         {
           'text': '！',
@@ -166,7 +166,7 @@ if (import.meta.vitest) {
           'pinyin': 'nǐ hǎo',
           'status': 2,
           'text': '你好',
-          user_views: 3,
+          views: 3,
         },
         {
           'text': ',',
@@ -203,7 +203,7 @@ if (import.meta.vitest) {
           'pinyin': 'lǎo shī',
           'status': WordStatus.known,
           definitions: 'teacher/instructor',
-          user_views: 0,
+          views: 0,
         })
     })
   })

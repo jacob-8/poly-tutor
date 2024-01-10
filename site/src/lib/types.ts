@@ -21,11 +21,7 @@ type Translation = Partial<Record<LocaleCode, string>>
 
 export interface VocabularyWordStats {
   status?: WordStatus
-
-  // these are used in vocabulary list views and to calculate word emphasis
   views?: number
-  rank?: number // personal rank based on view count, for word focus view and pronunciation/tone improvement emphasizing
-  rank_amongst_unknown?: number // personal rank based on view count of unknown words
 }
 
 export type UserVocabulary = Record<string, VocabularyWordStats>
@@ -41,7 +37,6 @@ export enum WordStatus {
 
 export interface AnalyzedWord extends VocabularyWordStats {
   text: string
-  user_views?: number
   context_sentence_indexes?: number[]
   definitions?: string
   neighbors_understood?: boolean
