@@ -19,15 +19,13 @@ export const word_lists = createPersistedStore<WordList[]>(
   { syncTabs: true },
 )
 
-// first pulled from localstorage, then calculated as a combo of the user_vocabulary view from the db and any word_status_updates not yet synced to db
 export function createVocabStore({ supabase, authResponse, language, log = false }: { supabase: Supabase, authResponse: AuthResponse, language: LanguageCode, log?: boolean }) {
   if (!browser)
-    return { ...readable<UserVocabulary>({}), change_word_status: null, add_seen_sentence: null}
+    return { ...readable<UserVocabulary>({}), change_word_status: null, add_seen_sentence: null, changed_words: readable<UserVocabulary>({})}
 
   const user_id = authResponse?.data?.user?.id
   const user_key = user_id || 'no_user'
   const user_vocabulary = createPersistedStore<UserVocabulary>(`vocabulary_${user_key}`, {}, { syncTabs: true })
-  const word_updates = createPersistedStore<Record<string, TablesInsert<'word_updates'>>>(`word_updates_${user_key}`, {}, { syncTabs: true })
   const seen_sentences_this_route = createPersistedStore<Record<string, string[]>>(`seen_sentences_this_route_${user_key}`, {}, { syncTabs: true })
 
   if (user_id) {
@@ -39,46 +37,32 @@ export function createVocabStore({ supabase, authResponse, language, log = false
         console.info({ user_vocabulary_load: data, error })
         if (error) return console.error(error)
         if (!data?.length) return
-
         const [{vocabulary}] = data as unknown as { vocabulary: Record<string, VocabItem> }[]
-
-        const current_word_updates = get(word_updates)
-        const not_saved_word_updates = filter_object(current_word_updates, ({word, views}) => views >= vocabulary[word].views)
-        if (log) console.info({current_word_updates, not_saved_word_updates}) // should be the same but if there is a lag in the db not yet having updated, this will catch the discrepancy
-        word_updates.set(not_saved_word_updates)
-
-        user_vocabulary.set({
-          ...vocabulary,
-          ...not_saved_word_updates,
-        })
+        user_vocabulary.set(vocabulary)
       })
   }
 
   function change_word_status(word: string, status: WordStatus) {
     if (!user_id) return open_auth()
-
     if (log) console.info({word, status})
-    const current_word_updates = get(word_updates)
 
-    if (current_word_updates[word]) {
-      current_word_updates[word] = {
-        ...current_word_updates[word],
-        status,
-      }
-      word_updates.set(current_word_updates)
-      return
-    }
+    const vocabulary = get(user_vocabulary)
+    const views = vocabulary[word]?.views || 0
 
     const word_update: TablesInsert<'word_updates'> = {
       word,
       status,
       language,
-      views: get(user_vocabulary)[word]?.views || 0,
+      views,
       id: window.crypto.randomUUID(),
     }
-    const new_set_of_word_updates = {...current_word_updates, [word]: word_update}
-    word_updates.set(new_set_of_word_updates)
-    if (log) console.info({new_set_of_word_updates})
+
+    user_vocabulary.set({
+      ...vocabulary,
+      [word]: word_update
+    })
+
+    add_word_updates_to_db([word_update])
   }
 
   function add_seen_sentence(words: string[]) {
@@ -92,18 +76,18 @@ export function createVocabStore({ supabase, authResponse, language, log = false
   navigating.subscribe((nav) => {
     if (!nav || !user_id) return
     if (log) console.info('navigated')
-    process_word_updates()
+    process_seen_sentences()
   })
 
-  let last_process_word_updates: Date
-  async function process_word_updates() {
+  let last_process_seen_sentences: Date
+  async function process_seen_sentences() {
     const ten_seconds = 1000 * 10
-    if (last_process_word_updates && last_process_word_updates > new Date(Date.now() - ten_seconds)) {
-      if (log) console.info('process_word_updates called recently, skipping')
+    if (last_process_seen_sentences && last_process_seen_sentences > new Date(Date.now() - ten_seconds)) {
+      if (log) console.info('process_seen_sentences called in last 10 seconds, skipping')
       return
     }
-    last_process_word_updates = new Date()
-    if (log) console.info('processing word updates')
+    last_process_seen_sentences = new Date()
+    if (log) console.info('process_seen_sentences')
 
     const current_sentences = get(seen_sentences_this_route)
     const vocabulary = get(user_vocabulary)
@@ -121,41 +105,29 @@ export function createVocabStore({ supabase, authResponse, language, log = false
       }
     }
 
-    const current_word_updates = get(word_updates)
-    const new_word_updates: Record<string, TablesInsert<'word_updates'>> = {}
+    const word_updates: Record<string, TablesInsert<'word_updates'>> = {}
 
     for (const [word, views] of Object.entries(word_counts)) {
-      if (current_word_updates[word]) {
-        current_word_updates[word] = {
-          ...current_word_updates[word],
-          views: current_word_updates[word].views + views,
-        }
-      } else {
-        new_word_updates[word] = {
-          word,
-          status: vocabulary[word]?.status || WordStatus.unknown,
-          language,
-          views,
-          id: window.crypto.randomUUID(),
-        }
+      word_updates[word] = {
+        word,
+        status: vocabulary[word]?.status || WordStatus.unknown,
+        language,
+        views: vocabulary[word]?.views + views || views,
+        id: window.crypto.randomUUID(),
       }
     }
 
-    const all_word_updates_to_send_to_db = {...current_word_updates, ...new_word_updates}
-    word_updates.set(all_word_updates_to_send_to_db)
     user_vocabulary.set({
       ...vocabulary,
-      ...all_word_updates_to_send_to_db,
+      ...word_updates,
     })
+
     try {
-      const updates = Object.values(all_word_updates_to_send_to_db)
+      const updates = Object.values(word_updates)
       if (!updates.length) return
-      if (log) console.info({updates_going_to_db: updates})
+      if (log) console.info({updates_going_to_db: updates, length: updates.length})
       await add_word_updates_to_db(updates)
-      const fresh_check_of_word_updates = get(word_updates)
-      const word_updates_since_db_save_sent = filter_object(fresh_check_of_word_updates, ({id}) => !all_word_updates_to_send_to_db[id])
-      word_updates.set(word_updates_since_db_save_sent)
-      if (log) console.info({word_updates_since_db_save_sent, length: Object.keys(word_updates_since_db_save_sent).length})
+      seen_sentences_this_route.set({})
     } catch (error) {
       console.error(error)
     }
@@ -165,8 +137,6 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     const { data, error } = await supabase.from('word_updates').insert(updates).select()
     console.info({ data, error })
     if (error) throw error
-    // TODO: don't throw on errors resulting from a word update with same id being saved again as these are ok, this can happen if the user saves and closes the tab before the network request is complete and the updates get removed from local storage
-    // TODO: create function in db to just ignore duplicate ids so the rest of the saves don't get thrown away
   }
 
   const vocab_with_word_lists = derived<[Readable<UserVocabulary>, Readable<WordList[]>], UserVocabulary>([user_vocabulary, word_lists], ([$user_vocabulary, $word_lists], set) => {
@@ -192,10 +162,12 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     }
   }, {})
 
-  return { subscribe: vocab_with_word_lists.subscribe, change_word_status, add_seen_sentence }
+  const changed_words = derived<Readable<UserVocabulary>, UserVocabulary>(user_vocabulary, ($user_vocabulary, set) => {
+    set(filter_object($user_vocabulary, ({ id }) => !!id))
+  }, {})
+
+  return { subscribe: vocab_with_word_lists.subscribe, change_word_status, add_seen_sentence, changed_words }
 }
-
-
 
 function filter_object<T>(obj: Record<string, T>, callback: (value) => boolean): Record<string, T> {
   const asArray = Object.entries(obj)

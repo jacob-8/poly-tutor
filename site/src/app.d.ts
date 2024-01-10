@@ -1,9 +1,8 @@
 // https://kit.svelte.dev/docs/types#app
 import type { BaseUser } from '$lib/supabase/user'
 import type { AuthResponse } from '@supabase/supabase-js'
-import type { Readable, Writable } from 'svelte/store'
+import type { Readable } from 'svelte/store'
 import type { Supabase } from '$lib/supabase/database.types'
-import type { UserVocabulary } from '$lib/types'
 
 declare global {
 	namespace App {
@@ -19,7 +18,7 @@ declare global {
 			supabase: Supabase
 			authResponse: AuthResponse
 			user: Readable<BaseUser>
-			user_vocabulary: Writable<UserVocabulary>
+			user_vocabulary: ReturnType<typeof import('$lib/vocab/vocabulary').createVocabStore>
     }
 		// interface Error {}
 		// interface Platform {}

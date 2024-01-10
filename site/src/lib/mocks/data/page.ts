@@ -10,7 +10,7 @@ export const mockLayoutData: LayoutData = {
   supabase: null,
   authResponse: null,
   user: readable(null),
-  user_vocabulary: { ...readable({'你好': {status: WordStatus.known, views: 1}}), change_word_status: (args) => console.info(args), add_seen_sentence: (args) => console.info(args)},
+  user_vocabulary: { ...readable({'你好': {status: WordStatus.known, views: 1}}), change_word_status: (args) => console.info(args), add_seen_sentence: (args) => console.info(args), changed_words: null},
   settings: writable({font_size_em: 1.5, show_definition: true, show_pronunciation: true}),
   split_string: null,
   split_sentences: null,

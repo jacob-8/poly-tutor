@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { WordStatus, type AnalyzedChineseWord } from '$lib/types'
   import { sort_definitions } from '$lib/utils/sort-definitions'
 
@@ -8,7 +9,11 @@
   export let improve_pronunciation_or_tone = false
   export let change_word_status: (word: string, status: WordStatus) => void
 
-  $: ({text, definitions, pinyin, status } = word)
+
+  $: ({text, definitions, pinyin, status: db_status } = word)
+
+  $: ({changed_words} = $page.data.user_vocabulary)
+  $: status = $changed_words[text]?.status ?? db_status
 
   function on_change_status(clicked_status: WordStatus) {
     if (status === clicked_status)
@@ -36,16 +41,16 @@
 
     <div class="ml-auto mr-1"></div>
     <button type="button" on:click={() => on_change_status(WordStatus.pronunciation)} class:active={status === WordStatus.pronunciation}><span class="i-material-symbols-hearing" /></button>
-    <button type="button" on:click={() => on_change_status(WordStatus.tone)} class:active={status === WordStatus.tone}><span class="i-material-symbols-chevron-right-rounded rotate-90 text-xl" /></button>
+    <button type="button" on:click={() => on_change_status(WordStatus.tone)} class:active={status === WordStatus.tone}><span class="text-4xl -mb-4.5">ˊ</span></button>
     <button type="button" on:click={() => on_change_status(WordStatus.known)} class:active={status === WordStatus.known}><span class="i-material-symbols-check-small-rounded text-xl" /></button>
   </div>
 {/if}
 
 <style>
   button {
-    --at-apply: flex items-center p-2 hover:bg-gray/30 rounded;
+    --at-apply: flex items-center justify-center h-9 w-9 shrink-0 hover:bg-gray/30 rounded border border-transparent;
   }
   .active {
-    --at-apply: border-green-600 border text-green-600;
+    --at-apply: border-green-600 text-green-600;
   }
 </style>

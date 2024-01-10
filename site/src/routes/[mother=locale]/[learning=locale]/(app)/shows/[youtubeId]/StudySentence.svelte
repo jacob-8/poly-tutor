@@ -11,7 +11,8 @@
   $: unique_words = sentence.words?.filter((word, index, array) =>
     array.findIndex(w => w.text === word.text) === index
   ) || []
-  $: unknown_words = unique_words.filter(({ status }) => status < WordStatus.known)
+  $: unknown_words = unique_words.filter(({ status }) => status === WordStatus.unknown)
+  $: learning_to_read = unique_words.filter(({ status }) => status === WordStatus.pronunciation || status === WordStatus.tone)
   $: word_list_words = unique_words.filter(({ status }) => status === WordStatus.wordlist)
   $: known_words = unique_words.filter(({ status }) => status === WordStatus.known)
 </script>
@@ -21,7 +22,6 @@
   {sentence.translation[$page.data.mother]}
 {/if}
 
-
 {#if unknown_words.length}
   <hr>
   <div class="text-xs text-gray mb-2">
@@ -29,6 +29,16 @@
   </div>
 {/if}
 {#each unknown_words as word}
+  <EditWordStatus {change_word_status} high_view_count={study_words_object?.high_view_count[word.text]} common_in_this_context={study_words_object?.common_in_this_context[word.text]} {word} />
+{/each}
+
+{#if learning_to_read.length}
+  <hr>
+  <div class="text-xs text-gray mb-2">
+    Learning to read:
+  </div>
+{/if}
+{#each learning_to_read as word}
   <EditWordStatus {change_word_status} high_view_count={study_words_object?.high_view_count[word.text]} common_in_this_context={study_words_object?.common_in_this_context[word.text]} {word} />
 {/each}
 
