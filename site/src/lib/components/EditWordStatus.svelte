@@ -14,7 +14,7 @@
     if (status === clicked_status)
       change_word_status(text, WordStatus.unknown)
     else
-      change_word_status(text, status)
+      change_word_status(text, clicked_status)
   }
 </script>
 
