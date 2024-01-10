@@ -19,7 +19,7 @@
     i_am_seen()
 
   function i_am_seen() {
-    if (has_been_seen) return
+    if (has_been_seen || !sentence.words) return
     add_seen_sentence(sentence.words
       .filter(({definitions}) => definitions?.length > 0)
       .map(({text}) => text))
@@ -34,10 +34,10 @@
     class:bg-gray-200={active}
     on:click={onClick}>
     {#if intersecting}
-      {#if mark_seen_based_on_visibility && add_seen_sentence && !has_been_seen}
-        <ImSeen {i_am_seen} milliseconds={6000} />
-      {/if}
       {#if sentence.words}
+        {#if mark_seen_based_on_visibility && add_seen_sentence && !has_been_seen}
+          <ImSeen {i_am_seen} milliseconds={6000} />
+        {/if}
         {#each sentence.words as word}
           <ChineseWord {study_words_object} {word} {settings} />
         {/each}

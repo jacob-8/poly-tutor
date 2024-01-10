@@ -25,7 +25,7 @@
 
 {#if pinyin}
   <div class="flex mb-3 items-start">
-    <div class="flex flex-col items-center mr-2">
+    <div class="flex flex-col mr-2">
       <div class="text-nowrap text-xl"
         class:text-orange-500={high_view_count}
         class:text-blue-500={common_in_this_context}
