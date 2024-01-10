@@ -54,7 +54,6 @@ export function createVocabStore({ supabase, authResponse, language, log = false
       status,
       language,
       views,
-      id: window.crypto.randomUUID(),
     }
 
     user_vocabulary.set({
@@ -114,7 +113,6 @@ export function createVocabStore({ supabase, authResponse, language, log = false
         status: vocabulary[word]?.status || WordStatus.unknown,
         language,
         views: vocabulary[word]?.views + views || views,
-        id: window.crypto.randomUUID(),
       }
     }
 
@@ -164,7 +162,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
   }, {})
 
   const changed_words = derived<Readable<UserVocabulary>, UserVocabulary>(user_vocabulary, ($user_vocabulary, set) => {
-    set(filter_object($user_vocabulary, ({ id }) => !!id))
+    set(filter_object($user_vocabulary, ({ language }) => !!language))
   }, {})
 
   return { subscribe: vocab_with_word_lists.subscribe, change_word_status, add_seen_sentence, changed_words }
@@ -175,3 +173,4 @@ function filter_object<T>(obj: Record<string, T>, callback: (value) => boolean):
   const filtered = asArray.filter(([_, value]) => callback(value))
   return Object.fromEntries(filtered)
 }
+
