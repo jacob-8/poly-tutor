@@ -4,7 +4,7 @@ import type Component from './+page.svelte'
 import { mockBobUser, mockLayoutData } from '$lib/mocks/data/page'
 import type { YouTube } from '$lib/supabase/database.types'
 import { writable } from 'svelte/store'
-import { WordStatus, type Sentence } from '$lib/types'
+import type { Sentence } from '$lib/types'
 import { zh_non_seeded, zh_transcribed_summarized } from '$lib/mocks/seed/youtubes'
 
 const youtube: YouTube = {
@@ -57,7 +57,6 @@ export const variants: Variant<Component>[] = [
       data: {
         ...mockLayoutData,
         user: mockBobUser,
-        user_vocabulary: writable({'你好': {status: WordStatus.known, views: 1}}),
         youtube,
         summary: writable(zh_transcribed_summarized.summaries[0].summary.sentences),
         streamed,

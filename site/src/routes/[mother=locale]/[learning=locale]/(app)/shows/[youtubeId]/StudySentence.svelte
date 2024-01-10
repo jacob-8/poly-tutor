@@ -6,6 +6,7 @@
 
   export let sentence: Sentence
   export let study_words_object: StudyWordsObject
+  export let change_word_status: (word: string, status: WordStatus) => void
 
   $: unique_words = sentence.words?.filter((word, index, array) =>
     array.findIndex(w => w.text === word.text) === index
@@ -28,7 +29,7 @@
   </div>
 {/if}
 {#each unknown_words as word}
-  <EditWordStatus high_view_count={study_words_object?.high_view_count[word.text]} common_in_this_context={study_words_object?.common_in_this_context[word.text]} {word} />
+  <EditWordStatus {change_word_status} high_view_count={study_words_object?.high_view_count[word.text]} common_in_this_context={study_words_object?.common_in_this_context[word.text]} {word} />
 {/each}
 
 {#if word_list_words.length}
@@ -39,7 +40,7 @@
 {/if}
 
 {#each word_list_words as word}
-  <EditWordStatus high_view_count={study_words_object?.high_view_count[word.text]} common_in_this_context={study_words_object?.common_in_this_context[word.text]} {word} />
+  <EditWordStatus {change_word_status} high_view_count={study_words_object?.high_view_count[word.text]} common_in_this_context={study_words_object?.common_in_this_context[word.text]} {word} />
 {/each}
 
 <div class="opacity-20 hover:opacity-100">
@@ -52,7 +53,7 @@
   {/if}
 
   {#each known_words as word}
-    <EditWordStatus {word} />
+    <EditWordStatus {change_word_status} {word} />
   {/each}
 </div>
 

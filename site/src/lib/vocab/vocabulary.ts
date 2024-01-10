@@ -21,7 +21,7 @@ export const word_lists = createPersistedStore<WordList[]>(
 // first pulled from localstorage, then calculated as a combo of the user_vocabulary view from the db and any word_status_updates not yet synced to db
 export function createVocabStore({ supabase, authResponse, language, log = false }: { supabase: Supabase, authResponse: AuthResponse, language: LanguageCode, log?: boolean }) {
   if (!browser)
-    return readable<UserVocabulary>({})
+    return { ...readable<UserVocabulary>({}), change_word_status: null, add_seen_sentence: null}
 
   const user_id = authResponse?.data?.user?.id || 'no_user'
   const user_vocabulary = createPersistedStore<UserVocabulary>(`vocabulary_${user_id}`, {}, { syncTabs: true })

@@ -10,7 +10,8 @@ import type Component from './StudyLesson.svelte'
 export const variants: Variant<Component>[] = [
   {
     props: {
-      study_words: null// title_sentence.words,
+      study_words: null,// title_sentence.words,
+      change_word_status: (args) => console.info(args),
     },
   },
 ]

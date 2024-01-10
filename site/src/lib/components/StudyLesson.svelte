@@ -1,8 +1,9 @@
 <script lang="ts">
-  import type { StudyWords } from '$lib/types'
+  import type { StudyWords, WordStatus } from '$lib/types'
   import EditWordStatus from './EditWordStatus.svelte'
 
   export let study_words: StudyWords
+  export let change_word_status: (word: string, status: WordStatus) => void
 </script>
 
 {#if study_words}
@@ -12,7 +13,7 @@
     </div>
   {/if}
   {#each study_words.high_view_count as word}
-    <EditWordStatus high_view_count {word} />
+    <EditWordStatus {change_word_status} high_view_count {word} />
   {/each}
 
   {#if study_words.common_in_this_context.length}
@@ -23,7 +24,7 @@
   {/if}
 
   {#each study_words.common_in_this_context as word}
-    <EditWordStatus common_in_this_context {word} />
+    <EditWordStatus {change_word_status} common_in_this_context {word} />
   {/each}
 
   {#if study_words.improve_pronunciation_or_tone?.length}
@@ -34,6 +35,6 @@
   {/if}
 
   {#each study_words.improve_pronunciation_or_tone || [] as word}
-    <EditWordStatus improve_pronunciation_or_tone {word} />
+    <EditWordStatus {change_word_status} improve_pronunciation_or_tone {word} />
   {/each}
 {/if}

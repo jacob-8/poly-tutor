@@ -6,8 +6,16 @@
   export let high_view_count = false
   export let common_in_this_context = false
   export let improve_pronunciation_or_tone = false
+  export let change_word_status: (word: string, status: WordStatus) => void
 
   $: ({text, definitions, pinyin, status } = word)
+
+  function on_change_status(clicked_status: WordStatus) {
+    if (status === clicked_status)
+      change_word_status(text, WordStatus.unknown)
+    else
+      change_word_status(text, status)
+  }
 </script>
 
 {#if pinyin}
@@ -27,9 +35,9 @@
     </div>
 
     <div class="ml-auto mr-1"></div>
-    <button type="button" class:active={status === WordStatus.pronunciation}><span class="i-material-symbols-hearing" /></button>
-    <button type="button" class:active={status === WordStatus.tone}><span class="i-material-symbols-chevron-right-rounded rotate-90 text-xl" /></button>
-    <button type="button" class:active={status === WordStatus.known}><span class="i-material-symbols-check-small-rounded text-xl" /></button>
+    <button type="button" on:click={() => on_change_status(WordStatus.pronunciation)} class:active={status === WordStatus.pronunciation}><span class="i-material-symbols-hearing" /></button>
+    <button type="button" on:click={() => on_change_status(WordStatus.tone)} class:active={status === WordStatus.tone}><span class="i-material-symbols-chevron-right-rounded rotate-90 text-xl" /></button>
+    <button type="button" on:click={() => on_change_status(WordStatus.known)} class:active={status === WordStatus.known}><span class="i-material-symbols-check-small-rounded text-xl" /></button>
   </div>
 {/if}
 

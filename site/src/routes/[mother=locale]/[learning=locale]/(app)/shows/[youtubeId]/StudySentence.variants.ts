@@ -12,6 +12,7 @@ export const variants: Variant<Component>[] = [
     props: {
       sentence: title_sentence,
       study_words_object: null,
+      change_word_status: (args) => console.info(args),
     },
   },
 ]
