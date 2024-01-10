@@ -24,9 +24,13 @@
       <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 mr-1" /></a>
       {$page.data.youtube.title || ''}
     {:else if $page.url.pathname.includes('shows')}
-      <a href="/">
-        <span class="i-iconamoon-arrow-left-1 mr-1" /></a>
+      <a href="/" class="mr-1">
+        <span class="i-iconamoon-arrow-left-1 my-1" /></a>
       {$page.data.t.home.watch}
+    {:else if $page.url.pathname.includes('vocabulary')}
+      <a href="/" class="mr-1">
+        <span class="i-iconamoon-arrow-left-1 my-1" /></a>
+      {$page.data.t.home.my_words}
     {:else}
       <a href="/">{$page.data.t.layout.tutor}</a>
     {/if}

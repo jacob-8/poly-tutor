@@ -13,12 +13,14 @@ export const load = async ({data: { access_token, refresh_token }, params: { lea
   const supabase = getSupabase()
   const authResponse = await getSession({ supabase, access_token, refresh_token })
   const user = createUserStore({ supabase, authResponse })
-  const user_vocabulary = createVocabStore({ supabase, authResponse, language: learning.replace(/-.*/, '') as LanguageCode })
+  const user_vocabulary = createVocabStore({ supabase, authResponse, language: learning.replace(/-.*/, '') as LanguageCode, log: true })
 
   if (browser) {
     const { api } = await import('$lib/analysis/expose-analysis-worker')
-    const vocab = get(user_vocabulary)
-    api.set_user_vocabulary(vocab) // TODO: update on changes
+    user_vocabulary.subscribe(vocab_sent_to_worker => {
+      api.set_user_vocabulary(vocab_sent_to_worker)
+      console.info({vocab_sent_to_worker, length: Object.keys(vocab_sent_to_worker).length})
+    })
   }
 
   async function split_string(text: string) {

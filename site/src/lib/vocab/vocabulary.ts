@@ -32,7 +32,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     .select('vocabulary')
     .eq('language', language)
     .then(({ data, error }) => {
-      console.info({ data, error })
+      console.info({ user_vocabulary_load: data, error })
       if (error) return console.error(error)
       if (!data?.length) return
 
@@ -85,11 +85,20 @@ export function createVocabStore({ supabase, authResponse, language, log = false
 
   navigating.subscribe((nav) => {
     if (!nav) return
-    if (log) console.info('navigated so going to process word updates')
+    if (log) console.info('navigated')
     process_word_updates()
   })
 
+  let last_process_word_updates: Date
   async function process_word_updates() {
+    const ten_seconds = 1000 * 10
+    if (last_process_word_updates && last_process_word_updates > new Date(Date.now() - ten_seconds)) {
+      if (log) console.info('process_word_updates called recently, skipping')
+      return
+    }
+    last_process_word_updates = new Date()
+    if (log) console.info('processing word updates')
+
     const current_sentences = get(seen_sentences_this_route)
     const vocabulary = get(user_vocabulary)
     const word_counts: Record<string, number> = {}
@@ -133,8 +142,10 @@ export function createVocabStore({ supabase, authResponse, language, log = false
       ...all_word_updates_to_send_to_db,
     })
     try {
-      if (log) console.info({all_word_updates_to_send_to_db})
-      await add_word_updates_to_db(Object.values(all_word_updates_to_send_to_db))
+      const updates = Object.values(all_word_updates_to_send_to_db)
+      if (!updates.length) return
+      if (log) console.info({updates})
+      await add_word_updates_to_db(updates)
       const fresh_check_of_word_updates = get(word_updates)
       if (log) console.info({fresh_check_of_word_updates})
       word_updates.set(filter_object(fresh_check_of_word_updates, ({id}) => !all_word_updates_to_send_to_db[id]))

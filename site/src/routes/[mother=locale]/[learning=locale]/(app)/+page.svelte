@@ -29,7 +29,7 @@
       <a class="box">{$page.data.t.home.read_websites}</a>
       <a class="box">{$page.data.t.home.word_lists}</a>
       <a class="box">{$page.data.t.home.realtime_transcription}</a>
-      <a class="box">{$page.data.t.home.my_words}</a>
+      <a class="box" href="/{$page.data.mother}/{$page.data.learning}/vocabulary">{$page.data.t.home.my_words}</a>
       <a class="box">{$page.data.t.home.dictionary}</a>
     {/if}
   </div>
