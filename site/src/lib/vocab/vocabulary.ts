@@ -4,8 +4,7 @@ import type { Supabase } from '../supabase/database.types'
 import type { AuthResponse } from '@supabase/supabase-js'
 import { derived, get, readable, type Readable } from 'svelte/store'
 import type { WordList } from './word-lists.interface'
-import { browser, dev } from '$app/environment'
-import { jacob_known } from './word-lists'
+import { browser } from '$app/environment'
 import type { TablesInsert } from '$lib/supabase/generated.types'
 import { navigating } from '$app/stores'
 import type { LanguageCode } from '$lib/i18n/locales'
@@ -15,7 +14,8 @@ type VocabItem = VocabularyWordStats & { updated_at?: string }
 
 export const word_lists = createPersistedStore<WordList[]>(
   'word_lists_01.03.24',
-  ['時代華語1w', '時代華語2Aw', '時代華語2Bw', '時代華語3Aw', '時代華語3Bw', '時代華語4Aw'],
+  [],
+  // ['時代華語1w', '時代華語2Aw', '時代華語2Bw', '時代華語3Aw', '時代華語3Bw', '時代華語4Aw'],
   { syncTabs: true },
 )
 
@@ -139,15 +139,8 @@ export function createVocabStore({ supabase, authResponse, language, log = false
   }
 
   const vocab_with_word_lists = derived<[Readable<UserVocabulary>, Readable<WordList[]>], UserVocabulary>([user_vocabulary, word_lists], ([$user_vocabulary, $word_lists], set) => {
-    const words = $user_vocabulary
-
-    if (dev || authResponse?.data?.user?.email === 'jacob@polylingual.dev') {
-      jacob_known.forEach((word) => {
-        if (!words[word])
-          words[word] = { status: WordStatus.known }
-      })
-      set(words)
-    } else {
+    if ($word_lists.length) {
+      const words = { ...$user_vocabulary }
       import('./word-lists').then(({ word_lists }) => {
         $word_lists
           .map(list => word_lists[list])
@@ -158,6 +151,8 @@ export function createVocabStore({ supabase, authResponse, language, log = false
           })
         set(words)
       })
+    } else {
+      set($user_vocabulary)
     }
   }, {})
 
