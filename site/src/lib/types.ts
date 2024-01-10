@@ -1,63 +1,98 @@
 import type { google } from '@google-cloud/language/build/protos/protos'
+import type { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai-edge'
+import type { LocaleCode } from './i18n/locales'
 
-export interface Content {
-  summary?: Paragraph[]
-  paragraphs?: Paragraph[]
-}
-
-export interface Paragraph {
-  sentences: Sentence[]
+// Books, Shows, Volumes, Pages, Paragraphs are all sections, this let's us nest as many layers as we need
+export interface Section {
+  sentences?: Sentence[]
+  children?: Section[]
 }
 
 export interface Sentence {
-  text: string
-  syntax?: google.cloud.language.v1.IAnalyzeSyntaxResponse
-  words?: Word[]
+  text?: string
+  words?: (AnalyzedWord | AnalyzedChineseWord)[]
   start_ms?: number
   end_ms?: number
-  machine_translation?: Translation
+  translation?: Translation
+  syntax?: google.cloud.language.v1.IAnalyzeSyntaxResponse
 }
 
-interface Word {
+type Translation = Partial<Record<LocaleCode, string>>
+
+export interface VocabularyWordStats {
+  status?: WordStatus
+  views?: number
+}
+
+export type UserVocabulary = Record<string, VocabularyWordStats>
+
+/* eslint-disable no-magic-numbers */
+export enum WordStatus {
+  'unknown' = 0,
+  'pronunciation' = 1, // Chinese only
+  'tone' = 2, // Chinese only
+  'known' = 3,
+  'wordlist' = 4,
+}
+
+export interface AnalyzedWord extends VocabularyWordStats {
   text: string
-  language: 'other' | 'zh'
-  known: boolean
-  partOfSpeechTag?: string
-  pronunciation?: string
-  tones?: string
+  context_sentence_indexes?: number[]
+  definitions?: string
+  neighbors_understood?: boolean
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
-interface Translation {
-  [bcp: string]: string;
+// calculated sentence by sentence
+export interface AnalyzedChineseWord extends AnalyzedWord {
+  opposite_script?: string
+  pinyin?: string // for word focus view
+  // tones?: number[]
+  // pronunciation?: string // a combination of pinyin, tone markers or nothing depending on word status
+  tone_change?: boolean
+}
+
+export interface ChineseEmphasisLimits {
+  high_view_count_max: number
+  common_in_this_context_max: number
+  improve_pronunciation_or_tone_max: number
+}
+
+export interface StudyWords {
+  high_view_count: AnalyzedChineseWord[]
+  common_in_this_context: AnalyzedChineseWord[]
+  improve_pronunciation_or_tone?: AnalyzedChineseWord[]
+}
+
+export interface StudyWordsObject {
+  high_view_count: Record<string, boolean>
+  common_in_this_context: Record<string, boolean>
+  improve_pronunciation_or_tone?: Record<string, boolean>
 }
 
 export interface CEDictEntry {
-  hsk?: string
-  hskId?: string
-  traditional?: string
+  traditional: string
   simplified?: string
-  pinyin?: string
-  zhuyin?: string
-  definitions?: string
-  weight?: string
-  length?: string
-  example?: string
-  exampleTranslation?: string
-  order?: string
+  pinyin: string
+  definitions: string
+}
 
-  noDefinition?: string // returned if no matching entry found
-  not中文?: string
-
-  // augments
-  definitionsArray?: string[]
-  adjustedWeight?: number
+export interface Settings {
+  font_size_em?: number
+  quizzing?: boolean
+  show_definition?: boolean
+  show_pronunciation?: boolean // Chinese only
 }
 
 // API
 
+export interface YtAddRequestBody {
+  youtube_id: string
+  language_code: 'en' | 'zh'
+}
+
 export interface YtCaptionsRequestBody {
   youtube_id: string
+  locale: LocaleCode
 }
 
 export interface YtTranscribeRequestBody {
@@ -67,18 +102,33 @@ export interface YtTranscribeRequestBody {
   duration_seconds: number
 }
 
+export interface ExternalYoutubeTranscribeRequestBody {
+  youtube_id: string
+  openai_api_key: string
+  poly_key: string
+  language?: string
+  prompt?: string
+  seconds_per_chunk?: number
+}
+
+export interface WhisperTranscript {
+  transcript: {
+    text: string,
+    start_second: number,
+    end_second: number,
+  }[]
+}
+
 export interface TranslateRequestBody {
   text: string
-  sourceLanguageCode: string
-  targetLanguageCode: string
+  sourceLanguageCode: LocaleCode // https://cloud.google.com/translate/docs/languages
+  targetLanguageCode: LocaleCode
 }
 
 export interface AnalyzeSyntaxRequestBody {
   text: string
   sourceLanguageCode: string
 }
-
-import type { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai-edge'
 
 export interface ChatRequestBody {
   messages: ChatCompletionRequestMessage[]

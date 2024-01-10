@@ -1,12 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 
-const localDev = defineConfig({
-  webServer: {
-    command: 'pnpm run dev',
-    port: 5173,
-    reuseExistingServer: true,
-  },
-})
+export const STORAGE_STATE = 'e2e/.playwright-login-storage-state.json'
 
 export default defineConfig({
   testDir: 'e2e',
@@ -18,15 +12,40 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173',
+    baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',
   },
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'reset', // don't run this in CI when adding these tests to CI
+      testMatch: /reset-db\.setup\.ts/,
+    },
+    {
+      name: 'login',
+      testMatch: /login\.setup\.ts/,
+      dependencies: ['reset'],
+    },
+    {
+      name: 'authed chromium',
+      testMatch: 'e2e/authed/**/*.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: STORAGE_STATE,
+      },
+      dependencies: ['login'],
+    },
+    {
+      name: 'no-auth chromium',
+      testMatch: 'e2e/no-auth/**/*.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+      dependencies: ['reset'],
     },
   ],
-  ...(!process.env.PLAYWRIGHT_BASE_URL && localDev),
+  webServer: {
+    command: 'pnpm run dev',
+    port: 5173,
+    reuseExistingServer: true,
+  },
 })
-

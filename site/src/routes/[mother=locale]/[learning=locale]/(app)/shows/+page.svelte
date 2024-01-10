@@ -1,7 +1,11 @@
 <script lang="ts">
+  import { browser } from '$app/environment'
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
+  import ShowThumbnail from './ShowThumbnail.svelte'
   import { get_youtube_video_id } from './get_youtube_video_id.js'
+
+  export let data
 
   let url = ''
   $: youtube_id = get_youtube_video_id(url)
@@ -9,23 +13,31 @@
     goto(`shows/${youtube_id}`)
 </script>
 
-<div class="grow-1 flex flex-col items-center justify-center text-xl">
-  <span class="i-logos-youtube-icon text-1000% -mt-1 opacity-20" />
-  <div class="mb-2">
-
-    {$page.data.t.shows.paste_youtube_url}</div>
-  <input bind:value={url} class="min-w-full sm:min-w-450px p-2 border border-2 rounded" />
-  <div class="flex flex-col mt-10 text-center">
-    <button class="text-xs" type="button" on:click={() => url = 'https://www.youtube.com/watch?v=9OkddyYQBec'}>AI數學文化營</button>
-    <a href="https://jia-you.vercel.app/shows/9OkddyYQBec" target="_blank" class="text-xs">old version</a>
-    <br />
-    <button class="text-xs" type="button" on:click={() => url = 'https://www.youtube.com/watch?v=Ukr40eBfeyg'}>農夫</button>
-    <a href="https://jia-you.vercel.app/shows/Ukr40eBfeyg" target="_blank" class="text-xs">old version</a>
-    <br />
-    <button class="text-xs" type="button" on:click={() => url = 'https://www.youtube.com/watch?v=HRenI3LURNk'}>南橫公路全線通車</button>
-    <a href="https://jia-you.vercel.app/shows/HRenI3LURNk" target="_blank" class="text-xs">old version</a>
-    <br />
-    <button class="text-xs" type="button" on:click={() => url = 'https://www.youtube.com/watch?v=lpyKfNjTZi8'}>Llama2 - hi friends</button>
+<div data-testid="my-videos" class="sm:px-3 pb-3 mb-3 border-b">
+  <h2 class="my-3 font-semibold text-xl">
+    <span class="i-logos-youtube-icon text-125% -mb-1.25 view-transition-yt-icon" />
+    My Videos</h2>
+  <div class="grid sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
+    <div class="sm:max-w-470px">
+      <div class="bg-gray-200 rounded h-0 pb-56.25% relative">
+        <div class="absolute inset-0 p-3 flex flex-col text-center justify-center h-full">
+          <div class="mb-2 text-xl">{$page.data.t.shows.paste_youtube_url}</div>
+          <input placeholder={browser ? 'https://www.youtube.com/watch?v=...' : ''} bind:value={url} class="w-full sm:w-450px max-w-full p-2 border border-2 rounded" />
+        </div>
+      </div>
+      <div class="text-sm my-1">{$page.data.t.home.youtube_description}</div>
+    </div>
+    {#each data.user_youtubes as youtube}
+      <ShowThumbnail youtube={youtube.youtube} channel={youtube.channel} />
+    {/each}
   </div>
 </div>
 
+<div data-testid="other-videos" class="sm:px-3">
+  <h2 class=" my-3 font-semibold text-xl">Others are watching...</h2>
+  <div class="grid sm:grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
+    {#each data.other_youtubes as youtube}
+      <ShowThumbnail youtube={youtube.youtube} channel={youtube.channel} />
+    {/each}
+  </div>
+</div>

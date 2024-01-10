@@ -1,12 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
 
-const localDev = defineConfig({
-  webServer: {
-    command: 'pnpm run build && pnpm run preview', // to allow service worker testing
-    port: 4173
-  },
-})
-
 export default defineConfig({
   testDir: 'e2e',
   snapshotDir: 'e2e/snapshots',
@@ -17,7 +10,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4173',
+    baseURL: 'http://localhost:4173',
     trace: 'on-first-retry',
   },
   projects: [
@@ -26,6 +19,9 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  ...(!process.env.PLAYWRIGHT_BASE_URL && localDev),
+  webServer: {
+    command: 'pnpm run build && pnpm run preview', // to allow service worker testing
+    port: 4173
+  },
 })
 

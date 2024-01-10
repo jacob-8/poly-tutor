@@ -1,0 +1,43 @@
+{
+  "kind": "youtube#channelListResponse",
+  "etag": "OhRpnhZjk6G-pnX8QqhuJ0j90UE",
+  "pageInfo": {
+    "totalResults": 1,
+    "resultsPerPage": 5
+  },
+  "items": [
+    {
+      "kind": "youtube#channel",
+      "etag": "BVZmwxCo8OoFSg646ga1DuzTEgA",
+      "id": "UC-7jKPgRmLBiB1ltbABubNA",
+      "snippet": {
+        "title": "小白的奇幻旅行",
+        "description": "带上金毛安妮，马犬波妞，开着改装的大黄，来一场疯狂的人文苦旅\n小白来Youtube啦，这是我的官方频道，从甘肃开始漫游整个中国，欢迎大家订阅收藏😉😉\nGolden Retriever Anne , Bonnie the Maremma Sheepdog with me drive the RV DAHUANG, going to a crazy stray journey\nHello everyone，There is [Bai`s Fantasy Travel],my channel will show the scenery of China,thanks for your subscribe\n\n欢迎订阅我的频道：https://bit.ly/xiaobaiqihuanlvxing\nWelcome to subscribe to my channel: https://bit.ly/xiaobaiqihuanlvxing",
+        "customUrl": "@jianxiaobai",
+        "publishedAt": "2020-04-16T03:53:38.719116Z",
+        "thumbnails": {
+          "default": {
+            "url": "https://yt3.ggpht.com/ytc/APkrFKav44IZWeQMQttWjk2AsDi8oLkP1Mnf6zgIVu8s=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+          },
+          "medium": {
+            "url": "https://yt3.ggpht.com/ytc/APkrFKav44IZWeQMQttWjk2AsDi8oLkP1Mnf6zgIVu8s=s240-c-k-c0x00ffffff-no-rj",
+            "width": 240,
+            "height": 240
+          },
+          "high": {
+            "url": "https://yt3.ggpht.com/ytc/APkrFKav44IZWeQMQttWjk2AsDi8oLkP1Mnf6zgIVu8s=s800-c-k-c0x00ffffff-no-rj",
+            "width": 800,
+            "height": 800
+          }
+        },
+        "localized": {
+          "title": "小白的奇幻旅行",
+          "description": "带上金毛安妮，马犬波妞，开着改装的大黄，来一场疯狂的人文苦旅\n小白来Youtube啦，这是我的官方频道，从甘肃开始漫游整个中国，欢迎大家订阅收藏😉😉\nGolden Retriever Anne , Bonnie the Maremma Sheepdog with me drive the RV DAHUANG, going to a crazy stray journey\nHello everyone，There is [Bai`s Fantasy Travel],my channel will show the scenery of China,thanks for your subscribe\n\n欢迎订阅我的频道：https://bit.ly/xiaobaiqihuanlvxing\nWelcome to subscribe to my channel: https://bit.ly/xiaobaiqihuanlvxing"
+        },
+        "country": "HK"
+      }
+    }
+  ]
+}

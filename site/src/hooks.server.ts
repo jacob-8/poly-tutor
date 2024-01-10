@@ -5,12 +5,11 @@ import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from '$lib/supaba
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
   if (dev)
-    await import('$lib/mocks/serverForHooks')
+    await import('$lib/mocks/msw/hooks-server')
 
   // only useful for things that are guaranteed to run server-side but not for passing to the client
-  const supabase = getSupabase()
-  event.locals.supabase = supabase
   event.locals.getSession = () => {
+    const supabase = getSupabase()
     const access_token = event.cookies.get(ACCESS_TOKEN_COOKIE_NAME)
     const refresh_token = event.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
     return getSession({ supabase, access_token, refresh_token })

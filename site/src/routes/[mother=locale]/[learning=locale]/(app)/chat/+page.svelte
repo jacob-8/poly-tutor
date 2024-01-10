@@ -4,7 +4,7 @@
   import type { ChatCompletionRequestMessage } from 'openai-edge'
   import { languageTutor } from './personalities'
   import type { ChatRequestBody, OpenAiChatStreamResponse } from '$lib/types'
-  import OpenAiUserKey from '$lib/OpenAiUserKey.svelte'
+  import { get_openai_api_key } from '$lib/client/UserInfo.svelte'
 
   export let data
   $: ({user} = data)
@@ -23,7 +23,10 @@
   //   }, 100);
   // }
 
-  function submit(openai_api_key: string) {
+  function submit() {
+    const openai_api_key = get_openai_api_key()
+    if (!openai_api_key) return
+
     if (!query || asking) return
     asking = true
     error = null
@@ -90,12 +93,10 @@
   {/if}
 
   <div class="flex p-3">
-    <OpenAiUserKey let:openai_api_key>
-      <form class="flex w-full ml-1" on:submit={() => submit(openai_api_key)}>
-        <input type="text" required class="grow-1 border border-gray-300 p-2 rounded mr-1" bind:value={query} />
-        <Button loading={asking} type="submit">Send</Button>
-      </form>
-    </OpenAiUserKey>
+    <form class="flex w-full ml-1" on:submit={submit}>
+      <input type="text" required class="grow-1 border border-gray-300 p-2 rounded mr-1" bind:value={query} />
+      <Button loading={asking} type="submit">Send</Button>
+    </form>
   </div>
 
   {#if error}

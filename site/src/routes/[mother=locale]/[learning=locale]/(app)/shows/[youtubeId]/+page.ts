@@ -1,42 +1,113 @@
-import { createPersistedStore } from 'svelte-pieces'
 import type { PageLoad } from './$types'
-import type { AnalyzeSyntaxRequestBody, ChatRequestBody, Content, OpenAiChatStreamResponse, Sentence, TranslateRequestBody, YtCaptionsRequestBody, YtTranscribeRequestBody } from '$lib/types'
-import { get } from 'svelte/store'
-import { apiFetch } from '$lib/client/apiFetch'
+import type { AnalyzeSyntaxRequestBody, ChatRequestBody, OpenAiChatStreamResponse, Sentence, StudyWords, TranslateRequestBody, YtAddRequestBody, YtCaptionsRequestBody, YtTranscribeRequestBody } from '$lib/types'
 import { fetchSSE } from '$lib/client/fetchSSE'
 import type { ChatCompletionRequestMessage } from 'openai-edge'
 import { merge_translations } from './merge_translations'
+import { check_is_in_my_videos, remove_from_my_videos, youtube_in_db } from './check-youtube'
+import type { Transcript, YouTube } from '$lib/supabase/database.types'
+import { invalidateAll } from '$app/navigation'
+import { get, writable } from 'svelte/store'
+import type { LocaleCode } from '$lib/i18n/locales'
+import { post_request } from '$lib/utils/post-request'
 import { merge_syntax } from './merge_syntax'
-import { getCEDict } from './getCEDict'
+import { browser } from '$app/environment'
+import { get_openai_api_key, open_auth } from '$lib/client/UserInfo.svelte'
 
-export const load = (async ({ params: { youtubeId }, fetch }) => {
-  const content = createPersistedStore<Content>(`content_${youtubeId}`, {}, true)
-  const summary = createPersistedStore<Content>(`summary_${youtubeId}`, {}, true)
+export const load = (async ({ params: { youtubeId: youtube_id, mother, learning }, fetch, parent }) => {
+  const learning_language = learning.replace(/-.*/, '') as 'zh' | 'en'
+  const { supabase, user, split_sentences, analyze_sentences } = await parent()
+  let youtube = await youtube_in_db(youtube_id, supabase)
 
-  const currentContent = get(content)
-  if (!currentContent.paragraphs?.length)
-    await getCaptions()
-
-  async function getCaptions() {
-    const response = await apiFetch<YtCaptionsRequestBody>('/api/yt_captions', { youtube_id: youtubeId }, fetch)
-    if (!response.ok) return
-    const sentences = await response.json() as Sentence[]
-    content.set({ paragraphs: [{ sentences }] })
+  let error = ''
+  if (!youtube) {
+    const { data, error: addingError } = await post_request<YtAddRequestBody, YouTube>('/api/yt_add', { youtube_id, language_code: learning_language }, fetch)
+    if (addingError) {
+      error = addingError.message
+      youtube = { id: youtube_id } as YouTube
+    } else {
+      youtube = data
+    }
   }
 
-  async function transcribeCaptions(openai_api_key: string) {
-    const response = await apiFetch<YtTranscribeRequestBody>('/api/yt_transcribe', { youtube_id: youtubeId, openai_api_key, language_code: 'zh', duration_seconds: 600 }, fetch)
-    if (!response.ok) return
-    const sentences = await response.json() as Sentence[]
-    content.set({ paragraphs: [{ sentences }] })
+  async function getTranscript(): Promise<Transcript | null> {
+    const { data: [transcript], error } = await supabase
+      .from('youtube_transcripts')
+      .select()
+      .eq('youtube_id', youtube_id)
+    if (error)
+      throw new Error(error.message)
+    if (transcript)
+      return transcript
+
+    const sentences = await getYoutubesCaptions()
+    if (!sentences) return null
+
+    const { data: justSavedTranscript, error: savingError } = await saveTranscript(sentences)
+    if (savingError)
+      throw new Error(savingError.message)
+    return justSavedTranscript
   }
 
-  function getSummary(openai_api_key: string): Promise<void> {
+  function saveTranscript(sentences: Sentence[]) {
+    return supabase
+      .from('youtube_transcripts')
+      .insert({
+        youtube_id,
+        transcript: { sentences },
+        transcript_source: 'youtube',
+      })
+      .select()
+      .single()
+  }
+
+  async function getYoutubesCaptions() {
+    if (!get(user)) return
+    const { data: sentences, error } = await post_request<YtCaptionsRequestBody, Sentence[]>('/api/yt_captions', { youtube_id, locale: learning as LocaleCode }, fetch)
+    if (error) {
+      console.error(error.message)
+      return
+    }
+    return sentences
+  }
+
+  async function transcribe_captions(): Promise<{ sentences: Sentence[], study_words: StudyWords} | void> {
+    const openai_api_key = get_openai_api_key()
+    if (!openai_api_key) return
+    const { data: sentences, error } = await post_request<YtTranscribeRequestBody, Sentence[]>('/api/yt_transcribe', { youtube_id, openai_api_key, language_code: 'zh', duration_seconds: 600 }, fetch)
+    if (error) {
+      console.error(error.message)
+      return alert(error.message)
+    }
+
+    const { error: savingError } = await saveTranscript(sentences)
+    if (savingError) {
+      console.error(savingError.message)
+      return alert(savingError.message)
+    }
+    return await analyze_sentences(sentences)
+  }
+
+  const summary = writable<Sentence[] | null>(null, (set) => {
+    if (!browser) return
+    supabase
+      .from('youtube_summaries')
+      .select()
+      .eq('youtube_id', youtube_id)
+      .then(({ data: [summary], error }) => {
+        if (error)
+          console.error(error.message)
+        if (summary?.summary?.sentences)
+          split_sentences(summary.summary.sentences).then(set)
+      })
+  })
+
+  function addSummary({sentences}: {sentences: Sentence[]}): Promise<void> {
     return new Promise((resolve) => {
-      const currentContent = get(content)
-      const transcript = currentContent.paragraphs.map(paragraph => {
-        return paragraph.sentences.map(sentence => sentence.text).join('\n')
-      }).join('\n\n')
+      const openai_api_key = get_openai_api_key()
+      if (!openai_api_key) return resolve()
+
+      const model = 'gpt-3.5-turbo-1106'
+      const transcript = sentences.map(sentence => sentence.text).join('\n')
 
       const messagesToSend: ChatCompletionRequestMessage[] = [
         { role: 'system', content: 'You are a professional language teacher who helps students learn language by watching films. Summarize the following transcript in less than 200 words to provide a quick preview before watching. Keep your speech simple and use 繁體中文.' },
@@ -45,7 +116,7 @@ export const load = (async ({ params: { youtubeId }, fetch }) => {
 
       const eventSource = fetchSSE<ChatRequestBody>('/api/chat', {
         messages: messagesToSend,
-        model: 'gpt-3.5-turbo-1106',
+        model,
         max_tokens: 600,
         openai_api_key
       })
@@ -53,12 +124,22 @@ export const load = (async ({ params: { youtubeId }, fetch }) => {
       eventSource.addEventListener('error', (e) => console.error(e))
       eventSource.stream()
 
-      let streamingInSummary = ''
+      let streamed_in_summary = ''
       async function handle_message({detail}: CustomEvent<string>) {
         if (detail === '[DONE]') {
-          const response = await apiFetch<TranslateRequestBody>('/api/translate', { text: streamingInSummary, sourceLanguageCode: 'zh', targetLanguageCode: 'en' })
-          const translatedSummary = await response.json() as string
-          summary.set({ summary: [{ sentences: [{text: streamingInSummary, machine_translation: { en: translatedSummary}}] }] })
+          const { data: translated_summary, error } = await post_request<TranslateRequestBody, {line_separated_translations: string}>('/api/translate', { text: streamed_in_summary, sourceLanguageCode: learning as LocaleCode, targetLanguageCode: mother as LocaleCode }, fetch)
+          if (error) {
+            console.error(error.message)
+            alert(error.message)
+          }
+          const final_summary: Sentence[] = [{ text: streamed_in_summary, translation: { [mother as LocaleCode]: translated_summary.line_separated_translations }}]
+          summary.set(await split_sentences(final_summary))
+
+          const { error: savingError } = await saveSummary(final_summary, model)
+          if (savingError) {
+            console.error(savingError.message)
+            alert(savingError.message)
+          }
           resolve()
           return
         }
@@ -66,56 +147,101 @@ export const load = (async ({ params: { youtubeId }, fetch }) => {
         const { choices: [ { delta }] } = JSON.parse(detail) as OpenAiChatStreamResponse
 
         if (delta.content) {
-          streamingInSummary += delta.content
-          summary.set({ summary: [{ sentences: [{text: streamingInSummary}] }] })
+          streamed_in_summary += delta.content
+          summary.set([{ text: streamed_in_summary }])
         }
       }
     })
   }
 
-  function deleteContent() {
-    content.set({})
+  function saveSummary(sentences: Sentence[], source: string) {
+    return supabase
+      .from('youtube_summaries')
+      .insert({
+        youtube_id,
+        start_ms: 0,
+        end_ms: 10000,
+        summary: { sentences },
+        summary_source: source,
+      })
+      .select()
+      .single()
   }
 
-  function deleteSummary() {
-    summary.set({})
+  // TODO: move this into an endpoint to allow for translating others's captions
+  async function translate(sentences: Sentence[]): Promise<Sentence[] | void> {
+    if (!get(user)) return open_auth()
+    const text = sentences.map(sentence => sentence.text).join('\n')
+    const { data, error } = await post_request<TranslateRequestBody, {line_separated_translations: string}>('/api/translate', { text, sourceLanguageCode: learning as LocaleCode, targetLanguageCode: mother as LocaleCode }, fetch)
+    if (error) {
+      console.error(error.message)
+      return alert(error.message)
+    }
+
+    const sentencesWithTranslation = merge_translations(data.line_separated_translations, sentences)
+
+    const { error: savingError } = await updateTranscript(sentencesWithTranslation)
+    if (savingError) {
+      console.error(savingError.message)
+      return alert(savingError.message)
+    }
+
+    return sentencesWithTranslation
   }
 
-  async function analyze_syntax() {
-    const currentContent = get(content)
-    if (!currentContent.paragraphs?.length) return
-    const [firstParagraph] = currentContent.paragraphs
-    const lineSeparatedText = firstParagraph.sentences.map(sentence => sentence.text).join('\n')
-    const response = await apiFetch<AnalyzeSyntaxRequestBody>('/api/analyze_syntax', { text: lineSeparatedText, sourceLanguageCode: 'zh' })
-    const syntax = await response.json() as Sentence['syntax']
-    const sentencesWithSyntax = merge_syntax(syntax, firstParagraph.sentences)
-    content.set({ ...currentContent, paragraphs: [{ sentences: sentencesWithSyntax }] })
+  function updateTranscript(sentences: Sentence[]) {
+    return supabase
+      .from('youtube_transcripts')
+      .update({
+        transcript: { sentences },
+      })
+      .eq('youtube_id', youtube_id)
+      .select()
+      .single()
   }
 
-  async function translate() {
-    const currentContent = get(content)
-    if (!currentContent.paragraphs?.length) return
-    const [firstParagraph] = currentContent.paragraphs
-    const lineSeparatedText = firstParagraph.sentences.map(sentence => sentence.text).join('\n')
+  // TODO: move this into an endpoint to allow for analyzing others's captions
+  async function analyze_syntax(sentences: Sentence[]) {
+    const text = sentences.map(sentence => sentence.text).join('\n')
+    const { data, error } = await post_request<AnalyzeSyntaxRequestBody, Sentence['syntax']>('/api/analyze_syntax', { text, sourceLanguageCode: learning_language }, fetch)
+    if (error) {
+      console.error(error.message)
+      return alert(error.message)
+    }
 
-    const response = await apiFetch<TranslateRequestBody>('/api/translate', { text: lineSeparatedText, sourceLanguageCode: 'zh', targetLanguageCode: 'en' })
-    const lineSeparatedTranslations = await response.json() as string // separated by /n
+    const sentencesWithSyntax = merge_syntax(data, sentences)
+    const { error: savingError } = await updateTranscript(sentencesWithSyntax)
+    if (savingError) {
+      console.error(savingError.message)
+      return alert(savingError.message)
+    }
+    invalidateAll()
+  }
 
-    const sentencesWithTranslation = merge_translations(lineSeparatedTranslations, firstParagraph.sentences)
-    content.set({ ...currentContent, paragraphs: [{ sentences: sentencesWithTranslation }] })
+  async function prepare_content(): Promise<{ sentences: Sentence[], study_words: StudyWords}> {
+    if (!browser) return undefined // don't use null as that will mistakenly show option to transcribe for a moment when we just need to wait until the client inits
+    const transcript = await getTranscript()
+    if (!transcript) return { sentences: null, study_words: null }
+    return await analyze_sentences(transcript.transcript.sentences)
   }
 
   return {
-    content,
+    youtube,
     summary,
-    transcribeCaptions,
-    getSummary,
-    deleteSummary,
-    deleteContent,
-    analyze_syntax,
+    error,
+    check_is_in_my_videos,
+    remove_from_my_videos,
+    transcribe_captions,
+    addSummary,
     translate,
+    analyze_syntax,
     streamed: {
-      cedict: getCEDict(),
-    }
+      title: split_sentences([{text: youtube.title}]),
+      description: split_sentences([{text: youtube.description}]),
+      content: prepare_content(),
+    },
   }
 }) satisfies PageLoad
+
+
+
