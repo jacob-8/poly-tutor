@@ -30,13 +30,13 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
 
   console.info(`transcribing: ${youtube_id} in ${language_code}`)
 
-  // const simplePrompt = '請使用繁體字。'
+  const prompt = '請使用繁體字。'
   // const puncPrompt = 'Whisper, as you transcribe speech into text, please ensure to include punctuation marks as accurately as possible. Additionally, when creating the timeline for the subtitles, try to split at the punctuation marks to ensure that sentences are not divided across different time segments. The goal is to have each sentence contained within a single time segment for clarity and coherence. 請使用繁體字。'
-  const prompt = `請盡量準確地加上標點符號。
+  //   const punc_prompt_ch = `請盡量準確地加上標點符號。
 
-在製作字幕的時間軸時，在標點符號處分割，以避免句子被分散在不同時間段。
+  // 在製作字幕的時間軸時，在標點符號處分割，以避免句子被分散在不同時間段。
 
-目標是讓每個句子都在一個時間段內，以保持清晰。`
+  // 目標是讓每個句子都在一個時間段內，以保持清晰。`
 
   const { data, error: transcribe_error } = await post_request<ExternalYoutubeTranscribeRequestBody, WhisperTranscript>('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', {
     youtube_id,
