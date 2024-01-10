@@ -1,9 +1,6 @@
-
-/* eslint-disable no-console */
-
 // To learn about this service worker:
 // 1. Understand SvelteKit's $service-worker module https://kit.svelte.dev/docs/service-workers
-// 2. Then read about preloads https://web.dev/navigation-preload/ and stale-while-revalidate https://developer.chrome.com/docs/workbox/caching-strategies-overview/#stale-while-revalidate as they are required to work together if both used as seen here
+// 2. Then read about preloads https://web.dev/navigation-preload/ and network first, falling back to cache https://developer.chrome.com/docs/workbox/caching-strategies-overview/#network_first_falling_back_to_cache as they are required to work together if both used as seen here
 // 3. Lastly the "Introduction to Workbox and service workers" and "What you need to know" sections of https://developer.chrome.com/docs/workbox/service-worker-overview/ are very helpful to round out your understanding of service workers even though we don't use Workbox here
 
 /// <reference types="@sveltejs/kit" />
@@ -32,7 +29,6 @@ async function addFilesToCache() {
   const cache = await caches.open(currentCache)
   await cache.addAll(assetsForCache)
 }
-
 
 _self.addEventListener('activate', (event) => {
   event.waitUntil(deleteOldCaches())
@@ -64,9 +60,11 @@ _self.addEventListener('fetch', (event) => {
 
   // const cookies = event.request.headers.get('Cookie') // can check cookies for auth to turn off the stale-while-revalidate strategy for editors. It would be annoying for them to be confused by slightly stale content.
 
-  // don't use cache in development to avoid working with one-page-load stale content
+  // const isImage = event.request.destination === 'image' // could use stale-while-revalidate for images but isn't the HTTP cache taking care of these automatically?
+
   if (viteCommand === 'build')
-    event.respondWith(staleWhileRevalidate(event, pathname))
+    event.respondWith(networkFirst(event, pathname))
+    // event.respondWith(staleWhileRevalidate(event, pathname)) // don't use cache in development to avoid working with one-page-load stale content
 })
 
 // `build`, `prerended`, and `files` can always be served from the cache
@@ -76,26 +74,38 @@ async function ignorePreloadAndReturnPrecached(event: FetchEvent, pathname: stri
   return (await cache.match(pathname))!
 }
 
-async function staleWhileRevalidate(event: FetchEvent, pathname: string): Promise<Response> {
+async function networkFirst(event: FetchEvent, pathname: string): Promise<Response> {
   const cache = await caches.open(currentCache)
 
-  const cachedResponse = await cache.match(event.request)
-  if (cachedResponse) {
-    console.log(`[sw] used cached: ${pathname}`)
-    event.waitUntil(respondFromNetworkAndUpdateCache(event, cache, pathname))
-    return cachedResponse
+  try {
+    return respondFromNetworkAndUpdateCache(event, cache, pathname)
+  } catch {
+    console.info(`[sw] network error, trying cache: ${pathname}`)
+    return cache.match(event.request) as Promise<Response>
   }
-
-  return respondFromNetworkAndUpdateCache(event, cache, pathname)
 }
+
+// Turns out to be a bad idea in this app, for example if a user loads a video without a summary, that no summary response is cached. So if they generate a summary, on next load it will not exist. Only one load further will it appear.
+// async function staleWhileRevalidate(event: FetchEvent, pathname: string): Promise<Response> {
+//   const cache = await caches.open(currentCache)
+
+//   const cachedResponse = await cache.match(event.request)
+//   if (cachedResponse) {
+//     console.info(`[sw] used cached: ${pathname}`)
+//     event.waitUntil(respondFromNetworkAndUpdateCache(event, cache, pathname))
+//     return cachedResponse
+//   }
+
+//   return respondFromNetworkAndUpdateCache(event, cache, pathname)
+// }
 
 async function respondFromNetworkAndUpdateCache(event: FetchEvent, cache: Cache, pathname: string): Promise<Response> {
   const preloadedResponse = await (event.preloadResponse as Promise<Response | undefined>)
 
   if (preloadedResponse)
-    console.log(`[sw] preloaded fetch: ${pathname}`)
+    console.info(`[sw] preloaded fetch: ${pathname}`)
   else
-    console.log(`[sw] normal fetch: ${pathname}`)
+    console.info(`[sw] normal fetch: ${pathname}`)
 
   const networkResponse = preloadedResponse || await fetch(event.request)
   if (networkResponse.status === SUCCESS)

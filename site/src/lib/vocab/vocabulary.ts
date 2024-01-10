@@ -34,11 +34,11 @@ export function createVocabStore({ supabase, authResponse, language, log = false
       .select('vocabulary')
       .eq('language', language)
       .then(({ data, error }) => {
-        console.info({ user_vocabulary_load: data, error })
         if (error) return console.error(error)
         if (!data?.length) return
         const [{vocabulary}] = data as unknown as { vocabulary: Record<string, VocabItem> }[]
         user_vocabulary.set(vocabulary)
+        console.info('user vocab loaded from db')
       })
   }
 
@@ -65,7 +65,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
   }
 
   function add_seen_sentence(words: string[]) {
-    if (log) console.info({add_seen_sentence: words, length: words.length})
+    if (log) console.info(`add_seen_sentence: ${words.join(' ')}`)
     const current_sentences = get(seen_sentences_this_route)
     const key = words.join('_')
     current_sentences[key] = words
