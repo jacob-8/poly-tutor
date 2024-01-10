@@ -79,12 +79,12 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     process_seen_sentences()
   })
 
-  let last_process_seen_sentences: Date
+  let last_process_seen_sentences: Date = null
 
   async function process_seen_sentences() {
-    const ten_seconds = 1000 * 10
-    if (last_process_seen_sentences && last_process_seen_sentences > new Date(Date.now() - ten_seconds)) {
-      if (log) console.info('process_seen_sentences called in last 10 seconds, skipping')
+    const FIVE_SECONDS = 1000 * 5
+    if (last_process_seen_sentences && last_process_seen_sentences > new Date(Date.now() - FIVE_SECONDS)) {
+      if (log) console.info('process_seen_sentences called in last 5 seconds, skipping')
       return
     }
     last_process_seen_sentences = new Date()
