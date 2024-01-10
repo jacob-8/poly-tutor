@@ -7,11 +7,12 @@
   export let studySentence: (sentence: Sentence) => void
   export let settings: Settings
   export let study_words_object: StudyWordsObject
+  export let add_seen_sentence: (words: string[]) => void
 </script>
 
 <div class="text-xs text-gray mb-2">
   {label}:
 </div>
 <div class="max-h-240px overflow-y-auto border-b pb-2 mb-2">
-  <SentenceComponent {study_words_object} {sentence} {settings} onClick={() => studySentence(sentence)} />
+  <SentenceComponent {add_seen_sentence} {study_words_object} {sentence} {settings} onClick={() => studySentence(sentence)} mark_seen_based_on_visibility />
 </div>

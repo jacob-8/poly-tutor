@@ -93,7 +93,7 @@
       {/if}
     {:else}
       {#await streamed.title then [sentence]}
-        <ShowMeta {study_words_object} label={$page.data.t.shows.title} settings={$settings} {sentence} {studySentence} />
+        <ShowMeta {study_words_object} label={$page.data.t.shows.title} settings={$settings} {sentence} {studySentence} add_seen_sentence={data.user_vocabulary.add_seen_sentence} />
       {/await}
 
       {#if $user}
@@ -106,12 +106,12 @@
       {/if}
 
       {#await streamed.description then [sentence]}
-        <ShowMeta {study_words_object} label={$page.data.t.shows.description} settings={$settings} {sentence} {studySentence} />
+        <ShowMeta {study_words_object} label={$page.data.t.shows.description} settings={$settings} {sentence} {studySentence} add_seen_sentence={data.user_vocabulary.add_seen_sentence} />
       {/await}
 
       {#if sentences}
         {#if $summary?.length}
-          <ShowMeta {study_words_object} label={$page.data.t.shows.summary} settings={$settings} sentence={$summary[0]} {studySentence} />
+          <ShowMeta {study_words_object} label={$page.data.t.shows.summary} settings={$settings} sentence={$summary[0]} {studySentence} add_seen_sentence={data.user_vocabulary.add_seen_sentence} />
         {:else}
           <div class="text-base border-b pb-2 mb-2">
             <Button onclick={() => addSummary({sentences})}>{$page.data.t.shows.summarize}</Button>
@@ -150,6 +150,7 @@
                 }
               }}
               settings={$settings}
+              add_seen_sentence={data.user_vocabulary.add_seen_sentence}
               play={youtubeComponent.play}
               pause={youtubeComponent.pause}
               seekToMs={youtubeComponent.seekToMs}

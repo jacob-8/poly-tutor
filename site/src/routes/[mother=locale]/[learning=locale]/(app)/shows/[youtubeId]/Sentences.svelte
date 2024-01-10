@@ -15,6 +15,7 @@
   export let showTranslation: () => void
   export let hideTranslation: () => void
   export let toggleStudy: () => void
+  export let add_seen_sentence: (words: string[]) => void
 
   let loop_caption = false
   let stop_time_ms: number
@@ -138,7 +139,7 @@
 </script>
 
 {#each sentences as sentence, index}
-  <SentenceComponent {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index}
+  <SentenceComponent {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index}
     onClick={() => {
       if (stop_time_ms)
         play_and_select({ start_ms: sentence.start_ms, index, end_ms: sentence.end_ms })

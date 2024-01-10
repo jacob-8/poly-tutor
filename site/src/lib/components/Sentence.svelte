@@ -2,6 +2,7 @@
   import type { Sentence, Settings, StudyWordsObject } from '$lib/types'
   import ChineseWord from '$lib/components/ChineseWord.svelte'
   import { IntersectionObserverShared } from 'svelte-pieces'
+  import ImSeen from './ImSeen.svelte'
 
   export let onClick: () => void = undefined
   export let id: string = undefined
@@ -9,6 +10,21 @@
   export let sentence: Sentence
   export let settings: Settings
   export let study_words_object: StudyWordsObject
+  export let add_seen_sentence: (words: string[]) => void = undefined
+  export let mark_seen_based_on_visibility = false
+
+  let has_been_seen = false
+
+  $: if (add_seen_sentence && active)
+    i_am_seen()
+
+  function i_am_seen() {
+    if (has_been_seen) return
+    add_seen_sentence(sentence.words
+      .filter(({definitions}) => definitions?.length > 0)
+      .map(({text}) => text))
+    has_been_seen = true
+  }
 </script>
 
 <IntersectionObserverShared bottom={1000} top={1000} once let:intersecting>
@@ -18,6 +34,9 @@
     class:bg-gray-200={active}
     on:click={onClick}>
     {#if intersecting}
+      {#if mark_seen_based_on_visibility && add_seen_sentence && !has_been_seen}
+        <ImSeen {i_am_seen} milliseconds={6000} />
+      {/if}
       {#if sentence.words}
         {#each sentence.words as word}
           <ChineseWord {study_words_object} {word} {settings} />

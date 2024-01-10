@@ -66,7 +66,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
   }
 
   function add_seen_sentence(words: string[]) {
-    if (log) console.info({add_seen_sentence: words})
+    if (log) console.info({add_seen_sentence: words, length: words.length})
     const current_sentences = get(seen_sentences_this_route)
     const key = words.join('_')
     current_sentences[key] = words
@@ -80,6 +80,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
   })
 
   let last_process_seen_sentences: Date
+
   async function process_seen_sentences() {
     const ten_seconds = 1000 * 10
     if (last_process_seen_sentences && last_process_seen_sentences > new Date(Date.now() - ten_seconds)) {
@@ -93,7 +94,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     const vocabulary = get(user_vocabulary)
     const word_counts: Record<string, number> = {}
 
-    for (const words in Object.values(current_sentences)) {
+    for (const words of Object.values(current_sentences)) {
       for (const word of words) {
         if (vocabulary[word]?.status === WordStatus.known)
           continue

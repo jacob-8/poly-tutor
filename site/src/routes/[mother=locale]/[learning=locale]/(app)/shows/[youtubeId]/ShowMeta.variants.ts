@@ -13,6 +13,7 @@ export const variants: Variant<Component>[] = [
       studySentence: (sentence) => console.info({sentence}),
       settings: {font_size_em: 1.5, show_definition: true, show_pronunciation: true},
       study_words_object: null,
+      add_seen_sentence: null,
     },
   },
   {
@@ -24,6 +25,7 @@ export const variants: Variant<Component>[] = [
       studySentence: (sentence) => console.info({sentence}),
       settings: {font_size_em: 1.5, show_definition: true, show_pronunciation: true},
       study_words_object: null,
+      add_seen_sentence: null,
     },
   },
 ]
