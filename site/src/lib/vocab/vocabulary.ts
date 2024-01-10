@@ -72,13 +72,13 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     seen_sentences_this_route.set(current_sentences)
   }
 
+  let last_process_seen_sentences: Date
+
   navigating.subscribe((nav) => {
     if (!nav || !user_id) return
     if (log) console.info('navigated')
     process_seen_sentences()
   })
-
-  let last_process_seen_sentences: Date = null
 
   async function process_seen_sentences() {
     const FIVE_SECONDS = 1000 * 5
