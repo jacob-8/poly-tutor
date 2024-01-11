@@ -1,4 +1,4 @@
-import { goto } from '$app/navigation'
+// import { goto } from '$app/navigation'
 import type { LocaleCode, LocaleCookieKey } from './locales'
 import { page } from '$app/stores'
 import { get } from 'svelte/store'
@@ -11,7 +11,8 @@ export function changeLocale(mother: LocaleCode, learning: LocaleCode) {
 
   const newUrl = url.href.replace(url.origin, '')
     .replace(/^\/[^/]+\/[^/]+/, `/${mother}/${learning}`)
-  goto(newUrl, { invalidateAll: true }) // SvelteKit method - invalidateAll required to force layout loads to re-run if using switches from language A to B and back to A
+  // goto(newUrl, { invalidateAll: true }) // SvelteKit method - invalidateAll required to force layout loads to re-run if using switches from language A to B and back to A
+  location.assign(newUrl)
 }
 
 function setLocaleCookie(locale: LocaleCode, key: LocaleCookieKey) {

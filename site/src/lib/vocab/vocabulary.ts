@@ -23,10 +23,12 @@ export function createVocabStore({ supabase, authResponse, language, log = false
   if (!browser)
     return { ...readable<UserVocabulary>({}), change_word_status: null, add_seen_sentence: null, changed_words: readable<UserVocabulary>({})}
 
+  if (log) console.info(`created vocab store in: ${language}`)
+
   const user_id = authResponse?.data?.user?.id
-  const user_key = user_id || 'no_user'
-  const user_vocabulary = createPersistedStore<UserVocabulary>(`vocabulary_${user_key}`, {}, { syncTabs: true })
-  const seen_sentences_this_route = createPersistedStore<Record<string, string[]>>(`seen_sentences_this_route_${user_key}`, {}, { syncTabs: true })
+  const storage_key_suffix = `${user_id || 'no_user'}_${language}`
+  const user_vocabulary = createPersistedStore<UserVocabulary>(`vocabulary_${storage_key_suffix}`, {}, { syncTabs: true })
+  const seen_sentences_this_route = createPersistedStore<Record<string, string[]>>(`seen_sentences_this_route_${storage_key_suffix}`, {}, { syncTabs: true })
 
   if (user_id) {
     supabase
@@ -87,7 +89,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
       return
     }
     last_process_seen_sentences = new Date()
-    if (log) console.info('process_seen_sentences')
+    if (log) console.info(`process_seen_sentences in ${language}`)
 
     const current_sentences = get(seen_sentences_this_route)
     const vocabulary = get(user_vocabulary)
