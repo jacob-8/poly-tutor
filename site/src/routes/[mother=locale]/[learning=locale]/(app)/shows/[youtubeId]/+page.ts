@@ -7,14 +7,14 @@ import { check_is_in_my_videos, remove_from_my_videos, youtube_in_db } from './c
 import type { Transcript, YouTube } from '$lib/supabase/database.types'
 import { invalidateAll } from '$app/navigation'
 import { get, writable } from 'svelte/store'
-import type { LocaleCode } from '$lib/i18n/locales'
+import type { LanguageCode, LocaleCode } from '$lib/i18n/locales'
 import { post_request } from '$lib/utils/post-request'
 import { merge_syntax } from './merge_syntax'
 import { browser } from '$app/environment'
 import { get_openai_api_key, open_auth } from '$lib/client/UserInfo.svelte'
 
 export const load = (async ({ params: { youtubeId: youtube_id, mother, learning }, fetch, parent }) => {
-  const learning_language = learning.replace(/-.*/, '') as 'zh' | 'en'
+  const learning_language = learning.replace(/-.*/, '') as LanguageCode
   const { supabase, user, split_sentences, analyze_sentences } = await parent()
   let youtube = await youtube_in_db(youtube_id, supabase)
 
@@ -109,15 +109,23 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
       const model = 'gpt-3.5-turbo-1106'
       const transcript = sentences.map(sentence => sentence.text).join('\n')
 
+      let prompt = 'You are a professional language teacher who helps students learn language by watching films. Summarize the following transcript in less than 200 words to provide a quick preview before watching. Keep your speech simple.'
+
+      if (learning === 'zh-TW')
+        prompt = 'You are a professional language teacher who helps students learn language by watching films. Summarize the following transcript in less than 200 words to provide a quick preview before watching. Keep your speech simple and use 繁體中文.'
+
+      if (learning === 'zh-CN')
+        prompt = 'You are a professional language teacher who helps students learn language by watching films. Summarize the following transcript in less than 200 words to provide a quick preview before watching. Keep your speech simple and use 简体中文.'
+
       const messagesToSend: ChatCompletionRequestMessage[] = [
-        { role: 'system', content: 'You are a professional language teacher who helps students learn language by watching films. Summarize the following transcript in less than 200 words to provide a quick preview before watching. Keep your speech simple and use 繁體中文.' },
+        { role: 'system', content: prompt },
         { role: 'user', content: `Transcript: ${transcript}` },
       ]
 
       const eventSource = fetchSSE<ChatRequestBody>('/api/chat', {
         messages: messagesToSend,
         model,
-        max_tokens: 600,
+        max_tokens: 6000,
         openai_api_key
       })
       eventSource.addEventListener('message', handle_message)
@@ -127,7 +135,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
       let streamed_in_summary = ''
       async function handle_message({detail}: CustomEvent<string>) {
         if (detail === '[DONE]') {
-          const { data: translated_summary, error } = await post_request<TranslateRequestBody, {line_separated_translations: string}>('/api/translate', { text: streamed_in_summary, sourceLanguageCode: learning as LocaleCode, targetLanguageCode: mother as LocaleCode }, fetch)
+          const { data: translated_summary, error } = await post_request<TranslateRequestBody, {line_separated_translations: string}>('/api/translate', { text: streamed_in_summary, sourceLanguageCode: learning, targetLanguageCode: mother }, fetch)
           if (error) {
             console.error(error.message)
             alert(error.message)

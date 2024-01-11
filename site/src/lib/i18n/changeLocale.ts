@@ -12,7 +12,7 @@ export function changeLocale(mother: LocaleCode, learning: LocaleCode) {
   const newUrl = url.href.replace(url.origin, '')
     .replace(/^\/[^/]+\/[^/]+/, `/${mother}/${learning}`)
   // goto(newUrl, { invalidateAll: true }) // SvelteKit method - invalidateAll required to force layout loads to re-run if using switches from language A to B and back to A
-  location.assign(newUrl)
+  location.assign(newUrl) // for simplicity to avoid having to subscriptions inside vocab store
 }
 
 function setLocaleCookie(locale: LocaleCode, key: LocaleCookieKey) {

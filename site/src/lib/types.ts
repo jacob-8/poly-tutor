@@ -76,6 +76,11 @@ export interface CEDictEntry {
   definitions: string
 }
 
+export interface EnglishToChineseDictEntry {
+  phonetic?: string
+  definition: string
+}
+
 export interface Settings {
   font_size_em?: number
   quizzing?: boolean
