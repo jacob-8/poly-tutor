@@ -84,9 +84,12 @@
     {#if submitting_code}
       <span class="i-svg-spinners-3-dots-fade align--4px" />
     {/if}
+    {#if !dev && !sixDigitCodeSent}
+      <Button size="sm" form="simple" onclick={auto_sign_in_on_dev}>Dev-Auto</Button>
+    {/if}
   </div>
   {#if !sixDigitCodeSent}
-    <div class="flex justify-center pb-3 border-b border-gray-500/50 mb-3">
+    <div class="mb-3">
       <div id="g_id_onload"
         data-client_id="962436367701-8f24318dmnh6ce75ig7p11lallvcr9eb.apps.googleusercontent.com"
         data-context="signin"
@@ -107,13 +110,16 @@
       <!-- signin_with or signin -->
     </div>
 
+    <div class="mb-3 text-gray-500/80 text-sm font-semibold">
+      OR
+    </div>
+
     <Form let:loading onsubmit={sendCode}>
       <div class="flex">
-
         <input
           type="email"
           use:autofocus
-          placeholder={$page.data.t.layout.email_address}
+          placeholder={$page.data.t.layout.enter_email_address}
           class="border border-gray-400 p-2 rounded w-full"
           required
           bind:value={email}
@@ -121,16 +127,14 @@
         <Button class="text-nowrap ml-1" {loading} form="filled" type="submit">{$page.data.t.layout.send_code}</Button>
 
       </div>
-      <div>
-        {#if dev}
-          <Button form="simple" onclick={auto_sign_in_on_dev}>Dev: Auto-sign-in</Button>
-        {/if}
-      </div>
     </Form>
   {:else}
+    <div class="mb-2">
+      {$page.data.t.layout.enter_6_digit_code_sent_to}: {email}
+    </div>
     <input
       type="text"
-      placeholder="{$page.data.t.layout.enter_6_digit_code} ({email})"
+      placeholder="_ _ _ _ _ _"
       class="border border-gray-400 p-2 rounded w-full"
       maxlength="6"
       bind:value={sixDigitCode}

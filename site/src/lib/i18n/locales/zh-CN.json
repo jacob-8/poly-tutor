@@ -3,11 +3,11 @@
     "tutor": "导师",
     "sign_in": "登录",
     "sign_out": "退出",
-    "email_address": "电子邮件",
     "send_code": "发送验证码",
-    "enter_6_digit_code": "输入 6 位数字代码",
-    "sent_code": "发送代码",
-    "error": "错误"
+    "sent_code": "发送验证码",
+    "error": "错误",
+    "enter_6_digit_code_sent_to": "输入发送至的 6 位数代码",
+    "enter_email_address": "输入电邮邮件"
   },
   "shows": {
     "paste_youtube_url": "粘贴 YouTube 视频网址",

@@ -3,10 +3,10 @@
     "tutor": "Tutor",
     "sign_in": "Sign in",
     "sign_out": "Sign out",
-    "email_address": "Email address",
-    "send_code": "Send 6-Digit Code",
-    "enter_6_digit_code": "Enter 6-digit code",
+    "enter_email_address": "Enter email address",
+    "send_code": "Send Code",
     "sent_code": "Sent code",
+    "enter_6_digit_code_sent_to": "Enter 6-digit code sent to",
     "error": "Error"
   },
   "shows": {
