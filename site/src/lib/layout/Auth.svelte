@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { dev } from '$app/environment'
+  import { browser, dev } from '$app/environment'
   import { invalidateAll } from '$app/navigation'
   import { page } from '$app/stores'
   import { PUBLIC_INBUCKET_URL } from '$env/static/public'
@@ -72,11 +72,14 @@
     invalidateAll()
     close()
   }
+
+  $: can_google_authenticate = browser && !location.origin.includes('vercel.app')
 </script>
 
 <svelte:head>
-  <script src="https://accounts.google.com/gsi/client" async></script>
-  <!-- could use google.accounts.id.renderButton(parent, {theme: "filled_blue"}); instead of reloading the script -->
+  {#if can_google_authenticate}
+    <script src="https://accounts.google.com/gsi/client" async></script>
+  {/if}
 </svelte:head>
 
 <Modal on:close={close}>
@@ -84,35 +87,37 @@
     {#if submitting_code}
       <span class="i-svg-spinners-3-dots-fade align--4px" />
     {/if}
-    {#if !dev && !sixDigitCodeSent}
+    {#if dev && !sixDigitCodeSent}
       <Button size="sm" form="simple" onclick={auto_sign_in_on_dev}>Dev-Auto</Button>
     {/if}
   </div>
   {#if !sixDigitCodeSent}
-    <div class="mb-3">
-      <div id="g_id_onload"
-        data-client_id="962436367701-8f24318dmnh6ce75ig7p11lallvcr9eb.apps.googleusercontent.com"
-        data-context="signin"
-        data-ux_mode="popup"
-        data-callback="handleSignInWithGoogle"
-        data-auto_select="true"
-        data-itp_support="true">
+    {#if can_google_authenticate}
+      <div class="mb-3">
+        <div id="g_id_onload"
+          data-client_id="962436367701-8f24318dmnh6ce75ig7p11lallvcr9eb.apps.googleusercontent.com"
+          data-context="signin"
+          data-ux_mode="popup"
+          data-callback="handleSignInWithGoogle"
+          data-auto_select="true"
+          data-itp_support="true">
+        </div>
+
+        <div class="g_id_signin"
+          data-type="standard"
+          data-shape="rectangular"
+          data-theme="outline"
+          data-text="signin_with"
+          data-size="large"
+          data-logo_alignment="left">
+        </div>
+        <!-- signin_with or signin -->
       </div>
 
-      <div class="g_id_signin"
-        data-type="standard"
-        data-shape="rectangular"
-        data-theme="outline"
-        data-text="signin_with"
-        data-size="large"
-        data-logo_alignment="left">
+      <div class="mb-3 text-gray-500/80 text-sm font-semibold">
+        OR
       </div>
-      <!-- signin_with or signin -->
-    </div>
-
-    <div class="mb-3 text-gray-500/80 text-sm font-semibold">
-      OR
-    </div>
+    {/if}
 
     <Form let:loading onsubmit={sendCode}>
       <div class="flex">

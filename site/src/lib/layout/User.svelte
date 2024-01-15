@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { browser } from '$app/environment'
   import { page } from '$app/stores'
   import { ShowHide, Slideover, portal } from 'svelte-pieces'
   import type { BaseUser } from '$lib/supabase/user'
@@ -13,6 +14,8 @@
 
   $: name = $user?.user_metadata?.full_name || $user?.email
   let broken_avatar_image = false
+
+  $: can_google_authenticate = browser && !location.origin.includes('vercel.app')
 </script>
 
 {#if $user}
@@ -65,6 +68,6 @@
   </ShowHide>
 {/if}
 
-{#if started_signed_out && $page.data.supabase}
+{#if can_google_authenticate && started_signed_out && $page.data.supabase}
   <GoogleOneTap />
 {/if}
