@@ -1,7 +1,6 @@
 import { PUBLIC_STUDIO_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_API_URL } from '$env/static/public'
 import { createClient, type AuthResponse } from '@supabase/supabase-js'
-import type { Supabase } from './database.types'
-import type { Database } from './generated.types'
+import type { Supabase, Database } from './database.types'
 
 // https://supabase.com/docs/reference/javascript/typescript-support
 

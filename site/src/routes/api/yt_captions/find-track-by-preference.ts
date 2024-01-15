@@ -4,6 +4,7 @@ import type { YoutubeCaptionTrack } from './+server'
 const zh_TW_code_preferences = ['zh-TW', 'zh-Hant', 'zh', 'zh-CN', 'zh-Hans']
 const zh_CN_code_preferences = ['zh-CN', 'zh-Hans', 'zh', 'zh-TW', 'zh-Hant']
 
+// TODO: handle zh-Hant and zh-Hans better
 export function find_track_by_preference(tracks: YoutubeCaptionTrack[], locale: LocaleCode): YoutubeCaptionTrack {
   if (locale === 'en') {
     const preferredTrack = tracks.find(({ language_code }) => language_code.startsWith('en'))
