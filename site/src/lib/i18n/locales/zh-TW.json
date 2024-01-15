@@ -3,11 +3,11 @@
     "tutor": "導師",
     "sign_in": "登入",
     "sign_out": "退出",
-    "email_address": "電子郵件",
     "send_code": "發送驗證碼",
-    "enter_6_digit_code": "輸入 6 位數字代碼",
-    "sent_code": "傳送代碼",
-    "error": "錯誤"
+    "sent_code": "傳送驗證碼",
+    "error": "錯誤",
+    "enter_6_digit_code_sent_to": "輸入發送至的 6 位數代碼",
+    "enter_email_address": "輸入電子郵件"
   },
   "shows": {
     "paste_youtube_url": "貼上 YouTube 影片網址",
