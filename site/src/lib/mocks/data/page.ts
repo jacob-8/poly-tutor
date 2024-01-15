@@ -17,4 +17,4 @@ export const mockLayoutData: LayoutData = {
   analyze_sentences: null,
 }
 
-export const mockBobUser = readable({ email: 'bob@gmail.com'}) as Readable<BaseUser>
+export const mockBobUser = readable({ email: 'bob@gmail.com', user_metadata: {}}) as Readable<BaseUser>

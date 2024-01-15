@@ -83,6 +83,21 @@ export interface Settings {
   show_pronunciation?: boolean // Chinese only
 }
 
+export interface GoogleAuthUserMetaData{
+    // "iss": string,
+    // "sub": string,
+    // "name": string,
+    // "email": string,
+    // "picture": string, // duplicate of avatar_url
+    full_name?: string,
+    avatar_url?: string,
+    // "provider_id": string,
+    // "email_verified": boolean,
+    // "phone_verified": boolean
+}
+
+export type UserMetaData = GoogleAuthUserMetaData
+
 // API
 
 export interface YtAddRequestBody {

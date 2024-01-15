@@ -3,9 +3,12 @@ import type { AuthResponse, Session, User } from '@supabase/supabase-js'
 import type { Supabase } from './database.types'
 import { setCookie } from '$lib/utils/cookies'
 import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from './constants'
+import type { GoogleAuthUserMetaData } from '$lib/types'
 const browser = typeof window !== 'undefined'
 
-export type BaseUser = User
+export type BaseUser = User & {
+  user_metadata: GoogleAuthUserMetaData
+}
 
 /** Subscribes to current user, caches it to local storage, and sets cookie for server-side rendering. */
 export function createUserStore({ supabase, authResponse, log = false }: { supabase: Supabase, authResponse: AuthResponse, log?: boolean }) {
