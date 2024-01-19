@@ -2,7 +2,7 @@
 	"name": "site",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev --host",
 		"build": "vite build",
 		"preview": "pnpm build && vite preview",
 		"sync": "svelte-kit sync",

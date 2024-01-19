@@ -1,9 +1,10 @@
 <script lang="ts">
-  import type { Sentence, Settings, StudyWordsObject } from '$lib/types'
+  import type { Sentence, Settings, StudyWordsObject, UserVocabulary } from '$lib/types'
   import SentenceComponent from '$lib/components/Sentence.svelte'
 
   export let sentences: Sentence[] = []
   export let study_words_object: StudyWordsObject
+  export let changed_words: UserVocabulary = {}
   export let studySentence: (sentence: Sentence) => void
   export let settings: Settings
   export let currentTimeMs: number
@@ -139,7 +140,7 @@
 </script>
 
 {#each sentences as sentence, index}
-  <SentenceComponent {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index}
+  <SentenceComponent {changed_words} {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index}
     onClick={() => {
       if (stop_time_ms)
         play_and_select({ start_ms: sentence.start_ms, index, end_ms: sentence.end_ms })
@@ -148,9 +149,8 @@
     }} />
 {/each}
 
-<div class="pb-20" />
 
-<div class="fixed bottom-0 left-0 sm:left-50% right-0 bg-white border-t p-1 sm:p-2 flex sm:space-x-1">
+<div class="sticky bottom-0 bg-white border-t p-1 sm:p-2 flex sm:space-x-1">
   <div class="ml-auto" />
   <button type="button" class="sm:hidden!" on:click={toggleStudy}>
     <span class="i-ic-baseline-manage-search text-xl" />

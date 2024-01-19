@@ -10,12 +10,13 @@
   import { format_time } from '$lib/utils/format_time'
   import ShowMeta from './ShowMeta.svelte'
   import StudyLesson from '$lib/components/StudyLesson.svelte'
-  import Viewport from './Viewport.svelte'
   import { onMount } from 'svelte'
   import { get_study_words_object } from '$lib/utils/study-words-object'
+  import ShowLayout from './ShowLayout.svelte'
 
   export let data
-  $: ({ youtube, summary, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase, settings } = data)
+  $: ({ youtube, summary, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase, settings, user_vocabulary } = data)
+  $: ({ changed_words } = user_vocabulary)
 
   let sentences: Sentence[]
   let study_words: StudyWords
@@ -57,12 +58,11 @@
     currentStudySentence = sentence
   }
 
-  let translation_on_mobile = false
-  let study_on_mobile = false
+// let translation_on_mobile = false
 </script>
 
-<div class="max-w-100rem w-full mx-auto sm:px-3 flex flex-col sm:flex-row items-start">
-  <div class="w-full sm:w-1/2 sticky z-1 top-0 -mt-2 sm:h-100vh flex flex-col pb-2 sm:pt-2">
+<ShowLayout>
+  <div slot="player">
     <Youtube
       bind:this={youtubeComponent}
       youtube_id={youtube.id}
@@ -70,22 +70,17 @@
       {readCurrentTime}
       {setPlaybackRate}
       {playbackRate} />
-
-    <Viewport let:width>
-      {#if width >= 640}
-        <div class="mt-2 overflow-y-auto grow-1 flex flex-col">
-          {#if currentStudySentence}
-            <StudySentence change_word_status={data.user_vocabulary.change_word_status} {study_words_object} sentence={currentStudySentence} />
-          {:else}
-            <StudyLesson change_word_status={data.user_vocabulary.change_word_status} {study_words} />
-            <!-- {$page.data.t.shows.click_to_study} -->
-          {/if}
-        </div>
-      {/if}
-    </Viewport>
+  </div>
+  <div class="p-2" slot="study">
+    {#if currentStudySentence}
+      <StudySentence changed_words={$changed_words} change_word_status={data.user_vocabulary.change_word_status} {study_words_object} sentence={currentStudySentence} />
+    {:else}
+      <StudyLesson changed_words={$changed_words} change_word_status={data.user_vocabulary.change_word_status} {study_words} />
+      <!-- {$page.data.t.shows.click_to_study} -->
+    {/if}
   </div>
 
-  <div class="sm:w-1/2 sm:pl-2">
+  <div slot="sentences">
     {#if error}
       {$page.data.t.layout.error}: {error}
       {#if !$user}
@@ -93,7 +88,7 @@
       {/if}
     {:else}
       {#await streamed.title then [sentence]}
-        <ShowMeta {study_words_object} label={$page.data.t.shows.title} settings={$settings} {sentence} {studySentence} add_seen_sentence={data.user_vocabulary.add_seen_sentence} />
+        <ShowMeta changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.title} settings={$settings} {sentence} {studySentence} add_seen_sentence={data.user_vocabulary.add_seen_sentence} />
       {/await}
 
       {#if $user}
@@ -106,12 +101,12 @@
       {/if}
 
       {#await streamed.description then [sentence]}
-        <ShowMeta {study_words_object} label={$page.data.t.shows.description} settings={$settings} {sentence} {studySentence} add_seen_sentence={data.user_vocabulary.add_seen_sentence} />
+        <ShowMeta changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.description} settings={$settings} {sentence} {studySentence} add_seen_sentence={data.user_vocabulary.add_seen_sentence} />
       {/await}
 
       {#if sentences}
         {#if $summary?.length}
-          <ShowMeta {study_words_object} label={$page.data.t.shows.summary} settings={$settings} sentence={$summary[0]} {studySentence} add_seen_sentence={data.user_vocabulary.add_seen_sentence} />
+          <ShowMeta changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.summary} settings={$settings} sentence={$summary[0]} {studySentence} add_seen_sentence={data.user_vocabulary.add_seen_sentence} />
         {:else}
           <div class="text-base border-b pb-2 mb-2">
             <Button onclick={() => addSummary({sentences})}>{$page.data.t.shows.summarize}</Button>
@@ -137,17 +132,18 @@
         {#if sentences !== undefined}
           {#if sentences}
             <Sentences
+              changed_words={$changed_words}
               {study_words_object}
-              hideTranslation={() => translation_on_mobile = false}
-              showTranslation={() => translation_on_mobile = true}
               toggleStudy={() => {
-                if (study_on_mobile) {
-                  study_on_mobile = false
-                  youtubeComponent.play()
-                } else {
-                  study_on_mobile = true
-                  youtubeComponent.pause()
-                }
+              // hideTranslation={() => translation_on_mobile = false}
+                // showTranslation={() => translation_on_mobile = true}
+                // if (study_on_mobile) {
+                //   study_on_mobile = false
+                //   youtubeComponent.play()
+                // } else {
+                //   study_on_mobile = true
+                //   youtubeComponent.pause()
+                // }
               }}
               settings={$settings}
               add_seen_sentence={data.user_vocabulary.add_seen_sentence}
@@ -168,16 +164,10 @@
       {/await}
     {/if}
   </div>
-</div>
+</ShowLayout>
 
-{#if study_on_mobile && currentStudySentence}
-  <div class="bg-white fixed top-0 bottom-11.25 left-0 right-0 p-2 z-1 overflow-y-scroll">
-    <StudySentence change_word_status={data.user_vocabulary.change_word_status} {study_words_object} sentence={currentStudySentence} />
-  </div>
-{/if}
-
-{#if translation_on_mobile && currentStudySentence?.translation?.[$page.data.mother]}
+<!-- {#if translation_on_mobile && currentStudySentence?.translation?.[$page.data.mother]}
   <div class="fixed bottom-11.25 left-0 right-0 bg-white border-t p-2 z-2 text-sm">
     {currentStudySentence?.translation?.[$page.data.mother]}
   </div>
-{/if}
+{/if} -->

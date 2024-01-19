@@ -35,14 +35,15 @@ export enum WordStatus {
   'wordlist' = 4,
 }
 
+// calculated sentence by sentence
 export interface AnalyzedWord extends VocabularyWordStats {
   text: string
+  phonetic?: string // English only
   context_sentence_indexes?: number[]
   definitions?: string
   neighbors_understood?: boolean
 }
 
-// calculated sentence by sentence
 export interface AnalyzedChineseWord extends AnalyzedWord {
   opposite_script?: string
   pinyin?: string // for word focus view
@@ -51,9 +52,12 @@ export interface AnalyzedChineseWord extends AnalyzedWord {
   tone_change?: boolean
 }
 
-export interface ChineseEmphasisLimits {
+export interface EmphasisLimits {
   high_view_count_max: number
   common_in_this_context_max: number
+}
+
+export interface ChineseEmphasisLimits extends EmphasisLimits {
   improve_pronunciation_or_tone_max: number
 }
 
@@ -74,6 +78,12 @@ export interface CEDictEntry {
   simplified?: string
   pinyin: string
   definitions: string
+}
+
+export interface ECDictEntry {
+  word: string
+  phonetic?: string
+  translation: string
 }
 
 export interface Settings {

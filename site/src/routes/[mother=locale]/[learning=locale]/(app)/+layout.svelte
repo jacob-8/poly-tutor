@@ -6,50 +6,46 @@
   import SelectLanguage from '$lib/i18n/SelectLanguage.svelte'
   import { invalidateAll } from '$app/navigation'
   import { browser } from '$app/environment'
-  import { onMount } from 'svelte'
 
   export let data
 
-  onMount(warm_up_analysis_worker)
-
-  async function warm_up_analysis_worker() {
-    const { api } = await import('$lib/analysis/expose-analysis-worker')
-    api.segment('你好世界！')
-  }
+// async function warm_up_analysis_worker() {
+  //   const { api } = await import('$lib/analysis/expose-chinese-analysis-worker')
+  //   api.segment('你好世界！')
+  // }
 </script>
 
-<div class="flex items-center space-x-1 py-1 pl-1" data-sveltekit-preload-data="tap">
-  <div class="text-lg font-semibold flex items-center truncate py-1">
-    {#if $page.data.youtube}
-      <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 mr-1" /></a>
-      {$page.data.youtube.title || ''}
-    {:else if $page.url.pathname.includes('shows')}
-      <a href="/" class="mr-1">
-        <span class="i-iconamoon-arrow-left-1 my-1" /></a>
-      {$page.data.t.home.watch}
-    {:else if $page.url.pathname.includes('vocabulary')}
-      <a href="/" class="mr-1">
-        <span class="i-iconamoon-arrow-left-1 my-1" /></a>
-      {$page.data.t.home.my_words}
-    {:else}
-      <a href="/">{$page.data.t.layout.tutor}</a>
+{#if !$page.data.youtube}
+  <div class="flex items-center space-x-1 py-1 pl-1" data-sveltekit-preload-data="tap">
+    <div class="text-lg font-semibold flex items-center truncate py-1">
+      {#if $page.url.pathname.includes('shows')}
+        <a href="/" class="mr-1">
+          <span class="i-iconamoon-arrow-left-1 my-1" /></a>
+        {$page.data.t.home.watch}
+      {:else if $page.url.pathname.includes('vocabulary')}
+        <a href="/" class="mr-1">
+          <span class="i-iconamoon-arrow-left-1 my-1" /></a>
+        {$page.data.t.home.my_words}
+      {:else}
+        <a href="/">{$page.data.t.layout.tutor}</a>
+      {/if}
+    </div>
+    <div class="grow-1" />
+    {#if browser}
+      <ShowHide let:show let:toggle>
+        <button aria-label="Select Language" type="button" on:click={toggle}><span class="i-heroicons-language-20-solid"></span></button>
+        {#if show}
+          <SelectLanguage close={toggle} />
+        {/if}
+      </ShowHide>
+      <!-- <span class="i-ri-sun-line dark:i-ri-moon-line" /> -->
+      <User user={data.user} sign_out={async () => {
+        await data.supabase?.auth.signOut()
+        invalidateAll()
+      }} />
     {/if}
   </div>
-  <div class="grow-1" />
-  {#if browser}
-    <ShowHide let:show let:toggle>
-      <button aria-label="Select Language" type="button" on:click={toggle}><span class="i-heroicons-language-20-solid"></span></button>
-      {#if show}
-        <SelectLanguage close={toggle} />
-      {/if}
-    </ShowHide>
-    <!-- <span class="i-ri-sun-line dark:i-ri-moon-line" /> -->
-    <User user={data.user} sign_out={async () => {
-      await data.supabase?.auth.signOut()
-      invalidateAll()
-    }} />
-  {/if}
-</div>
+{/if}
 
 <slot />
 

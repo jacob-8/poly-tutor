@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Sentence, Settings, StudyWordsObject } from '$lib/types'
+  import type { Sentence, Settings, StudyWordsObject, UserVocabulary } from '$lib/types'
   import ChineseWord from '$lib/components/ChineseWord.svelte'
   import { IntersectionObserverShared } from 'svelte-pieces'
   import ImSeen from './ImSeen.svelte'
@@ -12,6 +12,7 @@
   export let study_words_object: StudyWordsObject
   export let add_seen_sentence: (words: string[]) => void = undefined
   export let mark_seen_based_on_visibility = false
+  export let changed_words: UserVocabulary = {}
 
   let has_been_seen = false
 
@@ -39,7 +40,7 @@
           <ImSeen {i_am_seen} milliseconds={6000} />
         {/if}
         {#each sentence.words as word}
-          <ChineseWord {study_words_object} {word} {settings} />
+          <ChineseWord {changed_words} {study_words_object} {word} {settings} />
         {/each}
       {:else}
         <div>{sentence.text}</div>
