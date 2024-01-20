@@ -4,7 +4,7 @@ import { getSupabase, getSession } from '$lib/supabase'
 import { createUserStore } from '$lib/supabase/user'
 import  type { ChineseEmphasisLimits, Settings } from '$lib/types'
 import { createVocabStore } from '$lib/vocab/vocabulary'
-import { createPersistedStore } from 'svelte-pieces/index'
+import { createPersistedStore } from 'svelte-pieces'
 
 export const load = async ({data: { access_token, refresh_token }, params: { learning }}) => {
   const settings = createPersistedStore<Settings>('settings_01.03.24', {font_size_em: 1.5, show_definition: true, show_pronunciation: true}, true)

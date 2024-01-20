@@ -19,6 +19,7 @@ function formatCookie(name: string, value: string, options: CookieOptions = {}) 
   const updatedCookie = {
     [encodeURIComponent(name)]: encodeURIComponent(value),
     sameSite: 'strict',
+    path: '/',
     ...options,
   }
 
@@ -32,24 +33,24 @@ function formatCookie(name: string, value: string, options: CookieOptions = {}) 
 
 if (import.meta.vitest) {
   describe(setCookie, () => {
-    test('basic, secure by default', () => {
+    test('basic, secure by default, root path by default', () => {
       const cookie = formatCookie('my-cookie', '123')
-      expect(cookie).toEqual('my-cookie=123;sameSite=strict;secure')
+      expect(cookie).toEqual('my-cookie=123;sameSite=strict;path=/;secure')
     })
 
     test('handles options', () => {
-      const cookie = formatCookie('my-cookie', '123', { maxAge: 1234, path: '/', sameSite: 'lax' })
-      expect(cookie).toEqual('my-cookie=123;sameSite=lax;maxAge=1234;path=/;secure')
+      const cookie = formatCookie('my-cookie', '123', { maxAge: 1234, path: '/foo', sameSite: 'lax' })
+      expect(cookie).toEqual('my-cookie=123;sameSite=lax;path=/foo;maxAge=1234;secure')
     })
 
     test('secure false', () => {
       const cookie = formatCookie('my-cookie', '123', { secure: false})
-      expect(cookie).toEqual('my-cookie=123;sameSite=strict')
+      expect(cookie).toEqual('my-cookie=123;sameSite=strict;path=/')
     })
 
     test('clear cookie', () => {
       const cookie = formatCookie('my-cookie', '', { expires: new Date(0) })
-      expect(cookie).toEqual('my-cookie=;sameSite=strict;expires=Thu, 01 Jan 1970 00:00:00 GMT;secure')
+      expect(cookie).toEqual('my-cookie=;sameSite=strict;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;secure')
     })
   })
 }

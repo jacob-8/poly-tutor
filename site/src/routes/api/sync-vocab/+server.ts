@@ -30,7 +30,7 @@ interface Word {
 export const POST: RequestHandler = async ({ locals: { getSession }, request, fetch }) => {
   const { data: session_data, error: _error } = await getSession()
   if (_error || !session_data?.user)
-    throw error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
+    error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
   const { url } = await request.json()
   // const url = '/j-import.json'

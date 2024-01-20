@@ -15,20 +15,20 @@ const translationClient = new TranslationServiceClient({
 
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
   if (!CREDENTIALS.project_id)
-    throw error(ResponseCodes.INTERNAL_SERVER_ERROR, 'GOOGLE_TRANSLATE_NLP_CREDENTIALS not configured')
+    error(ResponseCodes.INTERNAL_SERVER_ERROR, 'GOOGLE_TRANSLATE_NLP_CREDENTIALS not configured')
 
   const { data: session_data, error: _error } = await getSession()
   if (_error || !session_data?.user)
-    throw error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
+    error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
   if (!dev && session_data.user.email !== 'jacob@polylingual.dev')
-    throw error(ResponseCodes.UNAUTHORIZED, { message: 'Unauthorized' })
+    error(ResponseCodes.UNAUTHORIZED, { message: 'Unauthorized' })
 
   const { text, sourceLanguageCode, targetLanguageCode } = await request.json() as TranslateRequestBody
   const location = 'global'
 
   if (!text)
-    throw error(ResponseCodes.BAD_REQUEST, 'No text property found in request body')
+    error(ResponseCodes.BAD_REQUEST, 'No text property found in request body')
 
   // Mock for E2E
   if (dev && text.startsWith(mocked_prefix)) {
@@ -55,7 +55,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
     return json({line_separated_translations: textTranslations.join('\n')})
   } catch (err) {
     console.error(err.message)
-    throw error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
+    error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
   }
 }
 
