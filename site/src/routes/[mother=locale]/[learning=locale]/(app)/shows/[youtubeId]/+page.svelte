@@ -13,6 +13,7 @@
   import { onMount } from 'svelte'
   import { get_study_words_object } from '$lib/utils/study-words-object'
   import ShowLayout from './ShowLayout.svelte'
+  import Controls from './Controls.svelte'
 
   export let data
   $: ({ youtube, summary, error, streamed, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase, settings, user_vocabulary } = data)
@@ -62,6 +63,13 @@
 </script>
 
 <ShowLayout>
+  <div class="h-full p-1 flex items-center" slot="header">
+    <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 text-lg" /></a>
+    <!-- {youtube.title || ''} -->
+    <div class="mr-auto" />
+    <Controls />
+  </div>
+
   <div slot="player">
     <Youtube
       bind:this={youtubeComponent}
@@ -134,17 +142,6 @@
             <Sentences
               changed_words={$changed_words}
               {study_words_object}
-              toggleStudy={() => {
-              // hideTranslation={() => translation_on_mobile = false}
-                // showTranslation={() => translation_on_mobile = true}
-                // if (study_on_mobile) {
-                //   study_on_mobile = false
-                //   youtubeComponent.play()
-                // } else {
-                //   study_on_mobile = true
-                //   youtubeComponent.pause()
-                // }
-              }}
               settings={$settings}
               add_seen_sentence={data.user_vocabulary.add_seen_sentence}
               play={youtubeComponent.play}
@@ -171,3 +168,9 @@
     {currentStudySentence?.translation?.[$page.data.mother]}
   </div>
 {/if} -->
+
+<style>
+  a {
+    --at-apply: px-2 py-2 hover:bg-gray/20 rounded flex items-center;
+  }
+</style>

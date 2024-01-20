@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Sentence, Settings, StudyWordsObject, UserVocabulary } from '$lib/types'
   import SentenceComponent from '$lib/components/Sentence.svelte'
+  import { portal } from './portal'
 
   export let sentences: Sentence[] = []
   export let study_words_object: StudyWordsObject
@@ -13,9 +14,6 @@
   export let play: () => void
   export let pause: () => void
   export let seekToMs: (ms: number) => void
-  export let showTranslation: () => void
-  export let hideTranslation: () => void
-  export let toggleStudy: () => void
   export let add_seen_sentence: (words: string[]) => void
 
   let loop_caption = false
@@ -129,10 +127,10 @@
     const currentCaption = sentences[current_caption_index]
     play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, loop: true, end_ms: currentCaption.end_ms })
   }
-  function playCaptionOnce() {
-    const currentCaption = sentences[current_caption_index]
-    play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, loop: false, end_ms: currentCaption.end_ms })
-  }
+  // function playCaptionOnce() {
+  //   const currentCaption = sentences[current_caption_index]
+  //   play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, loop: false, end_ms: currentCaption.end_ms })
+  // }
   function playNormal() {
     const currentCaption = sentences[current_caption_index]
     play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, loop: false })
@@ -142,31 +140,20 @@
 {#each sentences as sentence, index}
   <SentenceComponent {changed_words} {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index}
     onClick={() => {
-      if (stop_time_ms)
-        play_and_select({ start_ms: sentence.start_ms, index, end_ms: sentence.end_ms })
-      else
-        play_and_select({ start_ms: sentence.start_ms, index })
+      play_and_select({ start_ms: sentence.start_ms, index, end_ms: stop_time_ms ? sentence.end_ms : null })
     }} />
 {/each}
 
-
-<div class="sticky bottom-0 bg-white border-t p-1 sm:p-2 flex sm:space-x-1">
-  <div class="ml-auto" />
-  <button type="button" class="sm:hidden!" on:click={toggleStudy}>
-    <span class="i-ic-baseline-manage-search text-xl" />
-  </button>
-  <button type="button" class="sm:hidden!" on:mousedown={showTranslation} on:touchstart={showTranslation} on:mouseup={hideTranslation} on:touchend={hideTranslation}>
-    <span class="i-mdi-google-translate text-xl" />
-  </button>
+<div class="contents" use:portal={'#playback-controls'}>
   <!-- {#if mode === 'play-once' && isPlaying}
-    <button type="button" class="active" on:click={pause}>
-      <span class="i-carbon-pause-filled text-xl" />
-    </button>
-  {:else}
-    <button type="button" title="Play once (shortcut: 1)" class:active={mode === 'play-once'} on:click={playCaptionOnce}>
-      <div>1x</div>
-    </button>
-  {/if} -->
+  <button type="button" class="active" on:click={pause}>
+    <span class="i-carbon-pause-filled text-xl" />
+  </button>
+{:else}
+  <button type="button" title="Play once (shortcut: 1)" class:active={mode === 'play-once'} on:click={playCaptionOnce}>
+    <div>1x</div>
+  </button>
+{/if} -->
   {#if mode === 'repeat' && isPlaying}
     <button type="button" class="active" on:click={pause}>
       <span class="i-carbon-pause-filled text-xl" />
@@ -185,12 +172,12 @@
       <span class="i-carbon-play-filled-alt text-xl" />
     </button>
   {/if}
-  <button type="button" class="hidden! sm:flex!" title="Shortcut key: up or right-arrow" on:click={seekToPrevious}>
-    <span class="i-carbon-arrow-up text-xl" />
-  </button>
-  <button type="button" class="hidden! sm:flex!" title="Shortcut key: down or left-arrow" on:click={seekToNext}>
-    <span class="i-carbon-arrow-down text-xl" />
-  </button>
+  <!-- <button type="button" class="hidden! sm:flex!" title="Shortcut key: up or right-arrow" on:click={seekToPrevious}>
+  <span class="i-carbon-arrow-up text-xl" />
+</button>
+<button type="button" class="hidden! sm:flex!" title="Shortcut key: down or left-arrow" on:click={seekToNext}>
+  <span class="i-carbon-arrow-down text-xl" />
+</button> -->
 </div>
 
 <svelte:window
@@ -201,7 +188,6 @@
         pause()
       else
         play()
-
       event.preventDefault()
     }
     if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
@@ -212,10 +198,10 @@
       seekToNext()
       event.preventDefault()
     }
-    if (event.key === '1') {
-      playCaptionOnce()
-      event.preventDefault()
-    }
+    // if (event.key === '1') {
+    //   playCaptionOnce()
+    //   event.preventDefault()
+    // }
     if (event.key === 'r') {
       playCaptionOnLoop()
       event.preventDefault()
@@ -228,9 +214,8 @@
 
 <style>
   button {
-    --at-apply: px-3 py-2 hover:bg-gray/20 rounded flex items-center;
+    --at-apply: header-btn;
   }
-
   .active {
     --at-apply: bg-black hover:bg-black/70 text-white;
   }
