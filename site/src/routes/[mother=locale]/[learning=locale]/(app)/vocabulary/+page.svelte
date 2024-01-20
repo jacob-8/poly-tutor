@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { post_request } from '$lib/utils/post-request'
   import type { PageData } from './$types'
 
   export let data: PageData
@@ -7,9 +8,11 @@
 
 {#if $user.email === 'jacob@polylingual.dev'}
   <button type="button" on:click={async () => {
-    const { add_vocab } = await import('./import')
-    add_vocab(data.supabase)
-  }}>Add vocab</button>
+    const url = prompt('Enter url')
+    if (!url) return
+    const { data, error } = await post_request('/api/sync-vocab', { url })
+    console.info({data, error})
+  }}>Migrate Vocab</button>
 {/if}
 
 
