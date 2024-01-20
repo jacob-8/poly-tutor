@@ -44,7 +44,7 @@
 		"type-fest": "^4.8.3",
 		"typescript": "^5.3.3",
 		"unocss": "^0.58.3",
-		"vite": "^4.5.0",
+		"vite": "^5.0.12",
 		"vitest": "^1.2.1"
 	},
 	"type": "module",

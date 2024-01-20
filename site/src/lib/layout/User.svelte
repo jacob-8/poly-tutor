@@ -57,7 +57,7 @@
 {:else}
   <ShowHide let:show let:toggle>
     <button class="header-btn" type="button" on:click={toggle}>
-      <span class="i-material-symbols-login-rounded vertical--2px" />
+      <span class="i-material-symbols-login-rounded vertical--2px mr-1" />
       <span class="hidden sm:inline">{$page.data.t.layout.sign_in}</span>
     </button>
     {#if show}
