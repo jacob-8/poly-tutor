@@ -58,7 +58,8 @@
   function update_current_index_when_needed(current_time_ms: number) {
     const index = find_caption_index_by_time(current_time_ms)
     if (index === -1) {
-      if (sentences[0]?.start_ms > current_time_ms)
+      const playing_prior_to_first_caption = current_time_ms < sentences[0]?.start_ms
+      if (playing_prior_to_first_caption)
         set_current_caption_index(0)
       return
     }

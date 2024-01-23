@@ -35,7 +35,8 @@
     {id}
     class="px-1 pb-3 flex flex-wrap relative hover:bg-gray-100 rounded relative group"
     class:bg-gray-200={active}
-    on:click={onClick}>
+    on:mousedown={onClick}
+    on:touchstart={onClick}>
     {#if intersecting}
       {#if sentence.words}
         {#if mark_seen_based_on_visibility && add_seen_sentence && !has_been_seen}
