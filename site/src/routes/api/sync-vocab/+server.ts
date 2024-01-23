@@ -4,6 +4,11 @@ import { ResponseCodes } from '$lib/responseCodes'
 import type { TablesInsert } from '$lib/supabase/generated.types'
 import { WordStatus } from '$lib/types'
 import { getAdminSupabaseClient } from '$lib/supabase/admin'
+import type { Config } from '@sveltejs/adapter-vercel'
+
+export const config: Config = {
+  maxDuration: 300,
+}
 
 interface Timestamp {
   seconds: number;
