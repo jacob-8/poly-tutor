@@ -128,6 +128,13 @@ export interface YtTranscribeRequestBody {
   duration_seconds: number
 }
 
+export interface YtTranslateRequestBody {
+  youtube_id: string
+  sentences: Sentence[]
+  mother: LocaleCode
+  learning: LocaleCode
+}
+
 export interface ExternalYoutubeTranscribeRequestBody {
   youtube_id: string
   openai_api_key: string

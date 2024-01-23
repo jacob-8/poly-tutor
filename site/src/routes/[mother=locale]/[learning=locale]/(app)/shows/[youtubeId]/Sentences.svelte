@@ -17,11 +17,12 @@
   export let pause: () => void
   export let seekToMs: (ms: number) => void
   export let add_seen_sentence: (words: string[]) => void
+  export let in_view: boolean
 
   let loop_caption = false
   let stop_time_ms: number
   let start_time_ms: number
-  let updated_play_position: Date | null = null
+  let user_updated_position: Date | null = null
   let selected_caption_index = 0
 
   let current_caption_index = 0
@@ -47,8 +48,8 @@
       return
     }
 
-    const user_updated_position = updated_play_position && Date.now() - updated_play_position.getTime() < 2000
-    if (user_updated_position)
+    const user_recently_updated_position = user_updated_position && Date.now() - user_updated_position.getTime() < 2000
+    if (user_recently_updated_position)
       return
 
     update_current_index_when_needed(time_ms)
@@ -56,8 +57,13 @@
 
   function update_current_index_when_needed(current_time_ms: number) {
     const index = find_caption_index_by_time(current_time_ms)
-    const is_not_previous_to_selected = index >= selected_caption_index
-    if (index > -1 && is_not_previous_to_selected)
+    if (index === -1) {
+      if (sentences[0]?.start_ms > current_time_ms)
+        set_current_caption_index(0)
+      return
+    }
+    const is_prior_to_selected_because_of_play_padding = index === selected_caption_index - 1
+    if (!is_prior_to_selected_because_of_play_padding)
       set_current_caption_index(index)
   }
 
@@ -76,7 +82,7 @@
   }
 
   function play_and_select({ start_ms, end_ms, index, loop }: { start_ms: number; end_ms?: number; index: number; loop?: boolean }) {
-    updated_play_position = new Date()
+    user_updated_position = new Date()
     if (typeof loop === 'boolean')
       loop_caption = loop // don't change loop mode if undefined
     start_player_at(start_ms)
@@ -99,8 +105,8 @@
 
   function start_player_at(time_ms: number) {
     start_time_ms = time_ms // set for loop mode
-    seekToMs(time_ms - paddingMilliseconds)
     play()
+    seekToMs(time_ms - paddingMilliseconds)
   }
 
   function seekToPrevious() {
@@ -136,6 +142,16 @@
   function playNormal() {
     const currentCaption = sentences[current_caption_index]
     play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, loop: false })
+  }
+
+  let paused_for_study = false
+  $: if (isPlaying && !in_view) {
+    pause()
+    paused_for_study = true
+  }
+  $: if (paused_for_study && in_view) {
+    play()
+    paused_for_study = false
   }
 </script>
 

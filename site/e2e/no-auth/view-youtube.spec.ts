@@ -17,7 +17,7 @@ test('visitor opens video with transcripts, summary, and translation in db and s
   await expect(page.getByText(first_sentence.translation['zh-TW'])).toBeVisible()
 })
 
-test.skip('show duration is shown', async ({ page }) => {
+test('show duration is shown', async ({ page }) => {
   await page.goto(`/en/zh-TW/shows/${seeded_youtubes.zh_transcribed_summarized.youtube.id}`)
   await expect(page.getByText('10:14')).toBeVisible()
 })

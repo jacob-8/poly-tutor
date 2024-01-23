@@ -14,7 +14,7 @@
 </script>
 
 {#if sentence}
-  <div class="text-xs text-gray mb-2">
+  <div class="text-xs text-gray mb-2 mx-2 sm:mx-0">
     {label}:
   </div>
   <div class="max-h-240px overflow-y-auto border-b pb-2 mb-2">
