@@ -20,7 +20,7 @@ vi.mock('@google-cloud/translate', () => {
     // constructor(opts) {
     // console.log({ opts })
     // }
-    async translateText(request) {
+    translateText(request) {
       const line_separated_text_to_translate = request.contents[0] as string
       const translatedText = line_separated_text_to_translate.split('\n').map(text => 'Mocked translation: ' + text).join('\n')
       const response = { translations: [{translatedText}] }

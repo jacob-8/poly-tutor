@@ -128,7 +128,7 @@
         {#if $summary?.length}
           <ShowMeta {language} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.summary} settings={$settings} sentence={$summary[0]} {studySentence} add_seen_sentence={data.user_vocabulary.add_seen_sentence} />
         {:else}
-          <div class="text-base border-b pb-2 mb-2">
+          <div class="border-b pb-2 mb-2 px-2 sm:px-0">
             <Button onclick={() => addSummary({sentences})}>{$page.data.t.shows.summarize}</Button>
           </div>
         {/if}
@@ -136,7 +136,7 @@
 
       <div class="flex">
         {#if youtube.duration_seconds}
-          <div class="text-gray text-xs mb-2 capitalize">0:00 - {format_time(youtube.duration_seconds)} {$page.data.t.shows.captions}</div>
+          <div class="text-gray text-xs mb-2 capitalize px-2 sm:px-0">0:00 - {format_time(youtube.duration_seconds)} {$page.data.t.shows.captions}</div>
         {/if}
 
         {#if sentences && !sentences?.[0]?.translation}
@@ -162,13 +162,11 @@
               seekToMs={youtubeComponent.seekToMs}
               isPlaying={playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING} {currentTimeMs} {studySentence} {sentences} />
           {:else}
-            <div class="text-base">
-              <Button size="lg" class="mt-2" onclick={async () => {
-                const result = await transcribe_captions()
-                if (result)
-                  ({ sentences, study_words } = result)
-              }}>{$page.data.t.shows.get_captions}</Button>
-            </div>
+            <Button size="lg" class="mt-2 mx-2 sm:mx-0 mb-10" onclick={async () => {
+              const result = await transcribe_captions()
+              if (result)
+                ({ sentences, study_words } = result)
+            }}>{$page.data.t.shows.get_captions}</Button>
           {/if}
         {/if}
       {/await}

@@ -37,7 +37,7 @@
         </div>
       {/if}
     </div>
-    <div class="sm:w-50% overflow-x-auto relative sm:pl-2">
+    <div class="sm:w-50% overflow-x-auto relative sm:pl-2 pt-2 sm:pt-0">
       <slot name="sentences" />
     </div>
   </div>
