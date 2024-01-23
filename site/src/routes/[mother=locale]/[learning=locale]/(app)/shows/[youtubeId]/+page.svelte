@@ -61,8 +61,6 @@
   function studySentence(sentence: Sentence) {
     currentStudySentence = sentence
   }
-
-// let translation_on_mobile = false
 </script>
 
 <ShowLayout>
@@ -139,7 +137,7 @@
           <div class="text-gray text-xs mb-2 capitalize px-2 sm:px-0">0:00 - {format_time(youtube.duration_seconds)} {$page.data.t.shows.captions}</div>
         {/if}
 
-        {#if sentences && !sentences?.[0]?.translation}
+        {#if sentences && !sentences?.[0]?.translation?.[data.mother]}
           <Button class="ml-auto" form="simple" size="sm" onclick={async () => {
             const sentences_with_translations = await data.translate(sentences)
             if (sentences_with_translations)
