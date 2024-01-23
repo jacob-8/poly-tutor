@@ -62,7 +62,6 @@ export const variants: Variant<Component>[] = [
         check_is_in_my_videos: null,
         remove_from_my_videos: null,
         addSummary: null,
-        analyze_syntax: null,
         transcribe_captions: null,
       }
     },
