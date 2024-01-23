@@ -98,7 +98,7 @@
     {/if}
   </div>
 
-  <div slot="sentences">
+  <div slot="sentences" let:in_view>
     {#if error}
       {$page.data.t.layout.error}: {error}
       {#if !$user}
@@ -150,6 +150,7 @@
         {#if sentences !== undefined}
           {#if sentences}
             <Sentences
+              {in_view}
               {language}
               changed_words={$changed_words}
               {study_words_object}

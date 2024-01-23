@@ -17,6 +17,7 @@
   export let pause: () => void
   export let seekToMs: (ms: number) => void
   export let add_seen_sentence: (words: string[]) => void
+  export let in_view: boolean
 
   let loop_caption = false
   let stop_time_ms: number
@@ -104,8 +105,8 @@
 
   function start_player_at(time_ms: number) {
     start_time_ms = time_ms // set for loop mode
-    seekToMs(time_ms - paddingMilliseconds)
     play()
+    seekToMs(time_ms - paddingMilliseconds)
   }
 
   function seekToPrevious() {
@@ -141,6 +142,16 @@
   function playNormal() {
     const currentCaption = sentences[current_caption_index]
     play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, loop: false })
+  }
+
+  let paused_for_study = false
+  $: if (isPlaying && !in_view) {
+    pause()
+    paused_for_study = true
+  }
+  $: if (paused_for_study && in_view) {
+    play()
+    paused_for_study = false
   }
 </script>
 

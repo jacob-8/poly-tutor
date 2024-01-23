@@ -1,5 +1,6 @@
 <script lang="ts">
   import { browser } from '$app/environment'
+  import { visible } from './intersection-observer'
   // import { tick } from 'svelte'
 
   let main: HTMLDivElement
@@ -17,6 +18,7 @@
   // }
 
   let window_width: number
+  let active_view: 'player' | 'study' | 'chat' = 'player'
 </script>
 
 <div class="h-50px"><slot name="header" /></div>
@@ -27,7 +29,10 @@
     </div>
   {/if} -->
 
-  <div bind:this={main} class="shrink-0 w-100vw sm:w-full snap-start snap-always flex flex-col sm:flex-row">
+  <div bind:this={main} class="shrink-0 w-100vw sm:w-full snap-start snap-always flex flex-col sm:flex-row" use:visible={{threshold: 0.2}} on:observed={({detail: isIntersecting}) => {
+    if (isIntersecting)
+      active_view = 'player'
+  }}>
     <div class="sm:w-50% flex flex-col sm:h-full">
       <slot name="player" />
       {#if browser && !is_mobile}
@@ -38,12 +43,17 @@
       {/if}
     </div>
     <div class="sm:w-50% overflow-x-auto relative sm:pl-2 pt-2 sm:pt-0">
-      <slot name="sentences" />
+      <slot name="sentences" in_view={active_view === 'player'} />
     </div>
   </div>
 
   {#if is_mobile}
-    <div class="shrink-0 w-100vw snap-start snap-always overflow-y-auto">
+    <div class="shrink-0 w-100vw snap-start snap-always overflow-y-auto" use:visible={{threshold: 0.1}} on:observed={({detail: isIntersecting}) => {
+      if (isIntersecting)
+        active_view = 'study'
+      else
+        active_view = 'player'
+    }}>
       <slot name="study" />
     </div>
   {/if}
