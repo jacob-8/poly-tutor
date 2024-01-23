@@ -1,9 +1,9 @@
-import { WordStatus, type AnalyzedWord, type ECDictEntry, type EmphasisLimits, type Sentence, type StudyWords, type UserVocabulary } from '$lib/types'
+import { WordStatus, type AnalyzedEnglishWord, type ECDictEntry, type EmphasisLimits, type Sentence, type StudyWords, type UserVocabulary } from '$lib/types'
 import { analyze_english_sentence } from './analyze-english-sentence'
 
 export function analyze_english_sentences({ sentences, user_vocabulary, dictionary, emphasis_limits }: { sentences: Sentence[], user_vocabulary: UserVocabulary, dictionary: Record<string, ECDictEntry>, emphasis_limits: EmphasisLimits }): { sentences: Sentence[], study_words: StudyWords } {
   const { common_in_this_context_max, high_view_count_max } = emphasis_limits
-  const unknown_words_with_count = {} as Record<string, AnalyzedWord>
+  const unknown_words_with_count = {} as Record<string, AnalyzedEnglishWord>
 
   const analyzed_sentences = sentences.map((sentence, index) => {
     const words = analyze_english_sentence({text: sentence.text, user_vocabulary, dictionary})
@@ -12,7 +12,7 @@ export function analyze_english_sentences({ sentences, user_vocabulary, dictiona
     return { ...sentence, words }
   })
 
-  function add_to_counts(word: AnalyzedWord, sentence_index: number) {
+  function add_to_counts(word: AnalyzedEnglishWord, sentence_index: number) {
     if (word.status === undefined || word.status === WordStatus.known || word.status === WordStatus.wordlist) return // skip words not in dictionary and known words
 
     if (word.text in unknown_words_with_count)

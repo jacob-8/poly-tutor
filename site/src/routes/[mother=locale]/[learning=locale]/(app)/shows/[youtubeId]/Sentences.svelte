@@ -2,7 +2,9 @@
   import type { Sentence, Settings, StudyWordsObject, UserVocabulary } from '$lib/types'
   import SentenceComponent from '$lib/components/Sentence.svelte'
   import { portal } from './portal'
+  import type { LanguageCode } from '$lib/i18n/locales'
 
+  export let language: LanguageCode
   export let sentences: Sentence[] = []
   export let study_words_object: StudyWordsObject
   export let changed_words: UserVocabulary = {}
@@ -138,7 +140,7 @@
 </script>
 
 {#each sentences as sentence, index}
-  <SentenceComponent {changed_words} {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index}
+  <SentenceComponent {language} {changed_words} {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index}
     onClick={() => {
       play_and_select({ start_ms: sentence.start_ms, index, end_ms: stop_time_ms ? sentence.end_ms : null })
     }} />

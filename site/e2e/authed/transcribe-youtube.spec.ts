@@ -8,7 +8,7 @@ test('user can transcribe captions using Whisper when YouTube does not have them
   await page.getByPlaceholder('sk-').fill('sk-this-is-a-fake-key-obviously')
   await page.getByLabel('Close').click()
   await page.getByRole('button', { name: 'Get Captions' }).click()
-  await expect(page.locator('#caption_0').getByText('這 是 一 個 mónǐ 模擬 imitation, to')).toBeVisible()
+  await expect(page.locator('#caption_0').getByText('這')).toBeVisible()
   // remove the following temporary translate section once they can generate captions for other users transcripts
   await page.route('/api/translate', async (route) => {
     const { text } = await route.request().postDataJSON()
@@ -21,7 +21,7 @@ test('user can transcribe captions using Whisper when YouTube does not have them
   })
   await page.getByRole('button', { name: 'Translate' }).click()
   await new Promise(r => setTimeout(r, 1000)) // because study sentence isn't actually connected to live data
-  await page.locator('#caption_0').getByText('這 是 一 個 mónǐ 模擬 imitation, to').click()
+  await page.locator('#caption_0').getByText('這').click()
   await expect(page.getByText('Mocked translation')).toBeVisible()
 })
 

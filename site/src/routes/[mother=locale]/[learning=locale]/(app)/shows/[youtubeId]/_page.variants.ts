@@ -38,14 +38,6 @@ const translate = async (sentences: Sentence[]) => {
 function like_network_promise<T>(value: T): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(value), 500))
 }
-const streamed: Variant<Component>['props']['data']['streamed'] = {
-  title: like_network_promise(null),
-  description: like_network_promise(null),
-  content: like_network_promise(null),
-  // title: like_network_promise(await split_sentences([{text: youtube.title}])),
-  // description: like_network_promise(await split_sentences([{text: youtube.description}])),
-  // content: like_network_promise(await analyze_sentences(zh_transcribed_summarized.transcripts[0].transcript.sentences)),
-}
 
 const summary = writable(zh_transcribed_summarized.summaries[0].summary.sentences)
 // summary.set(await split_sentences(zh_transcribed_summarized.summaries[0].summary.sentences))
@@ -60,7 +52,12 @@ export const variants: Variant<Component>[] = [
         youtube,
         error: null,
         summary,
-        streamed,
+        title: like_network_promise(null),
+        description: like_network_promise(null),
+        content: like_network_promise(null),
+        // title: like_network_promise(await split_sentences([{text: youtube.title}])),
+        // description: like_network_promise(await split_sentences([{text: youtube.description}])),
+        // content: like_network_promise(await analyze_sentences(zh_transcribed_summarized.transcripts[0].transcript.sentences)),
         translate,
         check_is_in_my_videos: null,
         remove_from_my_videos: null,
@@ -79,7 +76,9 @@ export const variants: Variant<Component>[] = [
         user: mockBobUser,
         youtube,
         summary: writable(zh_transcribed_summarized.summaries[0].summary.sentences),
-        streamed,
+        title: like_network_promise(null),
+        description: like_network_promise(null),
+        content: like_network_promise(null),
         translate,
         // @ts-ignore
         check_is_in_my_videos: (youtube_id) => { console.info(`check_is_in_my_videos(${youtube_id})`)},

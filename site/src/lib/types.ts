@@ -10,7 +10,7 @@ export interface Section {
 
 export interface Sentence {
   text?: string
-  words?: (AnalyzedWord | AnalyzedChineseWord)[]
+  words?: (AnalyzedEnglishWord | AnalyzedChineseWord)[]
   start_ms?: number
   end_ms?: number
   translation?: Translation
@@ -36,20 +36,21 @@ export enum WordStatus {
 }
 
 // calculated sentence by sentence
-export interface AnalyzedWord extends VocabularyWordStats {
+interface AnalyzedWord extends VocabularyWordStats {
   text: string
-  phonetic?: string // English only
-  context_sentence_indexes?: number[]
   definitions?: string
-  neighbors_understood?: boolean
+  context_sentence_indexes?: number[] // not implemented
+  neighbors_understood?: boolean // designed, not implemented
+}
+
+export interface AnalyzedEnglishWord extends AnalyzedWord {
+  phonetic?: string
 }
 
 export interface AnalyzedChineseWord extends AnalyzedWord {
+  pinyin?: string
   opposite_script?: string
-  pinyin?: string // for word focus view
-  // tones?: number[]
-  // pronunciation?: string // a combination of pinyin, tone markers or nothing depending on word status
-  tone_change?: boolean
+  tone_change?: boolean // designed, not implemented
 }
 
 export interface EmphasisLimits {

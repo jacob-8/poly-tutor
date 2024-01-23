@@ -8,11 +8,6 @@
   import { browser } from '$app/environment'
 
   export let data
-
-// async function warm_up_analysis_worker() {
-  //   const { api } = await import('$lib/analysis/expose-chinese-analysis-worker')
-  //   api.segment('你好世界！')
-  // }
 </script>
 
 {#if !$page.data.youtube}

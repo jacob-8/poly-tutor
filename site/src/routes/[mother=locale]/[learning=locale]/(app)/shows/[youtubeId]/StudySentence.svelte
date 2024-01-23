@@ -3,11 +3,13 @@
   import SentenceComponent from '$lib/components/Sentence.svelte'
   import { WordStatus, type Sentence, type StudyWordsObject, type UserVocabulary } from '$lib/types'
   import EditWordStatus from '$lib/components/EditWordStatus.svelte'
+  import type { LanguageCode } from '$lib/i18n/locales'
 
   export let sentence: Sentence
   export let study_words_object: StudyWordsObject
   export let change_word_status: (word: string, status: WordStatus) => void
   export let changed_words: UserVocabulary = {}
+  export let language: LanguageCode
 
   $: unique_words = sentence.words?.filter((word, index, array) =>
     array.findIndex(w => w.text === word.text) === index
@@ -18,7 +20,7 @@
   $: known_words = unique_words.filter(({ status }) => status === WordStatus.known)
 </script>
 
-<SentenceComponent {changed_words} {study_words_object} {sentence} settings={{font_size_em: 1.5, show_definition: false, show_pronunciation: true}} />
+<SentenceComponent {language} {changed_words} {study_words_object} {sentence} settings={{font_size_em: 1.5, show_definition: false, show_pronunciation: true}} />
 {#if sentence.translation?.[$page.data.mother]}
   {sentence.translation[$page.data.mother]}
 {/if}

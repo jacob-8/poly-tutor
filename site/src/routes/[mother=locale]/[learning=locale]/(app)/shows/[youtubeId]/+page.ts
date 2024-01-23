@@ -235,11 +235,9 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     addSummary,
     translate,
     analyze_syntax,
-    streamed: {
-      title: split_sentences([{text: youtube.title}]),
-      description: split_sentences([{text: youtube.description}]),
-      content: prepare_content(),
-    },
+    title: split_sentences([{text: youtube.title}]),
+    description: split_sentences([{text: youtube.description}]),
+    content: prepare_content(),
   }
 }) satisfies PageLoad
 

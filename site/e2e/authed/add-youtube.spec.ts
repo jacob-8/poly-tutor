@@ -65,7 +65,7 @@ test('user can remove video from his videos', async ({ page }) => {
 test('user pastes in youtube url for a youtube already in the db with captions and he sees the captions load in from the db', async ({ page }) => {
   await page.goto('/en/zh-TW/shows')
   await page.getByPlaceholder(youtube_prefix).fill(youtube_prefix + seeded_youtubes.zh_transcribed_summarized.youtube.id)
-  await expect(page.getByText('在 貴州 的 第 一 天 ， 我們 就 遇到 了 一 位 非常 熱情 的 當 地 人 。')).toBeVisible()
+  await expect(page.getByText('zài 在 (located) at, (to be) in, to exist, in tguìzhōu 貴州 Guizhou province (')).toBeVisible()
 })
 
 // Test: user pastes in youtube url for a youtube not in the db but which YouTube already has captions for. The captions come down and user sees them load in a moment later.

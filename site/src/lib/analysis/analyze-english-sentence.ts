@@ -1,14 +1,14 @@
-import { WordStatus, type AnalyzedWord, type ECDictEntry, type UserVocabulary } from '$lib/types'
+import { WordStatus, type AnalyzedEnglishWord, type ECDictEntry, type UserVocabulary } from '$lib/types'
 
 export function analyze_english_sentence({text, user_vocabulary, dictionary}:
   {
     text: string,
     user_vocabulary: UserVocabulary,
     dictionary: Record<string, ECDictEntry>,
-  }): AnalyzedWord[] {
+  }): AnalyzedEnglishWord[] {
   if (!text) return []
 
-  const analyzed_words: AnalyzedWord[] = []
+  const analyzed_words: AnalyzedEnglishWord[] = []
 
   for (const word of text.split(' ')) {
     const entry = dictionary[word]
@@ -18,7 +18,7 @@ export function analyze_english_sentence({text, user_vocabulary, dictionary}:
       analyzed_words.push({ text: word })
   }
 
-  function analyze_word(entry: ECDictEntry): AnalyzedWord {
+  function analyze_word(entry: ECDictEntry): AnalyzedEnglishWord {
     const { word, phonetic, translation } = entry
 
     const status = user_vocabulary[text]?.status ?? WordStatus.unknown

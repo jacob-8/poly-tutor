@@ -15,9 +15,10 @@ export async function get_analysis_functions({learning, user_vocabulary, emphasi
   if (learning === 'en') {
     const { api } = await import('$lib/analysis/expose-english-analysis-worker')
     user_vocabulary.subscribe(api.set_user_vocabulary)
+
     return {
       split_string: (text: string) => api.split_english_string(text),
-      split_sentences: api.split_english_sentences,
+      split_sentences: (sentences: Sentence[]) => api.split_english_sentences({sentences}),
       analyze_sentences: (sentences: Sentence[]) => api.analyze_english_sentences({sentences, emphasis_limits: get(emphasis_limits)}),
     }
   } else if (learning === 'zh-TW' || learning === 'zh-CN') {
