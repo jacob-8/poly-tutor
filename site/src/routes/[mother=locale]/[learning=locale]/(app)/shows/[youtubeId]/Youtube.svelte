@@ -100,6 +100,8 @@
   {#if !error}
     {#if !player}
       <div out:fade={{delay: 500, duration: 500}} class="bg-no-repeat absolute inset-0 bg-cover z-1" style="background-color: black; background-image: url(https://i.ytimg.com/vi/{youtube_id}/sddefault.jpg); background-position: center;" />
+    {:else if state === PlayerState.PLAYING}
+      <div class="absolute inset-0 z-1" on:click={() => player.pauseVideo()} />
     {/if}
     <div id="player" class="bg-black" />
   {:else}

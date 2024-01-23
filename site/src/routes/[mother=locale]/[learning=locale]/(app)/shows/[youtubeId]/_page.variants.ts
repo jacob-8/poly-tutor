@@ -74,15 +74,16 @@ export const variants: Variant<Component>[] = [
         ...mockLayoutData,
         user: mockBobUser,
         youtube,
-        summary: writable(zh_transcribed_summarized.summaries[0].summary.sentences),
+        error: null,
+        summary,
         title: like_network_promise(null),
         description: like_network_promise(null),
         content: like_network_promise(null),
         translate,
-        // @ts-ignore
-        check_is_in_my_videos: (youtube_id) => { console.info(`check_is_in_my_videos(${youtube_id})`)},
-        // @ts-ignore
-        remove_from_my_videos: (youtube_id) => { alert(`remove_from_my_videos(${youtube_id})`)},
+        check_is_in_my_videos: null,
+        remove_from_my_videos: null,
+        addSummary: null,
+        transcribe_captions: null,
       }
     },
   },
