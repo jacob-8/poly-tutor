@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest # can only run containers on Linux
     timeout-minutes: 15
     container:
-      image: mcr.microsoft.com/playwright:v1.40.0-jammy # 👈 keep version in sync with installed playwright package https://playwright.dev/docs/ci#github-actions-via-containers
+      image: mcr.microsoft.com/playwright:v1.41.1-jammy # 👈 keep version in sync with installed playwright package https://playwright.dev/docs/ci#github-actions-via-containers
     concurrency:
       group: playwright-${{ github.ref }}  # Unique group per branch
       cancel-in-progress: true
