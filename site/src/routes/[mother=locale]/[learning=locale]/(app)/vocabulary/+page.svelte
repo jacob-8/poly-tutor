@@ -6,7 +6,7 @@
   $: ({user_vocabulary, user} = data)
 </script>
 
-{#if $user.email === 'jacob@polylingual.dev'}
+{#if $user?.email === 'jacob@polylingual.dev'}
   <button type="button" on:click={async () => {
     const url = prompt('Enter url')
     if (!url) return
