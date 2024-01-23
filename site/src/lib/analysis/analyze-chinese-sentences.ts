@@ -2,7 +2,7 @@ import { WordStatus, type AnalyzedChineseWord, type CEDictEntry, type ChineseEmp
 import { analyze_chinese_sentence } from './analyze-chinese-sentence'
 
 export function analyze_chinese_sentences({ sentences, user_vocabulary, dictionary, locale, emphasis_limits }: { sentences: Sentence[], user_vocabulary: UserVocabulary, dictionary: Record<string, CEDictEntry>, locale: 'zh-TW' | 'zh-CN', emphasis_limits: ChineseEmphasisLimits }): { sentences: Sentence[], study_words: StudyWords } {
-  const {common_in_this_context_max, high_view_count_max, improve_pronunciation_or_tone_max} = emphasis_limits
+  const { common_in_this_context_max, high_view_count_max, improve_pronunciation_or_tone_max } = emphasis_limits
   // benchmark do views add just when first placing in a count object instead of in analyzing chinese sentences?
 
   const learning_pronunciation_with_count = {} as Record<string, AnalyzedChineseWord>

@@ -1,0 +1,10 @@
+const _curious = ''
+const _todo = ''
+const _pronunciation = ''
+const _tone = ''
+const _known = ''
+export const curious = _curious.split(',')
+export const todo = _todo.split(',')
+export const pronunciation = _pronunciation.split(',')
+export const tone = _tone.split(',')
+export const known = _known.split(',')

@@ -14,7 +14,7 @@ export const config: Config = {
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
   const { data: session_data, error: _error } = await getSession()
   if (_error || !session_data?.user)
-    throw error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
+    error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
   const { messages, model, max_tokens, openai_api_key } = await request.json() as ChatRequestBody
 
@@ -23,9 +23,9 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
   if (!api_key && session_data.user.email === 'jacob@polylingual.dev')
     api_key = OPENAI_API_KEY
 
-  if (!api_key) throw error(ResponseCodes.BAD_REQUEST, 'No OPENAI_API_KEY found')
+  if (!api_key) error(ResponseCodes.BAD_REQUEST, 'No OPENAI_API_KEY found')
 
-  if (!messages?.length) throw error(ResponseCodes.BAD_REQUEST, 'No messages found')
+  if (!messages?.length) error(ResponseCodes.BAD_REQUEST, 'No messages found')
 
   try {
     const completionRequest: CreateChatCompletionRequest = {
@@ -60,6 +60,6 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
     return new Response(response.body, { headers: { 'Content-Type': 'text/event-stream;charset=utf-8' } })
   } catch (err) {
     console.error(err.message)
-    throw error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
+    error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
   }
 }

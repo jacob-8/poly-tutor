@@ -1,17 +1,16 @@
 <script lang="ts">
-  import { page } from '$app/stores'
-  import { WordStatus, type AnalyzedChineseWord, type Settings, type StudyWordsObject } from '$lib/types'
+  import { WordStatus, type AnalyzedChineseWord, type Settings, type StudyWordsObject, type UserVocabulary } from '$lib/types'
   import { find_tone, tone_marker } from '$lib/utils/find-tone'
   import { sort_definitions } from '$lib/utils/sort-definitions'
 
   export let settings: Settings
   export let word: AnalyzedChineseWord
   export let study_words_object: StudyWordsObject
+  export let changed_words: UserVocabulary = {}
 
   $: ({text, definitions, neighbors_understood, opposite_script, status: db_status, pinyin, tone_change } = word)
 
-  $: ({changed_words} = $page.data.user_vocabulary)
-  $: status = $changed_words[text]?.status ?? db_status
+  $: status = changed_words?.[text]?.status ?? db_status
 </script>
 
 <div class="text-center inline-flex flex-col items-center mt-2">

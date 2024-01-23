@@ -15,20 +15,20 @@ const languageServiceClient = new LanguageServiceClient({
 
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
   if (!CREDENTIALS.project_id)
-    throw error(ResponseCodes.INTERNAL_SERVER_ERROR, 'GOOGLE_TRANSLATE_NLP_CREDENTIALS not configured')
+    error(ResponseCodes.INTERNAL_SERVER_ERROR, 'GOOGLE_TRANSLATE_NLP_CREDENTIALS not configured')
 
   const { data: session_data, error: _error } = await getSession()
   if (_error || !session_data?.user)
-    throw error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
+    error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
   if (!dev && session_data.user.email !== 'jacob@polylingual.dev')
-    throw error(ResponseCodes.UNAUTHORIZED, { message: 'Unauthorized' })
+    error(ResponseCodes.UNAUTHORIZED, { message: 'Unauthorized' })
 
   try {
     const { text, sourceLanguageCode } = await request.json() as AnalyzeSyntaxRequestBody
 
     if (!text)
-      throw error(ResponseCodes.BAD_REQUEST, 'No text property found in request body')
+      error(ResponseCodes.BAD_REQUEST, 'No text property found in request body')
 
     console.info(`analyzing syntax: ${text}`)
 
@@ -56,7 +56,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
     return json(syntax)
   } catch (err) {
     console.error(err.message)
-    throw error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
+    error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
   }
 }
 

@@ -10,6 +10,7 @@ export const variants: Variant<Component>[] = [
   {
     props: {
       onClick: () => console.info('clicked'),
+      language: 'zh',
       settings: { font_size_em: 1.5, show_definition: true, show_pronunciation: true },
       sentence: {
         text: '我听见你说话了。',

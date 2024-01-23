@@ -13,7 +13,7 @@ export default defineConfig({
     // [/^btn-(\w+)$/, ([_, color]) => `op50 px2.5 py1 transition-all duration-200 ease-out no-underline! hover:(op100 text-${color} bg-${color}/10) border border-base! rounded`],
     {
       // 'styled-input': 'rounded-md border-gray-300 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50',
-      'header-btn': 'px-2 py-1 hover:bg-gray/20 rounded',
+      'header-btn': 'px-3 py-2 hover:bg-gray/20 rounded flex items-center',
     },
   ],
   presets: [

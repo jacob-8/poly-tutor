@@ -33,7 +33,7 @@
   import { backOut } from 'svelte/easing'
 </script>
 
-<div class="fixed z-500 inset-x-0 bottom-0 flex flex-col items-center p-2">
+<div class="fixed z-500 inset-x-2 bottom-2 flex flex-col items-center">
   {#each $toasts as toast (toast.id)}
     <div
       class="bg-black bg-opacity-75 text-white mt-2 px-3 py-2 rounded max-w-sm"
@@ -44,4 +44,5 @@
     </div>
   {/each}
 </div>
+
 <!-- Look at https://github.com/beyonk-adventures/svelte-notifications to improve -->

@@ -10,7 +10,7 @@ export interface Section {
 
 export interface Sentence {
   text?: string
-  words?: (AnalyzedWord | AnalyzedChineseWord)[]
+  words?: (AnalyzedEnglishWord | AnalyzedChineseWord)[]
   start_ms?: number
   end_ms?: number
   translation?: Translation
@@ -35,25 +35,30 @@ export enum WordStatus {
   'wordlist' = 4,
 }
 
-export interface AnalyzedWord extends VocabularyWordStats {
-  text: string
-  context_sentence_indexes?: number[]
-  definitions?: string
-  neighbors_understood?: boolean
-}
-
 // calculated sentence by sentence
-export interface AnalyzedChineseWord extends AnalyzedWord {
-  opposite_script?: string
-  pinyin?: string // for word focus view
-  // tones?: number[]
-  // pronunciation?: string // a combination of pinyin, tone markers or nothing depending on word status
-  tone_change?: boolean
+interface AnalyzedWord extends VocabularyWordStats {
+  text: string
+  definitions?: string
+  context_sentence_indexes?: number[] // not implemented
+  neighbors_understood?: boolean // designed, not implemented
 }
 
-export interface ChineseEmphasisLimits {
+export interface AnalyzedEnglishWord extends AnalyzedWord {
+  phonetic?: string
+}
+
+export interface AnalyzedChineseWord extends AnalyzedWord {
+  pinyin?: string
+  opposite_script?: string
+  tone_change?: boolean // designed, not implemented
+}
+
+export interface EmphasisLimits {
   high_view_count_max: number
   common_in_this_context_max: number
+}
+
+export interface ChineseEmphasisLimits extends EmphasisLimits {
   improve_pronunciation_or_tone_max: number
 }
 
@@ -74,6 +79,12 @@ export interface CEDictEntry {
   simplified?: string
   pinyin: string
   definitions: string
+}
+
+export interface ECDictEntry {
+  word: string
+  phonetic?: string
+  translation: string
 }
 
 export interface Settings {

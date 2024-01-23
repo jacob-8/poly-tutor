@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { page } from '$app/stores'
-  import { WordStatus, type AnalyzedChineseWord } from '$lib/types'
+  import { WordStatus, type AnalyzedChineseWord, type UserVocabulary } from '$lib/types'
   import { sort_definitions } from '$lib/utils/sort-definitions'
 
   export let word: AnalyzedChineseWord
@@ -8,12 +7,10 @@
   export let common_in_this_context = false
   export let improve_pronunciation_or_tone = false
   export let change_word_status: (word: string, status: WordStatus) => void
-
+  export let changed_words: UserVocabulary = {}
 
   $: ({text, definitions, pinyin, status: db_status } = word)
-
-  $: ({changed_words} = $page.data.user_vocabulary)
-  $: status = $changed_words[text]?.status ?? db_status
+  $: status = changed_words?.[text]?.status ?? db_status
 
   function on_change_status(clicked_status: WordStatus) {
     if (status === clicked_status)

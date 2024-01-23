@@ -93,11 +93,11 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
       .from('youtube_summaries')
       .select()
       .eq('youtube_id', youtube_id)
-      .then(({ data: [summary], error }) => {
+      .then(async ({ data: [summary], error }) => {
         if (error)
           console.error(error.message)
         if (summary?.summary?.sentences)
-          split_sentences(summary.summary.sentences).then(set)
+          set(await split_sentences(summary.summary.sentences))
       })
   })
 
@@ -235,11 +235,9 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     addSummary,
     translate,
     analyze_syntax,
-    streamed: {
-      title: split_sentences([{text: youtube.title}]),
-      description: split_sentences([{text: youtube.description}]),
-      content: prepare_content(),
-    },
+    title: split_sentences([{text: youtube.title}]),
+    description: split_sentences([{text: youtube.description}]),
+    content: prepare_content(),
   }
 }) satisfies PageLoad
 

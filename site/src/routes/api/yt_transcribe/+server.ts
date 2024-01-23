@@ -13,7 +13,7 @@ export const config: Config = {
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
   const { data: session_data, error: _error } = await getSession()
   if (_error || !session_data?.user)
-    throw error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
+    error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
   const { youtube_id, openai_api_key, language_code, duration_seconds } = await request.json() as YtTranscribeRequestBody
   console.info({ duration_seconds })
@@ -23,10 +23,10 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
   if (!api_key && session_data.user.email === 'jacob@polylingual.dev')
     api_key = OPENAI_API_KEY
 
-  if (!api_key) throw error(ResponseCodes.BAD_REQUEST, 'No OPENAI_API_KEY found')
+  if (!api_key) error(ResponseCodes.BAD_REQUEST, 'No OPENAI_API_KEY found')
 
   if (!youtube_id)
-    throw error(ResponseCodes.BAD_REQUEST, 'No youtube_id found in request body')
+    error(ResponseCodes.BAD_REQUEST, 'No youtube_id found in request body')
 
   console.info(`transcribing: ${youtube_id} in ${language_code}`)
 
@@ -47,7 +47,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
     seconds_per_chunk: calculate_chunk_seconds(duration_seconds),
   })
 
-  if (transcribe_error) throw error(ResponseCodes.INTERNAL_SERVER_ERROR, transcribe_error.message)
+  if (transcribe_error) error(ResponseCodes.INTERNAL_SERVER_ERROR, transcribe_error.message)
 
   try {
     const sentences: Sentence[] = data.transcript.map(({ text, start_second, end_second }) => ({
@@ -58,7 +58,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
 
     return json(sentences)
   } catch (err) {
-    throw error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
+    error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
   }
 }
 

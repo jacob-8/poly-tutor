@@ -24,12 +24,12 @@ export interface YoutubeCaption {
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
   const { data: session_data, error: _error } = await getSession()
   if (_error || !session_data?.user)
-    throw error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
+    error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
   const { youtube_id, locale } = await request.json() as YtCaptionsRequestBody
 
   if (!youtube_id)
-    throw error(ResponseCodes.BAD_REQUEST, 'No youtube_id found in request body')
+    error(ResponseCodes.BAD_REQUEST, 'No youtube_id found in request body')
 
   try {
     if (!CAPTIONS_URL) throw new Error('CAPTIONS_URL not configured')
@@ -53,6 +53,6 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
     return json(sentences)
   } catch (err) {
     console.error(err.message)
-    throw error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
+    error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
   }
 }

@@ -10,6 +10,7 @@ export const viewports: Viewport[] = [
 export const variants: Variant<Component>[] = [
   {
     props: {
+      language: 'zh',
       sentence: title_sentence,
       study_words_object: null,
       change_word_status: (args) => console.info(args),

@@ -1,4 +1,24 @@
-:root {
+@media only screen and (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 1rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: 0 0;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(240, 26%, 91%);
+    border-radius: 1rem;
+    border: 0.25rem solid #ffffff;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(240, 9%, 71%);
+  }
+}
+
+/* :root {
   --c-bg: #fff;
   --c-scrollbar: #eee;
   --c-scrollbar-hover: #bbb;
@@ -14,7 +34,7 @@ html.dark {
   --c-bg: #050505;
   --c-scrollbar: #111;
   --c-scrollbar-hover: #222;
-}
+} */
 
 /* 'biao_kaiti_windows',  */
 body {
@@ -27,7 +47,7 @@ body {
   background: #8884;
 }
 
-* {
+/* * {
   scrollbar-color: var(--c-scrollbar) var(--c-bg);
 }
 
@@ -47,7 +67,7 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--c-scrollbar-hover);
-}
+} */
 
 @font-face {
   font-family: 'biao_kaiti_windows';

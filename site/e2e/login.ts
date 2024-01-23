@@ -7,9 +7,9 @@ export async function login(page: Page, email: string) {
     const { token: oldToken } = await getLoginMessage(username)
     await page.getByRole('button', { name: 'Sign in' }).click()
     await page.getByPlaceholder('Email address').fill(email)
-    await page.getByRole('button', { name: 'Send 6-Digit Code' }).click()
+    await page.getByRole('button', { name: 'Send Code' }).click()
     const { token } = await waitForNewToken(oldToken, username)
-    await page.getByPlaceholder(`Enter 6-digit code (${email})`).fill(token)
+    await page.getByPlaceholder('_ _ _ _ _ _').fill(token)
     await expect(page.getByText(`Signed in with ${email}`)).toBeVisible()
   }, { box: true })
 }

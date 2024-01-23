@@ -8,6 +8,7 @@ export const variants: Variant<Component>[] = [
   {
     name: 'not-analyzed',
     props: {
+      language: 'zh',
       label: 'Description',
       sentence: {text: 'This is just a plain text string.'},
       studySentence: (sentence) => console.info({sentence}),
@@ -20,6 +21,7 @@ export const variants: Variant<Component>[] = [
     name: 'analyzed',
     viewports: [{width: 700, height: 250}],
     props: {
+      language: 'zh',
       label: 'Description',
       sentence: title_sentence,
       studySentence: (sentence) => console.info({sentence}),
