@@ -7,14 +7,14 @@
 </script>
 
 <ShowLayout>
-  <div class="bg-green/10 h-full p-2 flex items-center" slot="header">
+  <div class="bg-green/10 h-full p-2 flex items-center" slot="header" let:scroll_to_study>
     <div class="p-2"><span class="i-iconamoon-arrow-left-1" /></div>
     <div class="flex items-center overflow-x-auto grow-1" use:scrollRight>
       <div class="p-2 font-semibold text-nowrap">Title that's a bit more verbose and actually kind of crazy long</div>
       <div class="mr-auto" />
-      <div class="py-2 px-3"><span class="i-ic-baseline-manage-search text-xl" /></div>
-      <div class="py-2 px-3"><span class="i-ic-baseline-manage-search text-xl" /></div>
-      <div class="py-2 px-3"><span class="i-ic-baseline-manage-search text-xl" /></div>
+      <div class="py-2 px-3"><span class="i-fluent-arrow-previous-12-regular text-xl" /></div>
+      <div class="py-2 px-3"><span class="i-fluent-arrow-next-12-regular text-xl" /></div>
+      <div class="py-2 px-3" on:click={scroll_to_study}><span class="i-ic-baseline-manage-search text-xl" /></div>
       <div class="py-2 px-3"><span class="i-ic-baseline-loop text-xl" /></div>
       <div class="py-2 px-3"><span class="i-carbon-play-filled-alt text-xl" /></div>
       <div class="py-2 px-3">J</div>

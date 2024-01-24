@@ -13,9 +13,9 @@
   import { onMount } from 'svelte'
   import { get_study_words_object } from '$lib/utils/study-words-object'
   import ShowLayout from './ShowLayout.svelte'
-  import Controls from './Controls.svelte'
   import User from '$lib/layout/User.svelte'
   import type { LanguageCode } from '$lib/i18n/locales'
+  import UnknownInCurrentSentence from './UnknownInCurrentSentence.svelte'
 
   export let data
   $: ({ youtube, summary, error, title, description, content, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase, settings, user_vocabulary, learning } = data)
@@ -43,6 +43,7 @@
   let playbackRate = 1
   let currentTimeMs = 0
   let playerState: YT.PlayerState
+  $: isPlaying = playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING
 
   let youtubeComponent: Youtube
 
@@ -61,25 +62,56 @@
   function studySentence(sentence: Sentence) {
     currentStudySentence = sentence
   }
+
+  const delay_render_to_not_slow_page_transition = new Promise(r => setTimeout(r, 200))
 </script>
 
 <ShowLayout>
-  <div slot="header" class="h-full p-1 flex items-center">
-    <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 text-lg" /></a>
-    <span class="hidden md:block">
-      {youtube.title || ''}
-    </span>
-    <div class="mr-auto" />
-    <Controls />
-    {#if browser}
-      <User user={data.user} sign_out={async () => {
-        await data.supabase?.auth.signOut()
-        invalidateAll()
-      }} />
+  <div slot="header" class="h-full p-1 flex items-center" let:scroll_to_main let:scroll_to_study let:active_view>
+    {#if active_view === 'main'}
+      <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 text-lg" /></a>
+      <span class="hidden md:block">
+        {youtube.title || ''}
+      </span>
+      <div class="mr-auto" />
+      <button type="button" class="header-btn" on:click={() => {
+        scroll_to_study()
+        currentStudySentence = null
+      }}>
+        <span class="i-ic-baseline-manage-search text-xl" />
+      </button>
+      <div id="playback-controls" class="contents" />
+
+      {#if browser}
+        <User user={data.user} sign_out={async () => {
+          await data.supabase?.auth.signOut()
+          invalidateAll()
+        }} />
+      {/if}
+    {:else}
+      {#if !currentStudySentence}
+        <div class="font-semibold px-1">
+          Study List
+        </div>
+      {/if}
+      <div class="ml-auto"></div>
+      {#if currentStudySentence}
+        <button type="button" class="header-btn" on:click={() => {
+          currentStudySentence = null
+        }}>
+          <span class="i-ic-baseline-manage-search text-xl" />
+        </button>
+      {/if}
+      <button type="button" class="header-btn" on:click={scroll_to_main}>
+        <span class="i-fa-solid-times" />
+      </button>
     {/if}
   </div>
 
   <div slot="player">
+    {#if currentStudySentence && isPlaying}
+      <UnknownInCurrentSentence sentence={currentStudySentence} />
+    {/if}
     <Youtube
       bind:this={youtubeComponent}
       youtube_id={youtube.id}
@@ -146,7 +178,7 @@
           }}>{$page.data.t.shows.translate}</Button>
         {/if}
       </div>
-      {#await new Promise(r => setTimeout(r, 200)) then _}
+      {#await delay_render_to_not_slow_page_transition then _}
         {#if sentences !== undefined}
           {#if sentences}
             <Sentences
@@ -159,7 +191,7 @@
               play={youtubeComponent.play}
               pause={youtubeComponent.pause}
               seekToMs={youtubeComponent.seekToMs}
-              isPlaying={playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING} {currentTimeMs} {studySentence} {sentences} />
+              {isPlaying} {currentTimeMs} {studySentence} {sentences} />
           {:else}
             <Button size="lg" class="mt-2 mx-2 sm:mx-0 mb-10" onclick={async () => {
               const result = await transcribe_captions()
