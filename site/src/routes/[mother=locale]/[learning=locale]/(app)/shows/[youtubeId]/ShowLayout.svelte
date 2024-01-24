@@ -42,7 +42,7 @@
     if (isIntersecting)
       active_view = 'main'
   }}>
-    <div class="sm:w-50% flex flex-col sm:h-full">
+    <div class="sm:w-50% flex flex-col sm:h-full relative">
       <slot name="player" />
       {#if browser && !is_mobile}
         <div class="grow-1 overflow-y-auto">

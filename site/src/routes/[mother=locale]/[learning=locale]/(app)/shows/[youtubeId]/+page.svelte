@@ -15,6 +15,7 @@
   import ShowLayout from './ShowLayout.svelte'
   import User from '$lib/layout/User.svelte'
   import type { LanguageCode } from '$lib/i18n/locales'
+  import UnknownInCurrentSentence from './UnknownInCurrentSentence.svelte'
 
   export let data
   $: ({ youtube, summary, error, title, description, content, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase, settings, user_vocabulary, learning } = data)
@@ -42,6 +43,7 @@
   let playbackRate = 1
   let currentTimeMs = 0
   let playerState: YT.PlayerState
+  $: isPlaying = playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING
 
   let youtubeComponent: Youtube
 
@@ -107,6 +109,9 @@
   </div>
 
   <div slot="player">
+    {#if currentStudySentence && isPlaying}
+      <UnknownInCurrentSentence sentence={currentStudySentence} />
+    {/if}
     <Youtube
       bind:this={youtubeComponent}
       youtube_id={youtube.id}
@@ -186,7 +191,7 @@
               play={youtubeComponent.play}
               pause={youtubeComponent.pause}
               seekToMs={youtubeComponent.seekToMs}
-              isPlaying={playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING} {currentTimeMs} {studySentence} {sentences} />
+              {isPlaying} {currentTimeMs} {studySentence} {sentences} />
           {:else}
             <Button size="lg" class="mt-2 mx-2 sm:mx-0 mb-10" onclick={async () => {
               const result = await transcribe_captions()

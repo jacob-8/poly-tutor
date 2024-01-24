@@ -33,7 +33,7 @@
   </div>
   {#if settings.show_definition && status === WordStatus.unknown}
     <div class="text-base" style="max-width: {settings.font_size_em * text.length}em;">
-      <div class="text-[0.6em] leading-none text-gray-500/80 overflow-hidden max-h-2em" class:-mx-2.75={neighbors_understood}>
+      <div class="text-0.6em leading-none text-gray-500/80 overflow-hidden max-h-2em" class:-mx-2.75={neighbors_understood}>
         {sort_definitions(definitions).join(', ').substring(0, 40)}
       </div>
     </div>
