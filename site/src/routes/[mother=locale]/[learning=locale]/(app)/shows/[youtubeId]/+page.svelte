@@ -110,7 +110,7 @@
 
   <div slot="player">
     {#if currentStudySentence && isPlaying}
-      <UnknownInCurrentSentence sentence={currentStudySentence} />
+      <UnknownInCurrentSentence changed_words={$changed_words} sentence={currentStudySentence} />
     {/if}
     <Youtube
       bind:this={youtubeComponent}

@@ -41,6 +41,7 @@ const sentence: Sentence = {
     {
       text: '這個',
       definitions: 'this/this one/here/this',
+      pinyin: 'zhè ge',
       status: WordStatus.unknown,
       views: 2,
     },
@@ -59,8 +60,14 @@ const sentence: Sentence = {
 
 export const variants: Variant<Component>[] = [
   {
+    name: 'video changed to known',
     props: {
       sentence,
+      changed_words: {
+        '視頻': {
+          status: WordStatus.known,
+        },
+      }
     },
   },
   {

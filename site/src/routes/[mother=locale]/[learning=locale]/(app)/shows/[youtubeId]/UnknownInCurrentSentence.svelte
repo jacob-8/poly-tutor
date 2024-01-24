@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { WordStatus, type Sentence, type AnalyzedChineseWord } from '$lib/types'
+  import { WordStatus, type Sentence, type AnalyzedChineseWord, type UserVocabulary } from '$lib/types'
   import { sort_definitions } from '$lib/utils/sort-definitions'
   import { fade } from 'svelte/transition'
 
   export let sentence: Sentence
+  export let changed_words: UserVocabulary = {}
+
   export let black = false // for kitbook mocking only
 
   function sortByOriginalIndex(a: AnalyzedChineseWord, b: AnalyzedChineseWord) {
@@ -11,7 +13,10 @@
   }
 
   $: words = sentence.words
-    .filter(({status}) => status === WordStatus.unknown)
+    .filter(({text, status}) => {
+      const up_to_date_status = changed_words?.[text]?.status ?? status
+      return up_to_date_status === WordStatus.unknown
+    })
     .filter(({text}, index, array) => array.findIndex(item => item.text === text) === index) // filter duplicates
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 3)
