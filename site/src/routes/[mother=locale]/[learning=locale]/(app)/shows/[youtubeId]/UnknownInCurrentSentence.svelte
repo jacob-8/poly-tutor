@@ -1,6 +1,7 @@
 <script lang="ts">
   import { WordStatus, type Sentence, type AnalyzedChineseWord } from '$lib/types'
   import { sort_definitions } from '$lib/utils/sort-definitions'
+  import { fade } from 'svelte/transition'
 
   export let sentence: Sentence
   export let black = false // for kitbook mocking only
@@ -10,7 +11,8 @@
   }
 
   $: words = sentence.words
-    .filter(word => word.status === WordStatus.unknown)
+    .filter(({status}) => status === WordStatus.unknown)
+    .filter(({text}, index, array) => array.findIndex(item => item.text === text) === index) // filter duplicates
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 3)
     .sort(sortByOriginalIndex) as AnalyzedChineseWord[]
@@ -20,7 +22,7 @@
   <div class="bg-black h-250px w-full" />
 {/if}
 
-<div class="absolute top-.5 left-0 z-1 text-white stroke">
+<div class="absolute top-.5 left-0 z-1 text-white stroke" out:fade={{ delay: 1000, duration: 1000 }}>
   {#each words as word}
     <div class="px-1">
       {word.pinyin?.replaceAll(' ', '')}

@@ -17,7 +17,7 @@ const sentence: Sentence = {
       definitions: 'good/well/proper/good to/easy to/very/so/(suffix indicating completion or readiness)/(of two people) close/on intimate terms/(after a personal pronoun) hello',
       pinyin: 'hǎo',
       status: WordStatus.unknown,
-      views: 4,
+      views: 3,
     },
     {
       text: '，',
@@ -27,7 +27,12 @@ const sentence: Sentence = {
       definitions: 'to welcome/to greet/to state',
       pinyin: 'huān yíng',
       status: WordStatus.unknown,
-      views: 3,
+      views: 4,
+    },
+    {
+      text: '歡迎', // duplicate that's weeded out
+      status: WordStatus.unknown,
+      views: 4,
     },
     {
       text: '來到',
