@@ -190,6 +190,7 @@
               add_seen_sentence={data.user_vocabulary.add_seen_sentence}
               play={youtubeComponent.play}
               pause={youtubeComponent.pause}
+              mute={youtubeComponent.mute}
               seekToMs={youtubeComponent.seekToMs}
               {isPlaying} {currentTimeMs} {studySentence} {sentences} />
           {:else}

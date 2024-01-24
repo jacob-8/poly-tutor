@@ -55,6 +55,9 @@
         modestbranding: 1,
         playsinline: 1,
         rel: 0,
+        // cc_lang_pref: 'en', | 'zh'
+        disablekb: 1,
+      // TODO: start: 0, time in seconds to start playing, use this when resuming from previous user position
       },
       events: {
         onReady: (e) => {
@@ -93,6 +96,13 @@
 
   export function pause() {
     player.pauseVideo()
+  }
+
+  export function mute(silence: boolean) {
+    if (silence)
+      player.mute()
+    else
+      player.unMute()
   }
 </script>
 

@@ -3,6 +3,7 @@
   import SentenceComponent from '$lib/components/Sentence.svelte'
   import { portal } from './portal'
   import type { LanguageCode } from '$lib/i18n/locales'
+  import { speakPromise } from '$lib/utils/speak'
 
   export let language: LanguageCode
   export let sentences: Sentence[] = []
@@ -15,6 +16,7 @@
   export let paddingMilliseconds = 250
   export let play: () => void
   export let pause: () => void
+  export let mute: (silence: boolean) => void
   export let seekToMs: (ms: number) => void
   export let add_seen_sentence: (words: string[]) => void
   export let in_view: boolean
@@ -26,18 +28,24 @@
   let selected_caption_index = 0
 
   let current_caption_index = 0
-  let mode: 'repeat' | 'play-once' | 'normal-play'
-  $: mode = (() => {
-    if (loop_caption)
-      return 'repeat'
-    if (stop_time_ms)
-      return 'play-once'
-    return 'normal-play'
-  })()
+  const mode: 'repeat' | 'play-once' | 'normal-play' | 'bilingual' = 'bilingual'
+  // $: mode = (() => {
+  //   return 'bilingual'
+  //   // if (loop_caption)
+  //   //   return 'repeat'
+  //   // if (stop_time_ms)
+  //   //   return 'play-once'
+  //   // return 'normal-play'
+  // })()
+
+  let read_translation_for_caption: number
+  let is_reading_translation = false
 
   $: watch_time(currentTimeMs)
 
   function watch_time(time_ms: number) {
+    if (is_reading_translation) return
+
     if (stop_time_ms) {
       if (time_ms >= stop_time_ms + paddingMilliseconds) {
         if (loop_caption)
@@ -63,9 +71,30 @@
         set_current_caption_index(0)
       return
     }
+
+    if (current_caption_index === index) return
+
     const is_prior_to_selected_because_of_play_padding = index === selected_caption_index - 1
-    if (!is_prior_to_selected_because_of_play_padding)
-      set_current_caption_index(index)
+    if (is_prior_to_selected_because_of_play_padding) return
+
+    if (mode === 'bilingual' && index === current_caption_index + 1 && read_translation_for_caption !== current_caption_index)
+      return read_translation_then_repeat_caption(current_caption_index)
+
+    console.info({ index, current_caption_index, read_translation_for_caption, is_reading_translation })
+    set_current_caption_index(index)
+  }
+
+  async function read_translation_then_repeat_caption(index: number) {
+    const caption = sentences[index]
+    is_reading_translation = true
+    mute(true)
+    seekToMs(caption.start_ms)
+    await speakPromise({ text: caption.translation?.en, rate: 1, locale: 'en'})
+    is_reading_translation = false
+    read_translation_for_caption = index
+    console.info(`marked ${index} as read`)
+    seekToMs(caption.start_ms)
+    mute(false)
   }
 
   function find_caption_index_by_time(current_milliseconds: number) {
@@ -97,6 +126,7 @@
   }
 
   function set_current_caption_index(index: number) {
+    console.info({setCurrentCaption: index})
     studySentence(sentences[index])
     current_caption_index = index
   // const url = new URL($page.url.toString())
@@ -173,7 +203,7 @@
     <div>1x</div>
   </button>
 {/if} -->
-  {#if mode === 'repeat' && isPlaying}
+  <!-- {#if mode === 'repeat' && isPlaying}
     <button type="button" class="active" on:click={pause}>
       <span class="i-carbon-pause-filled text-xl" />
     </button>
@@ -190,7 +220,7 @@
     <button type="button" title="Play normal (shortcut: n)" class:active={mode === 'normal-play'} on:click={playNormal}>
       <span class="i-carbon-play-filled-alt text-xl" />
     </button>
-  {/if}
+  {/if} -->
   <!-- <button type="button" class="hidden! sm:flex!" title="Shortcut key: up or right-arrow" on:click={seekToPrevious}>
   <span class="i-carbon-arrow-up text-xl" />
 </button>
