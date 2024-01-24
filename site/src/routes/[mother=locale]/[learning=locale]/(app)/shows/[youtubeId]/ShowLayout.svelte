@@ -4,24 +4,33 @@
   // import { tick } from 'svelte'
 
   let main: HTMLDivElement
+  let study: HTMLDivElement
 
   const SM_BREAKPOINT = 640
   $: is_mobile = window_width < SM_BREAKPOINT
   // $: if (is_mobile) {
   //   tick().then(() => {
-  //     scroll_to(main)
+  //     scroll_to_main()
   //   })
   // }
 
-  // function scroll_to(element: HTMLElement) {
-  //   element.scrollIntoView({ behavior: 'instant' })
-  // }
+  function scroll_to(element: HTMLElement) {
+    element.scrollIntoView({ behavior: 'instant' })
+  }
 
   let window_width: number
-  let active_view: 'player' | 'study' | 'chat' = 'player'
+  let active_view: 'main' | 'study' | 'chat' = 'main'
+
+  function scroll_to_main() {
+    scroll_to(main)
+  }
+
+  function scroll_to_study() {
+    scroll_to(study)
+  }
 </script>
 
-<div class="h-50px"><slot name="header" /></div>
+<div class="h-50px"><slot name="header" {scroll_to_main} {scroll_to_study} {active_view} /></div>
 <div class="w-full snap-mandatory snap-x sm:snap-none flex overflow-y-hidden overflow-x-scroll sm:overflow-x-hidden max-w-90rem sm:mx-auto h-[calc(100vh-50px)]">
   <!-- {#if is_mobile}
     <div class="shrink-0 w-100vw h-100vh snap-start snap-always overflow-y-auto">
@@ -31,7 +40,7 @@
 
   <div bind:this={main} class="shrink-0 w-100vw sm:w-full snap-start snap-always flex flex-col sm:flex-row" use:visible={{threshold: 0.2}} on:observed={({detail: isIntersecting}) => {
     if (isIntersecting)
-      active_view = 'player'
+      active_view = 'main'
   }}>
     <div class="sm:w-50% flex flex-col sm:h-full">
       <slot name="player" />
@@ -42,17 +51,17 @@
         </div>
       {/if}
     </div>
-    <div class="sm:w-50% overflow-x-auto relative sm:pl-2 pt-2 sm:pt-0">
-      <slot name="sentences" in_view={active_view === 'player'} />
+    <div class="sm:w-50% overflow-y-auto relative sm:pl-2 pt-2 sm:pt-0">
+      <slot name="sentences" in_view={active_view === 'main'} />
     </div>
   </div>
 
   {#if is_mobile}
-    <div class="shrink-0 w-100vw snap-start snap-always overflow-y-auto" use:visible={{threshold: 0.1}} on:observed={({detail: isIntersecting}) => {
+    <div bind:this={study} class="shrink-0 w-100vw snap-start snap-always overflow-y-auto" use:visible={{threshold: 0.1}} on:observed={({detail: isIntersecting}) => {
       if (isIntersecting)
         active_view = 'study'
       else
-        active_view = 'player'
+        active_view = 'main'
     }}>
       <slot name="study" />
     </div>
