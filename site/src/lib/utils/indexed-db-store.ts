@@ -37,7 +37,7 @@ export function createIndexedDBStore<T>({ store_name, key_path, key, initial_val
   }
 
   if (!('indexedDB' in window))
-    return createPersistedStore<T>(store_name + '_' + key, initial_value, { syncTabs: true })
+    return createPersistedStore<T>(`${store_name}_${key}`, initial_value, { syncTabs: true })
 
   const { subscribe, set } = writable<T>(initial_value, start)
 

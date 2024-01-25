@@ -13,12 +13,9 @@ import { VOCAB_KEY_PATH, VOCAB_STORE_NAME, createIndexedDBStore } from '$lib/uti
 
 type VocabItem = VocabularyWordStats & { updated_at?: string }
 
-export const word_lists = createPersistedStore<WordList[]>(
-  'word_lists_01.03.24',
-  [],
-  // ['時代華語1w', '時代華語2Aw', '時代華語2Bw', '時代華語3Aw', '時代華語3Bw', '時代華語4Aw'],
-  { syncTabs: true },
-)
+const DEFAULT_ZH_LISTS = []
+const DEFAULT_EN_LISTS = []
+// const DEFAULT_ZH_LISTS = ['時代華語1w', '時代華語2Aw', '時代華語2Bw', '時代華語3Aw', '時代華語3Bw', '時代華語4Aw']
 
 export function createVocabStore({ supabase, authResponse, language, log = false }: { supabase: Supabase, authResponse: AuthResponse, language: LanguageCode, log?: boolean }) {
   if (!browser)
@@ -27,9 +24,10 @@ export function createVocabStore({ supabase, authResponse, language, log = false
   if (log) console.info(`created vocab store in: ${language}`)
 
   const user_id = authResponse?.data?.user?.id
-  const storage_key_suffix = `${user_id || 'no_user'}_${language}`
-  const user_vocabulary = createIndexedDBStore<UserVocabulary>({store_name: VOCAB_STORE_NAME, key_path: VOCAB_KEY_PATH, key: storage_key_suffix, initial_value: {}, log})
-  const seen_sentences_this_route = createPersistedStore<Record<string, string[]>>(`seen_sentences_this_route_${storage_key_suffix}`, {}, { syncTabs: true })
+  const user_with_language_key = `${user_id || 'no_user'}_${language}`
+  const user_vocabulary = createIndexedDBStore<UserVocabulary>({store_name: VOCAB_STORE_NAME, key_path: VOCAB_KEY_PATH, key: user_with_language_key, initial_value: {}, log})
+  const seen_sentences_this_route = createPersistedStore<Record<string, string[]>>(`seen_sentences_this_route_${user_with_language_key}`, {}, { syncTabs: true })
+  const word_lists = createPersistedStore<WordList[]>(`word_lists_${user_with_language_key}`, language === 'en' ? DEFAULT_EN_LISTS : DEFAULT_ZH_LISTS, { syncTabs: true })
 
   if (user_id) {
     supabase
@@ -93,6 +91,8 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     if (log) console.info(`process_seen_sentences in ${language}`)
 
     const current_sentences = get(seen_sentences_this_route)
+    if (!Object.keys(current_sentences).length) return
+
     const vocabulary = get(user_vocabulary)
     const word_counts: Record<string, number> = {}
 
@@ -107,9 +107,9 @@ export function createVocabStore({ supabase, authResponse, language, log = false
           word_counts[word]++
       }
     }
+    if (!Object.keys(word_counts).length) return
 
     const word_updates: Record<string, TablesInsert<'word_updates'>> = {}
-
     for (const [word, views] of Object.entries(word_counts)) {
       word_updates[word] = {
         word,
@@ -163,7 +163,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     set(filter_object($user_vocabulary, ({ language }) => !!language))
   }, {})
 
-  return { subscribe: vocab_with_word_lists.subscribe, change_word_status, add_seen_sentence, changed_words }
+  return { subscribe: vocab_with_word_lists.subscribe, change_word_status, add_seen_sentence, changed_words, word_lists }
 }
 
 function filter_object<T>(obj: Record<string, T>, callback: (value) => boolean): Record<string, T> {
