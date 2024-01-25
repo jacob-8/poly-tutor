@@ -69,7 +69,7 @@
 
 <ShowLayout>
   <div slot="header" class="h-full p-1 flex items-center" let:scroll_to_main let:scroll_to_study let:active_view>
-    {#if active_view === 'main'}
+    <div class:hidden={active_view !== 'main'} class="contents">
       <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 text-lg" /></a>
       <span class="hidden md:block">
         {youtube.title || ''}
@@ -89,7 +89,9 @@
           invalidateAll()
         }} />
       {/if}
-    {:else}
+    </div>
+
+    {#if active_view !== 'main'}
       {#if !currentStudySentence}
         <div class="font-semibold px-1">
           Study List

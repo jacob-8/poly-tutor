@@ -205,15 +205,6 @@
 {/each}
 
 <div class="contents" use:portal={'#playback-controls'}>
-  <!-- {#if mode === 'play-once' && isPlaying}
-  <button type="button" class="active" on:click={pause}>
-    <span class="i-carbon-pause-filled text-xl" />
-  </button>
-{:else}
-  <button type="button" title="Play once (shortcut: 1)" class:active={mode === 'play-once'} on:click={playCaptionOnce}>
-    <div>1x</div>
-  </button>
-{/if} -->
   {#if mode === 'bilingual' && isPlaying}
     <button type="button" class="active" on:click={pause}>
       <span class="i-carbon-pause-filled text-xl" />
@@ -241,12 +232,6 @@
       <span class="i-carbon-play-filled-alt text-xl" />
     </button>
   {/if}
-  <!-- <button type="button" class="hidden! sm:flex!" title="Shortcut key: up or right-arrow" on:click={seekToPrevious}>
-  <span class="i-carbon-arrow-up text-xl" />
-</button>
-<button type="button" class="hidden! sm:flex!" title="Shortcut key: down or left-arrow" on:click={seekToNext}>
-  <span class="i-carbon-arrow-down text-xl" />
-</button> -->
 </div>
 
 <svelte:window
