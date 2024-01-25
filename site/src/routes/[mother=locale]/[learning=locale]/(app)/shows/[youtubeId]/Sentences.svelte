@@ -13,7 +13,8 @@
   export let settings: Settings
   export let currentTimeMs: number
   export let isPlaying: boolean
-  export let paddingMilliseconds = 500 // 250
+  export let paddingMilliseconds = 250
+  const volume_change_duration = 500
   export let play: () => void
   export let pause: () => void
   export let set_volume: (volume: number) => void
@@ -21,12 +22,13 @@
   export let add_seen_sentence: (words: string[]) => void
   export let in_view: boolean
 
-  let stop_time_ms: number
-  let start_time_ms: number
-  let user_updated_position: Date | null = null
+  let mode: 'normal' | 'repeat' | 'bilingual' = 'normal'
+  let intentionally_updated_at: number | null = null
+
   let selected_caption_index = 0
   let current_caption_index = 0
-  let mode: 'normal' | 'repeat' | 'bilingual' = 'normal'
+  let current_caption: Sentence
+
   let read_translation_for_caption: number
   let is_reading_translation = false
 
@@ -35,19 +37,17 @@
   function watch_time(time_ms: number) {
     if (is_reading_translation) return
 
-    if (stop_time_ms) {
-      if (time_ms >= stop_time_ms + paddingMilliseconds) {
-        if (mode === 'repeat')
-          start_player_at(start_time_ms)
-        else
-          pause()
-      }
+    if (mode === 'repeat') {
+      if (time_ms >= current_caption.end_ms + paddingMilliseconds)
+        start_player_at(current_caption.start_ms)
       return
     }
 
-    const user_recently_updated_position = user_updated_position && Date.now() - user_updated_position.getTime() < 2000
-    if (user_recently_updated_position)
-      return
+    if (intentionally_updated_at) {
+      const recently_updated_position = ( Date.now() - intentionally_updated_at ) < ( paddingMilliseconds + 1000 )
+      if (recently_updated_position)
+        return
+    }
 
     update_current_index_when_needed(time_ms)
   }
@@ -75,10 +75,11 @@
   async function read_translation_then_repeat_caption(index: number) {
     const caption = sentences[index]
     is_reading_translation = true
-    await ease_volume({from: 100, to: 0, duration_ms: paddingMilliseconds})
+    ease_volume({from: 100, to: 0, duration_ms: volume_change_duration})
     await speakPromise({ text: caption.translation?.en, rate: 1, locale: 'en', volume: .8})
-    seekToMs(caption.start_ms - paddingMilliseconds)
-    await ease_volume({from: 0, to: 100, duration_ms: paddingMilliseconds})
+    seekToMs(caption.start_ms - volume_change_duration)
+    await ease_volume({from: 0, to: 100, duration_ms: volume_change_duration})
+    intentionally_updated_at = Date.now()
     is_reading_translation = false
     read_translation_for_caption = index
   }
@@ -114,11 +115,10 @@
     document.querySelector(`#caption_${index}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' })
   }
 
-  function play_and_select({ start_ms, end_ms, index }: { start_ms: number; end_ms?: number; index: number }) {
-    user_updated_position = new Date()
+  function play_and_select({ start_ms, index }: { start_ms: number; index: number }) {
+    intentionally_updated_at = Date.now()
     start_player_at(start_ms)
     select_caption(index)
-    stop_time_ms = end_ms || null
   }
 
   function select_caption(index: number) {
@@ -135,43 +135,25 @@
   }
 
   function start_player_at(time_ms: number) {
-    start_time_ms = time_ms // set for loop mode
-    play()
     seekToMs(time_ms - paddingMilliseconds)
+    play()
   }
 
-  function seekToPrevious() {
-    current_caption_index = Math.max(0, current_caption_index - 1)
-    const previousCaption = sentences[current_caption_index]
-    const end_ms = stop_time_ms ? previousCaption.end_ms : null
+  function seek_by_steps(steps: number) {
+    current_caption_index = Math.max(0, current_caption_index + steps) // +1 for next and -1 for previous
+    current_caption = sentences[current_caption_index]
     if (isPlaying) {
-      play_and_select({ start_ms: previousCaption.start_ms, index: current_caption_index, end_ms })
+      play_and_select({ start_ms: current_caption.start_ms, index: current_caption_index })
     } else {
-      seekToMs(previousCaption.start_ms)
-      studySentence(sentences[current_caption_index])
-    }
-  }
-  function seekToNext() {
-    current_caption_index = Math.min(sentences.length, current_caption_index + 1)
-    const nextCaption = sentences[current_caption_index]
-    const end_ms = stop_time_ms ? nextCaption.end_ms : null
-    if (isPlaying) {
-      play_and_select({ start_ms: nextCaption.start_ms, index: current_caption_index, end_ms })
-    } else {
-      seekToMs(nextCaption.start_ms)
+      seekToMs(current_caption.start_ms)
       studySentence(sentences[current_caption_index])
     }
   }
   function playCaptionOnLoop() {
     mode = 'repeat'
     const currentCaption = sentences[current_caption_index]
-    play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, end_ms: currentCaption.end_ms })
+    play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index })
   }
-  // function playCaptionOnce() {
-  //   mode = 'play-once'
-  //   const currentCaption = sentences[current_caption_index]
-  //   play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, end_ms: currentCaption.end_ms })
-  // }
   function playBilingual() {
     mode = 'bilingual'
     const currentCaption = sentences[current_caption_index]
@@ -197,7 +179,7 @@
 {#each sentences as sentence, index}
   <SentenceComponent {language} {changed_words} {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index} show={index < current_caption_index}
     onClick={() => {
-      play_and_select({ start_ms: sentence.start_ms, index, end_ms: stop_time_ms ? sentence.end_ms : null })
+      play_and_select({ start_ms: sentence.start_ms, index })
     }} />
 {/each}
 
@@ -242,17 +224,13 @@
       event.preventDefault()
     }
     if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-      seekToPrevious()
+      seek_by_steps(-1)
       event.preventDefault()
     }
     if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-      seekToNext()
+      seek_by_steps(1)
       event.preventDefault()
     }
-    // if (event.key === '1') {
-    //   playCaptionOnce()
-    //   event.preventDefault()
-    // }
     if (event.key === 'b') {
       playBilingual()
       event.preventDefault()

@@ -86,7 +86,7 @@
 
   export function seekToMs(ms: number) {
     const seconds = ms/ 1000
-    if (first_time_playing)
+    if (first_time_playing && player)
       ignore_youtube_autoresume_location(seconds)
     player.seekTo(seconds, true)
   }
