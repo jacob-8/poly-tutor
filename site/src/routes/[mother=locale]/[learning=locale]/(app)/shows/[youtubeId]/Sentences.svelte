@@ -21,23 +21,12 @@
   export let add_seen_sentence: (words: string[]) => void
   export let in_view: boolean
 
-  let loop_caption = false
   let stop_time_ms: number
   let start_time_ms: number
   let user_updated_position: Date | null = null
   let selected_caption_index = 0
-
   let current_caption_index = 0
-  const mode: 'repeat' | 'play-once' | 'normal-play' | 'bilingual' = 'bilingual'
-  // $: mode = (() => {
-  //   return 'bilingual'
-  //   // if (loop_caption)
-  //   //   return 'repeat'
-  //   // if (stop_time_ms)
-  //   //   return 'play-once'
-  //   // return 'normal-play'
-  // })()
-
+  let mode: 'normal' | 'repeat' | 'bilingual' = 'normal'
   let read_translation_for_caption: number
   let is_reading_translation = false
 
@@ -48,7 +37,7 @@
 
     if (stop_time_ms) {
       if (time_ms >= stop_time_ms + paddingMilliseconds) {
-        if (loop_caption)
+        if (mode === 'repeat')
           start_player_at(start_time_ms)
         else
           pause()
@@ -111,10 +100,8 @@
     document.querySelector(`#caption_${index}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' })
   }
 
-  function play_and_select({ start_ms, end_ms, index, loop }: { start_ms: number; end_ms?: number; index: number; loop?: boolean }) {
+  function play_and_select({ start_ms, end_ms, index }: { start_ms: number; end_ms?: number; index: number }) {
     user_updated_position = new Date()
-    if (typeof loop === 'boolean')
-      loop_caption = loop // don't change loop mode if undefined
     start_player_at(start_ms)
     select_caption(index)
     stop_time_ms = end_ms || null
@@ -163,16 +150,24 @@
     }
   }
   function playCaptionOnLoop() {
+    mode = 'repeat'
     const currentCaption = sentences[current_caption_index]
-    play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, loop: true, end_ms: currentCaption.end_ms })
+    play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, end_ms: currentCaption.end_ms })
   }
   // function playCaptionOnce() {
+  //   mode = 'play-once'
   //   const currentCaption = sentences[current_caption_index]
-  //   play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, loop: false, end_ms: currentCaption.end_ms })
+  //   play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, end_ms: currentCaption.end_ms })
   // }
-  function playNormal() {
+  function playBilingual() {
+    mode = 'bilingual'
     const currentCaption = sentences[current_caption_index]
-    play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index, loop: false })
+    play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index })
+  }
+  function playNormal() {
+    mode = 'normal'
+    const currentCaption = sentences[current_caption_index]
+    play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index })
   }
 
   let paused_for_study = false
@@ -203,7 +198,16 @@
     <div>1x</div>
   </button>
 {/if} -->
-  <!-- {#if mode === 'repeat' && isPlaying}
+  {#if mode === 'bilingual' && isPlaying}
+    <button type="button" class="active" on:click={pause}>
+      <span class="i-carbon-pause-filled text-xl" />
+    </button>
+  {:else}
+    <button type="button" title="Bilingual (shortcut: b)" class:active={mode === 'bilingual'} on:click={playBilingual}>
+      <span class="i-ri-translate text-xl" />
+    </button>
+  {/if}
+  {#if mode === 'repeat' && isPlaying}
     <button type="button" class="active" on:click={pause}>
       <span class="i-carbon-pause-filled text-xl" />
     </button>
@@ -212,15 +216,15 @@
       <span class="i-ic-baseline-loop text-xl" />
     </button>
   {/if}
-  {#if mode === 'normal-play' && isPlaying}
+  {#if mode === 'normal' && isPlaying}
     <button type="button" class="active" on:click={pause}>
       <span class="i-carbon-pause-filled text-xl" />
     </button>
   {:else}
-    <button type="button" title="Play normal (shortcut: n)" class:active={mode === 'normal-play'} on:click={playNormal}>
+    <button type="button" title="Play normal (shortcut: n)" class:active={mode === 'normal'} on:click={playNormal}>
       <span class="i-carbon-play-filled-alt text-xl" />
     </button>
-  {/if} -->
+  {/if}
   <!-- <button type="button" class="hidden! sm:flex!" title="Shortcut key: up or right-arrow" on:click={seekToPrevious}>
   <span class="i-carbon-arrow-up text-xl" />
 </button>
@@ -251,6 +255,10 @@
     //   playCaptionOnce()
     //   event.preventDefault()
     // }
+    if (event.key === 'b') {
+      playBilingual()
+      event.preventDefault()
+    }
     if (event.key === 'r') {
       playCaptionOnLoop()
       event.preventDefault()

@@ -1,10 +1,12 @@
 export function portal(node: HTMLElement, target = 'body') {
-  const parent = document.querySelector(target)
-  parent.appendChild(node)
+  const portal = document.createElement('div')
+  portal.style.display = 'contents'
+  document.querySelector(target).appendChild(portal)
+  portal.appendChild(node)
 
   return {
     destroy() {
-      parent.removeChild(node)
+      portal.parentElement.removeChild(portal)
     },
   }
 }
