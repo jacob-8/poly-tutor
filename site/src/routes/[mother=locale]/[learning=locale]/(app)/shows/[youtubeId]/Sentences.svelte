@@ -72,12 +72,15 @@
     set_current_caption_index(index)
   }
 
+  const sleep = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
   async function read_translation_then_repeat_caption(index: number) {
     const caption = sentences[index]
     is_reading_translation = true
     ease_volume({from: 100, to: 0, duration_ms: volume_change_duration})
     await speakPromise({ text: caption.translation?.en, rate: 1, locale: 'en', volume: .8})
     seekToMs(caption.start_ms - volume_change_duration)
+    await sleep(volume_change_duration / 2)
     await ease_volume({from: 0, to: 100, duration_ms: volume_change_duration})
     intentionally_updated_at = Date.now()
     is_reading_translation = false
@@ -91,12 +94,12 @@
     if (from < to) {
       for (let vol = from; vol <= to; vol += 1) {
         set_volume(vol)
-        await new Promise(resolve => setTimeout(resolve, ms_per_step))
+        await sleep(ms_per_step)
       }
     } else {
       for (let vol = from; vol >= to; vol -= 1) {
         set_volume(vol)
-        await new Promise(resolve => setTimeout(resolve, ms_per_step))
+        await sleep(ms_per_step)
       }
     }
   }
