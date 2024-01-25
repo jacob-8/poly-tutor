@@ -15,6 +15,7 @@
   export let add_seen_sentence: (words: string[]) => void = undefined
   export let mark_seen_based_on_visibility = false
   export let changed_words: UserVocabulary = {}
+  export let show = false
 
   let has_been_seen = false
 
@@ -37,7 +38,7 @@
     class:bg-gray-200={active}
     on:mousedown={onClick}
     on:touchstart={onClick}>
-    {#if intersecting}
+    {#if show || intersecting}
       {#if sentence.words}
         {#if mark_seen_based_on_visibility && add_seen_sentence && !has_been_seen}
           <ImSeen {i_am_seen} milliseconds={6000} />

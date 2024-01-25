@@ -195,7 +195,7 @@
 </script>
 
 {#each sentences as sentence, index}
-  <SentenceComponent {language} {changed_words} {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index}
+  <SentenceComponent {language} {changed_words} {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index} show={index < current_caption_index}
     onClick={() => {
       play_and_select({ start_ms: sentence.start_ms, index, end_ms: stop_time_ms ? sentence.end_ms : null })
     }} />
