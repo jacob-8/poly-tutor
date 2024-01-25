@@ -7,7 +7,7 @@ import { calculate_chunk_seconds } from './calculate-chunk-seconds'
 import { post_request } from '$lib/utils/post-request'
 
 export const config: Config = {
-  runtime: 'edge',
+  maxDuration: 300,
 }
 
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {

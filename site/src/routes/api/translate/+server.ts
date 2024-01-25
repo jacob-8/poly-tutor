@@ -1,11 +1,15 @@
 import { TranslationServiceClient } from '@google-cloud/translate'
-import { error, json } from '@sveltejs/kit'
+import { error, json, type Config } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { GOOGLE_TRANSLATE_NLP_CREDENTIALS } from '$env/static/private'
 import { ResponseCodes } from '$lib/responseCodes'
 import { dev } from '$app/environment'
 import type { TranslateRequestBody } from '$lib/types'
 import { mocked_prefix } from '$lib/mocks/seed/youtubes'
+
+export const config: Config = {
+  maxDuration: 300,
+}
 
 const CREDENTIALS = JSON.parse(GOOGLE_TRANSLATE_NLP_CREDENTIALS)
 const translationClient = new TranslationServiceClient({
