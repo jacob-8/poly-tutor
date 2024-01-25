@@ -1,6 +1,8 @@
 # Local Supabase dev
 
-I recommend you read https://supabase.com/docs/guides/cli and install supabase cli locally, but if you have not installed it you can also prepend `pnpx ` to the commands below.
+## CLI Options
+1. [Install supabase cli locally](https://supabase.com/docs/guides/cli).
+2. Or just prepend `pnpx ` to the commands below. *After awhile you will tire of waiting each command and will do option 1*.
 
 ## Development
 

@@ -15,7 +15,7 @@
   // }
 
   function scroll_to(element: HTMLElement) {
-    element.scrollIntoView({ behavior: 'instant' })
+    element?.scrollIntoView({ behavior: 'instant' })
   }
 
   let window_width: number

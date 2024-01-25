@@ -9,6 +9,7 @@ import type { TablesInsert } from '$lib/supabase/generated.types'
 import { navigating } from '$app/stores'
 import type { LanguageCode } from '$lib/i18n/locales'
 import { open_auth } from '$lib/client/UserInfo.svelte'
+import { VOCAB_KEY_PATH, VOCAB_STORE_NAME, createIndexedDBStore } from '$lib/utils/indexed-db-store'
 
 type VocabItem = VocabularyWordStats & { updated_at?: string }
 
@@ -27,7 +28,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
 
   const user_id = authResponse?.data?.user?.id
   const storage_key_suffix = `${user_id || 'no_user'}_${language}`
-  const user_vocabulary = createPersistedStore<UserVocabulary>(`vocabulary_${storage_key_suffix}`, {}, { syncTabs: true })
+  const user_vocabulary = createIndexedDBStore<UserVocabulary>({store_name: VOCAB_STORE_NAME, key_path: VOCAB_KEY_PATH, key: storage_key_suffix, initial_value: {}, log})
   const seen_sentences_this_route = createPersistedStore<Record<string, string[]>>(`seen_sentences_this_route_${storage_key_suffix}`, {}, { syncTabs: true })
 
   if (user_id) {
@@ -39,8 +40,8 @@ export function createVocabStore({ supabase, authResponse, language, log = false
         if (error) return console.error(error)
         if (!data?.length) return
         const [{vocabulary}] = data as unknown as { vocabulary: Record<string, VocabItem> }[]
+        if (log) console.info({db_user_vocabulary: vocabulary})
         user_vocabulary.set(vocabulary)
-        console.info('user vocab loaded from db')
       })
   }
 

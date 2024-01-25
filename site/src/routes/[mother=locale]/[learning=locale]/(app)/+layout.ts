@@ -1,3 +1,4 @@
+import { dev } from '$app/environment'
 import { get_analysis_functions } from '$lib/analysis'
 import type { LanguageCode } from '$lib/i18n/locales.js'
 import { getSupabase, getSession } from '$lib/supabase'
@@ -14,7 +15,7 @@ export const load = async ({data: { access_token, refresh_token }, params: { lea
   const authResponse = await getSession({ supabase, access_token, refresh_token })
 
   const user = createUserStore({ supabase, authResponse })
-  const user_vocabulary = createVocabStore({ supabase, authResponse, language: learning.replace(/-.*/, '') as LanguageCode, log: true })
+  const user_vocabulary = createVocabStore({ supabase, authResponse, language: learning.replace(/-.*/, '') as LanguageCode, log: dev })
 
   const { analyze_sentences, split_sentences, split_string } = await get_analysis_functions({learning, user_vocabulary, emphasis_limits})
 

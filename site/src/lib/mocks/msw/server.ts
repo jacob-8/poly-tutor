@@ -12,7 +12,7 @@ export const server = setupServer(...handlers)
 
 server.events.on('response:bypass', ({ request, response }) => {
   const LOCAL_SUPABASE_URL = 'http://127.0.0.1:54321'
-  const DEPLOYED_SUPABASE_URL = 'https://zfxvyodqwvigxarorgjx.supabase.co'
+  const DEPLOYED_SUPABASE_URL = 'https://tjxlervwzlcvaibrrime.supabase.co'
   if (request.url.startsWith(LOCAL_SUPABASE_URL) || request.url.startsWith(DEPLOYED_SUPABASE_URL))
     return
 
