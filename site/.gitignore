@@ -12,3 +12,4 @@ playwright-report
 test-results
 **/e2e/snapshots/*
 .playwright-login-storage-state.json
+/logs

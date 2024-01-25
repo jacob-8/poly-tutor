@@ -57,7 +57,7 @@
         rel: 0,
         // cc_lang_pref: 'en', | 'zh'
         disablekb: 1,
-      // TODO: start: 0, time in seconds to start playing, use this when resuming from previous user position
+
       },
       events: {
         onReady: (e) => {
@@ -82,12 +82,29 @@
     })
   }
 
-  export function setPlaybackRate(rate: number) {
-    player.setPlaybackRate(rate)
-  }
+  let first_time_playing = true
 
   export function seekToMs(ms: number) {
-    player.seekTo(ms / 1000, true)
+    const seconds = ms/ 1000
+    if (first_time_playing)
+      ignore_youtube_autoresume_location(seconds)
+    player.seekTo(seconds, true)
+  }
+
+  function ignore_youtube_autoresume_location(seconds: number) {
+    player.mute()
+    const interval = setInterval(() => {
+      if (state === PlayerState.PLAYING) {
+        player.seekTo(seconds, true)
+        player.unMute()
+        clearInterval(interval)
+      }
+    }, 20)
+    first_time_playing = false
+  }
+
+  export function setPlaybackRate(rate: number) {
+    player.setPlaybackRate(rate)
   }
 
   export function play() {

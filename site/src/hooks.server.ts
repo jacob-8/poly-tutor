@@ -1,11 +1,19 @@
 import { dev } from '$app/environment'
 import { getSession, getSupabase } from '$lib/supabase'
 import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from '$lib/supabase/constants'
+// import fs from 'fs'
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
-  if (dev)
+  if (dev) {
+    // const logFile = fs.createWriteStream(`./logs/${Date.now()}.txt`, { flags: 'a' }) // 'a' to append, 'w' to truncate the file every time the process starts.
+    // console.warn = function (data: any) {
+    //   logFile.write(JSON.stringify(data) + '\n')
+    //   process.stdout.write(JSON.stringify(data) + '\n')
+    // }
+
     await import('$lib/mocks/msw/hooks-server')
+  }
 
   // only useful for things that are guaranteed to run server-side but not for passing to the client
   event.locals.getSession = () => {

@@ -69,7 +69,6 @@
     if (mode === 'bilingual' && index === current_caption_index + 1 && read_translation_for_caption !== current_caption_index)
       return read_translation_then_repeat_caption(current_caption_index)
 
-    console.info({ index, current_caption_index, read_translation_for_caption, is_reading_translation })
     set_current_caption_index(index)
   }
 
@@ -82,22 +81,21 @@
     await ease_volume({from: 0, to: 100, duration_ms: paddingMilliseconds})
     is_reading_translation = false
     read_translation_for_caption = index
-    console.info(`marked ${index} as read`)
   }
 
   async function ease_volume({ from, to, duration_ms }: { from: number, to: number, duration_ms: number }): Promise<void> {
-    const stepCount: number = Math.abs(to - from)
-    const msPerStep: number = duration_ms / stepCount
+    const steps = Math.abs(to - from)
+    const ms_per_step = duration_ms / steps
 
     if (from < to) {
       for (let vol = from; vol <= to; vol += 1) {
         set_volume(vol)
-        await new Promise(resolve => setTimeout(resolve, msPerStep))
+        await new Promise(resolve => setTimeout(resolve, ms_per_step))
       }
     } else {
       for (let vol = from; vol >= to; vol -= 1) {
         set_volume(vol)
-        await new Promise(resolve => setTimeout(resolve, msPerStep))
+        await new Promise(resolve => setTimeout(resolve, ms_per_step))
       }
     }
   }
@@ -129,7 +127,6 @@
   }
 
   function set_current_caption_index(index: number) {
-    console.info({setCurrentCaption: index})
     studySentence(sentences[index])
     current_caption_index = index
   // const url = new URL($page.url.toString())

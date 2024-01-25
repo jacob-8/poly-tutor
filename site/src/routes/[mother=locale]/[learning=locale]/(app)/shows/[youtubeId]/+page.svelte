@@ -71,8 +71,8 @@
   <div slot="header" class="h-full p-1 flex items-center" let:scroll_to_main let:scroll_to_study let:active_view>
     <div class:hidden={active_view !== 'main'} class="contents">
       <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 text-lg" /></a>
-      <span class="hidden md:block">
-        {youtube.title || ''}
+      <span class="hidden md:block text-nowrap shrink-1">
+        {youtube?.title.substring(0, 30) || ''}
       </span>
       <div class="mr-auto" />
       <button type="button" class="header-btn" on:click={() => {

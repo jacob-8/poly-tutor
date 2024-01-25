@@ -3,6 +3,16 @@ import type { Sentence } from '$lib/types'
 
 export function merge_translations({ line_separated_translations, sentences, locale}: {line_separated_translations: string, sentences: Sentence[], locale: LocaleCode}): Sentence[] {
   const translations = line_separated_translations.split('\n')
+
+  if (sentences.length !== translations.length) {
+    console.warn({ sentence_count: sentences.length })
+    console.warn({ translation_count: translations.length })
+    console.warn({ sentences: sentences.map(sentence => sentence.text) })
+    console.warn({ translations })
+
+    throw new Error(`translation length (${translations.length}) does not match captions length (${sentences.length})`)
+  }
+
   const mergedSentences: Sentence[] = []
 
   for (let i = 0; i < sentences.length; i++) {

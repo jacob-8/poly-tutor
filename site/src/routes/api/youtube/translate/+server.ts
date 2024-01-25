@@ -17,7 +17,8 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request, fe
     error(ResponseCodes.BAD_REQUEST, 'No youtube_id found in request body')
 
   try {
-    const text = sentences.map(sentence => sentence.text).join('\n')
+    // before joining array with newlines, remove the newlines with each line that Whisper added in which will skew alignment between sentences and translations
+    const text = sentences.map(sentence => sentence.text.replace('\n', '，')).join('\n')
 
     const { data, error: translate_error } = await post_request<TranslateRequestBody, {line_separated_translations: string}>('/api/translate', { text, sourceLanguageCode: learning, targetLanguageCode: mother }, fetch)
     if (translate_error)
