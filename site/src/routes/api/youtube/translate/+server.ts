@@ -1,10 +1,14 @@
-import { error, json } from '@sveltejs/kit'
+import { error, json, type Config } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { ResponseCodes } from '$lib/responseCodes'
 import type { TranslateRequestBody, YtTranslateRequestBody } from '$lib/types'
 import { getAdminSupabaseClient } from '$lib/supabase/admin'
 import { merge_translations } from './merge_translations'
 import { post_request } from '$lib/utils/post-request'
+
+export const config: Config = {
+  maxDuration: 300,
+}
 
 export const POST: RequestHandler = async ({ locals: { getSession }, request, fetch }) => {
   const { data: session_data, error: _error } = await getSession()
