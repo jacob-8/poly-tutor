@@ -16,6 +16,7 @@
   import User from '$lib/layout/User.svelte'
   import type { LanguageCode } from '$lib/i18n/locales'
   import UnknownInCurrentSentence from './UnknownInCurrentSentence.svelte'
+  import SelectSpeechSynthesisVoice from '$lib/components/SelectSpeechSynthesisVoice.svelte'
 
   export let data
   $: ({ youtube, summary, error, title, description, content, check_is_in_my_videos, remove_from_my_videos, user, transcribe_captions, addSummary, supabase, settings, user_vocabulary, learning } = data)
@@ -125,6 +126,7 @@
     {#if currentStudySentence}
       <StudySentence {language} changed_words={$changed_words} change_word_status={data.user_vocabulary.change_word_status} {study_words_object} sentence={currentStudySentence} />
     {:else}
+      <SelectSpeechSynthesisVoice />
       <StudyLesson changed_words={$changed_words} change_word_status={data.user_vocabulary.change_word_status} {study_words} />
       <!-- {$page.data.t.shows.click_to_study} -->
     {/if}
@@ -190,7 +192,7 @@
               add_seen_sentence={data.user_vocabulary.add_seen_sentence}
               play={youtubeComponent.play}
               pause={youtubeComponent.pause}
-              mute={youtubeComponent.mute}
+              set_volume={youtubeComponent.set_volume}
               seekToMs={youtubeComponent.seekToMs}
               {isPlaying} {currentTimeMs} {studySentence} {sentences} />
           {:else}

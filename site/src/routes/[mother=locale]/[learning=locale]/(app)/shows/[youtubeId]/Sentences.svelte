@@ -13,10 +13,10 @@
   export let settings: Settings
   export let currentTimeMs: number
   export let isPlaying: boolean
-  export let paddingMilliseconds = 250
+  export let paddingMilliseconds = 500 // 250
   export let play: () => void
   export let pause: () => void
-  export let mute: (silence: boolean) => void
+  export let set_volume: (volume: number) => void
   export let seekToMs: (ms: number) => void
   export let add_seen_sentence: (words: string[]) => void
   export let in_view: boolean
@@ -76,14 +76,30 @@
   async function read_translation_then_repeat_caption(index: number) {
     const caption = sentences[index]
     is_reading_translation = true
-    mute(true)
-    seekToMs(caption.start_ms)
-    await speakPromise({ text: caption.translation?.en, rate: 1, locale: 'en'})
+    await ease_volume({from: 100, to: 0, duration_ms: paddingMilliseconds})
+    await speakPromise({ text: caption.translation?.en, rate: 1, locale: 'en', volume: .8})
+    seekToMs(caption.start_ms - paddingMilliseconds)
+    await ease_volume({from: 0, to: 100, duration_ms: paddingMilliseconds})
     is_reading_translation = false
     read_translation_for_caption = index
     console.info(`marked ${index} as read`)
-    seekToMs(caption.start_ms)
-    mute(false)
+  }
+
+  async function ease_volume({ from, to, duration_ms }: { from: number, to: number, duration_ms: number }): Promise<void> {
+    const stepCount: number = Math.abs(to - from)
+    const msPerStep: number = duration_ms / stepCount
+
+    if (from < to) {
+      for (let vol = from; vol <= to; vol += 1) {
+        set_volume(vol)
+        await new Promise(resolve => setTimeout(resolve, msPerStep))
+      }
+    } else {
+      for (let vol = from; vol >= to; vol -= 1) {
+        set_volume(vol)
+        await new Promise(resolve => setTimeout(resolve, msPerStep))
+      }
+    }
   }
 
   function find_caption_index_by_time(current_milliseconds: number) {

@@ -18,6 +18,6 @@
     {label}:
   </div>
   <div class="max-h-240px overflow-y-auto border-b pb-2 mb-2">
-    <SentenceComponent {language} {changed_words} {add_seen_sentence} {study_words_object} {sentence} {settings} onClick={() => studySentence(sentence)} mark_seen_based_on_visibility />
+    <SentenceComponent {language} {changed_words} add_seen_sentence={() => null} {study_words_object} {sentence} {settings} onClick={() => studySentence(sentence)} mark_seen_based_on_visibility />
   </div>
 {/if}

@@ -98,11 +98,8 @@
     player.pauseVideo()
   }
 
-  export function mute(silence: boolean) {
-    if (silence)
-      player.mute()
-    else
-      player.unMute()
+  export function set_volume(volume: number) {
+    player.setVolume(volume)
   }
 </script>
 
