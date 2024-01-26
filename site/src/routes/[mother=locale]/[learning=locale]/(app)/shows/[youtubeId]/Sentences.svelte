@@ -4,6 +4,7 @@
   import { portal } from './portal'
   import type { LanguageCode } from '$lib/i18n/locales'
   import { speech } from '$lib/utils/speak'
+  import { combine_short_sentences } from './combine-short-sentences'
 
   export let language: LanguageCode
   export let sentences: Sentence[] = []
@@ -20,7 +21,10 @@
   export let add_seen_sentence: (words: string[]) => void
   export let in_view: boolean
   export let padding_ms = 250
-  const volume_change_ms = 500
+  const volume_change_duration_ms = 500
+
+  const COMBINE_IF_LESS_THAN_MS = 2000
+  $: captions = combine_short_sentences(sentences, COMBINE_IF_LESS_THAN_MS)
 
   let mode: 'normal' | 'repeat' | 'bilingual' = 'normal'
   let bilingual_loop_back = false
@@ -56,8 +60,7 @@
     const time_based_caption_index = find_caption_index_by_time(time_ms)
     if (current_caption_index === time_based_caption_index) return
 
-    const next_caption = sentences[current_caption_index + 1]
-
+    const next_caption = captions[current_caption_index + 1]
 
     if (mode === 'bilingual') {
       if (time_ms > current_caption.end_ms && time_ms < next_caption.end_ms) {
@@ -67,7 +70,7 @@
     }
 
     if (time_based_caption_index === -1) {
-      const playing_prior_to_first_caption = time_ms < sentences[0]?.start_ms
+      const playing_prior_to_first_caption = time_ms < captions[0]?.start_ms
       if (playing_prior_to_first_caption)
         set_current_caption_index(0)
       return
@@ -79,28 +82,26 @@
   const sleep = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
   function read_translation(index_to_read_translation: number) {
-    const caption = sentences[index_to_read_translation]
-    const caption_ms = caption.end_ms - caption.start_ms
+    const caption = captions[index_to_read_translation]
 
     is_reading_translation = true
-    ease_volume({from: 100, to: 0, duration_ms: volume_change_ms})
+    ease_volume({from: 100, to: 0, duration_ms: volume_change_duration_ms})
     const { speak, stop } = speech({ text: caption.translation?.en, rate: 1.2, locale: 'en', volume: .6})
     stop_reading_translation = stop
     speak.then(async () => {
       stop_reading_translation = null
-      if (bilingual_loop_back && caption_ms < 10000) {
-        seekToMs(caption.start_ms - volume_change_ms)
+      if (bilingual_loop_back) {
+        seekToMs(caption.start_ms - volume_change_duration_ms)
       } else {
-        seekToMs(caption.end_ms - volume_change_ms)
+        seekToMs(caption.end_ms - volume_change_duration_ms)
         set_current_caption_index(index_to_read_translation + 1)
       }
-      // await sleep(volume_change_duration / 2) // why sleep?
-      await ease_volume({from: 0, to: 100, duration_ms: volume_change_ms})
+      await ease_volume({from: 0, to: 100, duration_ms: volume_change_duration_ms})
       intentionally_updated_at = Date.now()
       read_translation_for_caption = index_to_read_translation
     }).catch(async () => {
       stop_reading_translation = null
-      await ease_volume({from: 0, to: 100, duration_ms: volume_change_ms / 2})
+      await ease_volume({from: 0, to: 100, duration_ms: volume_change_duration_ms / 2})
     }).finally(() => {
       is_reading_translation = false
     })
@@ -124,7 +125,7 @@
   }
 
   function find_caption_index_by_time(current_milliseconds: number) {
-    return sentences.findIndex(({ start_ms, end_ms }) => {
+    return captions.findIndex(({ start_ms, end_ms }) => {
       const isAfterStart = current_milliseconds > start_ms
       const isBeforeEnd = current_milliseconds < end_ms
       return isAfterStart && isBeforeEnd
@@ -147,7 +148,7 @@
 
   function set_current_caption_index(index: number) {
     current_caption_index = index
-    current_caption = sentences[index]
+    current_caption = captions[index]
     studySentence(current_caption)
   // const url = new URL($page.url.toString())
     // url.searchParams.set(CAPTION_SEARCH_PARAM, index.toString())
@@ -161,31 +162,31 @@
 
   function seek_by_steps(steps: number) {
     current_caption_index = Math.max(0, current_caption_index + steps) // +1 for next and -1 for previous
-    current_caption = sentences[current_caption_index]
+    current_caption = captions[current_caption_index]
     if (isPlaying) {
       user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
     } else {
       seekToMs(current_caption.start_ms)
-      studySentence(sentences[current_caption_index])
+      studySentence(current_caption)
     }
   }
   function playCaptionOnLoop() {
     if (mode === 'repeat' && isPlaying) return pause()
     mode = 'repeat'
-    current_caption = sentences[current_caption_index]
+    current_caption = captions[current_caption_index]
     user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
   function playBilingual(loop_back: boolean) {
     if (mode === 'bilingual' && bilingual_loop_back === loop_back && isPlaying) return pause()
     mode = 'bilingual'
     bilingual_loop_back = loop_back
-    current_caption = sentences[current_caption_index]
+    current_caption = captions[current_caption_index]
     user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
   function playNormal() {
     if (mode === 'normal' && isPlaying) return pause()
     mode = 'normal'
-    current_caption = sentences[current_caption_index]
+    current_caption = captions[current_caption_index]
     user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
 
@@ -200,10 +201,9 @@
   }
 </script>
 
-{#each sentences as sentence, index}
-  <div>{sentence.end_ms - sentence.start_ms}</div>
+{#each captions as sentence, index}
   <SentenceComponent {language} {changed_words} {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index} show={index < current_caption_index}
-    ontouch={() => studySentence(sentences[index])}
+    ontouch={() => studySentence(captions[index])}
     onclick={() => user_wants_to_play_new_location({ start_ms: sentence.start_ms, index })} />
 {/each}
 
