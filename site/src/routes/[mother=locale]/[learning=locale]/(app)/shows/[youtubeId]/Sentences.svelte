@@ -23,6 +23,7 @@
   export let in_view: boolean
 
   let mode: 'normal' | 'repeat' | 'bilingual' = 'normal'
+  let bilingual_loop_back = false
   let intentionally_updated_at: number | null = null
 
   let selected_caption_index = 0
@@ -54,40 +55,45 @@
   }
 
   function update_current_index_when_needed(current_time_ms: number) {
-    const index = find_caption_index_by_time(current_time_ms)
-    if (index === -1) {
+    const updated_time_index = find_caption_index_by_time(current_time_ms)
+    if (updated_time_index === -1) {
       const playing_prior_to_first_caption = current_time_ms < sentences[0]?.start_ms
       if (playing_prior_to_first_caption)
         set_current_caption_index(0)
       return
     }
 
-    if (current_caption_index === index) return
+    if (current_caption_index === updated_time_index) return
 
-    const is_prior_to_selected_because_of_play_padding = index === selected_caption_index - 1
+    const is_prior_to_selected_because_of_play_padding = updated_time_index === selected_caption_index - 1
     if (is_prior_to_selected_because_of_play_padding) return
 
-    if (mode === 'bilingual' && index === current_caption_index + 1 && read_translation_for_caption !== current_caption_index)
+    if (mode === 'bilingual' && updated_time_index === current_caption_index + 1 && read_translation_for_caption !== current_caption_index)
       return read_translation_then_repeat_caption(current_caption_index)
 
-    set_current_caption_index(index)
+    set_current_caption_index(updated_time_index)
   }
 
   const sleep = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-  function read_translation_then_repeat_caption(index: number) {
-    const caption = sentences[index]
+  function read_translation_then_repeat_caption(index_to_read_translation: number) {
+    const caption = sentences[index_to_read_translation]
     is_reading_translation = true
     ease_volume({from: 100, to: 0, duration_ms: volume_change_duration})
     const { speak, stop } = speech({ text: caption.translation?.en, rate: 1, locale: 'en', volume: .7})
     stop_reading_translation = stop
     speak.then(async () => {
       stop_reading_translation = null
-      seekToMs(caption.start_ms - volume_change_duration)
-      await sleep(volume_change_duration / 2)
+      if (bilingual_loop_back) {
+        seekToMs(caption.start_ms - volume_change_duration)
+      } else {
+        seekToMs(caption.end_ms - volume_change_duration)
+        set_current_caption_index(index_to_read_translation + 1)
+      }
+      // await sleep(volume_change_duration / 2) // why sleep?
       await ease_volume({from: 0, to: 100, duration_ms: volume_change_duration})
       intentionally_updated_at = Date.now()
-      read_translation_for_caption = index
+      read_translation_for_caption = index_to_read_translation
     }).catch(async () => {
       stop_reading_translation = null
       await ease_volume({from: 0, to: 100, duration_ms: volume_change_duration / 2})
@@ -164,16 +170,20 @@
     }
   }
   function playCaptionOnLoop() {
+    if (mode === 'repeat' && isPlaying) return pause()
     mode = 'repeat'
     current_caption = sentences[current_caption_index]
     user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
-  function playBilingual() {
+  function playBilingual(loop_back: boolean) {
+    if (mode === 'bilingual' && bilingual_loop_back === loop_back && isPlaying) return pause()
     mode = 'bilingual'
+    bilingual_loop_back = loop_back
     current_caption = sentences[current_caption_index]
     user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
   function playNormal() {
+    if (mode === 'normal' && isPlaying) return pause()
     mode = 'normal'
     current_caption = sentences[current_caption_index]
     user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
@@ -198,33 +208,19 @@
 {/each}
 
 <div class="contents" use:portal={'#playback-controls'}>
-  {#if mode === 'bilingual' && isPlaying}
-    <button type="button" class="active" on:click={pause}>
-      <span class="i-carbon-pause-filled text-xl" />
-    </button>
-  {:else}
-    <button type="button" title="Bilingual (shortcut: b)" class:active={mode === 'bilingual'} on:click={playBilingual}>
-      <span class="i-ri-translate text-xl" />
-    </button>
-  {/if}
-  {#if mode === 'repeat' && isPlaying}
-    <button type="button" class="active" on:click={pause}>
-      <span class="i-carbon-pause-filled text-xl" />
-    </button>
-  {:else}
-    <button type="button" title="Repeat (shortcut: r)" class:active={mode === 'repeat'} on:click={playCaptionOnLoop}>
-      <span class="i-ic-baseline-loop text-xl" />
-    </button>
-  {/if}
-  {#if mode === 'normal' && isPlaying}
-    <button type="button" class="active" on:click={pause}>
-      <span class="i-carbon-pause-filled text-xl" />
-    </button>
-  {:else}
-    <button type="button" title="Play normal (shortcut: n)" class:active={mode === 'normal'} on:click={playNormal}>
-      <span class="i-carbon-play-filled-alt text-xl" />
-    </button>
-  {/if}
+  <button type="button" title="Bilingual (shortcut: b)" class:playing={isPlaying} class:active={mode === 'bilingual' && !bilingual_loop_back} on:click={() => playBilingual(false)}>
+    <span class="i-ri-translate text-xl" />
+  </button>
+  <button type="button" title="Bilingual with loop-back (shortcut: b)" class:playing={isPlaying} class:active={mode === 'bilingual' && bilingual_loop_back} on:click={() => playBilingual(true)}>
+    <span class="i-ri-translate text-xl" />
+    <span class="text-xs -mt-2">2</span>
+  </button>
+  <button type="button" title="Repeat (shortcut: r)" class:playing={isPlaying} class:active={mode === 'repeat'} on:click={playCaptionOnLoop}>
+    <span class="i-ic-baseline-loop text-xl" />
+  </button>
+  <button type="button" title="Play normal (shortcut: n)" class:playing={isPlaying} class:active={mode === 'normal'} on:click={playNormal}>
+    <span class="i-carbon-play-filled-alt text-xl" />
+  </button>
 </div>
 
 <svelte:window
@@ -246,7 +242,7 @@
       event.preventDefault()
     }
     if (event.key === 'b') {
-      playBilingual()
+      playBilingual(isPlaying ? !bilingual_loop_back: bilingual_loop_back)
       event.preventDefault()
     }
     if (event.key === 'r') {
@@ -264,6 +260,9 @@
     --at-apply: header-btn;
   }
   .active {
+    --at-apply: border border-black hover:bg-black/70 hover:text-white;
+  }
+  .active.playing {
     --at-apply: bg-black hover:bg-black/70 text-white;
   }
 </style>
