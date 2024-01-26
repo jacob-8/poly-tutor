@@ -42,7 +42,7 @@
   }
 
   let playbackRate = 1
-  let currentTimeMs = 0
+  let current_time_ms = 0
   let playerState: YT.PlayerState
   $: isPlaying = playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING
 
@@ -52,7 +52,7 @@
     playerState = state
   }
   function readCurrentTime(ms: number) {
-    currentTimeMs = ms
+    current_time_ms = ms
   }
   function setPlaybackRate(rate: number) {
     playbackRate = rate
@@ -196,7 +196,7 @@
               pause={youtubeComponent.pause}
               set_volume={youtubeComponent.set_volume}
               seekToMs={youtubeComponent.seekToMs}
-              {isPlaying} {currentTimeMs} {studySentence} {sentences} />
+              {isPlaying} {current_time_ms} {studySentence} {sentences} />
           {:else}
             <Button size="lg" class="mt-2 mx-2 sm:mx-0 mb-10" onclick={async () => {
               const result = await transcribe_captions()

@@ -9,7 +9,7 @@ export const viewports: Viewport[] = [
 export const variants: Variant<Component>[] = [
   {
     props: {
-      onClick: () => console.info('clicked'),
+      onclick: () => console.info('clicked'),
       language: 'zh',
       settings: { font_size_em: 1.5, show_definition: true, show_pronunciation: true },
       sentence: {

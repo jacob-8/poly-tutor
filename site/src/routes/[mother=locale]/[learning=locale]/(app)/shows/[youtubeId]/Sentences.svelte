@@ -11,22 +11,21 @@
   export let changed_words: UserVocabulary = {}
   export let studySentence: (sentence: Sentence) => void
   export let settings: Settings
-  export let currentTimeMs: number
+  export let current_time_ms: number
   export let isPlaying: boolean
-  export let paddingMilliseconds = 250
-  const volume_change_duration = 500
   export let play: () => void
   export let pause: () => void
   export let set_volume: (volume: number) => void
   export let seekToMs: (ms: number) => void
   export let add_seen_sentence: (words: string[]) => void
   export let in_view: boolean
+  export let padding_ms = 250
+  const volume_change_ms = 500
 
   let mode: 'normal' | 'repeat' | 'bilingual' = 'normal'
   let bilingual_loop_back = false
   let intentionally_updated_at: number | null = null
 
-  let selected_caption_index = 0
   let current_caption_index = 0
   let current_caption: Sentence
 
@@ -34,69 +33,74 @@
   let is_reading_translation = false
   let stop_reading_translation: () => void
 
-  $: watch_time(currentTimeMs)
+  $: watch_time(current_time_ms)
 
   function watch_time(time_ms: number) {
     if (is_reading_translation) return
 
     if (mode === 'repeat') {
-      if (time_ms >= current_caption.end_ms + paddingMilliseconds)
+      if (time_ms > current_caption.end_ms + padding_ms)
         start_player_at(current_caption.start_ms)
       return
     }
 
     if (intentionally_updated_at) {
-      const recently_updated_position = ( Date.now() - intentionally_updated_at ) < ( paddingMilliseconds + 1000 )
-      if (recently_updated_position)
-        return
+      const recently_updated_position = ( Date.now() - intentionally_updated_at ) < ( padding_ms + 1000 )
+      if (recently_updated_position) return
     }
 
     update_current_index_when_needed(time_ms)
   }
 
-  function update_current_index_when_needed(current_time_ms: number) {
-    const updated_time_index = find_caption_index_by_time(current_time_ms)
-    if (updated_time_index === -1) {
-      const playing_prior_to_first_caption = current_time_ms < sentences[0]?.start_ms
+  function update_current_index_when_needed(time_ms: number) {
+    const time_based_caption_index = find_caption_index_by_time(time_ms)
+    if (current_caption_index === time_based_caption_index) return
+
+    const next_caption = sentences[current_caption_index + 1]
+
+
+    if (mode === 'bilingual') {
+      if (time_ms > current_caption.end_ms && time_ms < next_caption.end_ms) {
+        if (read_translation_for_caption !== current_caption_index)
+          return read_translation(current_caption_index)
+      }
+    }
+
+    if (time_based_caption_index === -1) {
+      const playing_prior_to_first_caption = time_ms < sentences[0]?.start_ms
       if (playing_prior_to_first_caption)
         set_current_caption_index(0)
       return
     }
 
-    if (current_caption_index === updated_time_index) return
-
-    const is_prior_to_selected_because_of_play_padding = updated_time_index === selected_caption_index - 1
-    if (is_prior_to_selected_because_of_play_padding) return
-
-    if (mode === 'bilingual' && updated_time_index === current_caption_index + 1 && read_translation_for_caption !== current_caption_index)
-      return read_translation_then_repeat_caption(current_caption_index)
-
-    set_current_caption_index(updated_time_index)
+    set_current_caption_index(time_based_caption_index)
   }
 
   const sleep = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-  function read_translation_then_repeat_caption(index_to_read_translation: number) {
+  function read_translation(index_to_read_translation: number) {
     const caption = sentences[index_to_read_translation]
+    const caption_ms = caption.end_ms - caption.start_ms
+
     is_reading_translation = true
-    ease_volume({from: 100, to: 0, duration_ms: volume_change_duration})
-    const { speak, stop } = speech({ text: caption.translation?.en, rate: 1, locale: 'en', volume: .7})
+    ease_volume({from: 100, to: 0, duration_ms: volume_change_ms})
+    const { speak, stop } = speech({ text: caption.translation?.en, rate: 1.2, locale: 'en', volume: .6})
     stop_reading_translation = stop
     speak.then(async () => {
       stop_reading_translation = null
-      if (bilingual_loop_back) {
-        seekToMs(caption.start_ms - volume_change_duration)
+      if (bilingual_loop_back && caption_ms < 10000) {
+        seekToMs(caption.start_ms - volume_change_ms)
       } else {
-        seekToMs(caption.end_ms - volume_change_duration)
+        seekToMs(caption.end_ms - volume_change_ms)
         set_current_caption_index(index_to_read_translation + 1)
       }
       // await sleep(volume_change_duration / 2) // why sleep?
-      await ease_volume({from: 0, to: 100, duration_ms: volume_change_duration})
+      await ease_volume({from: 0, to: 100, duration_ms: volume_change_ms})
       intentionally_updated_at = Date.now()
       read_translation_for_caption = index_to_read_translation
     }).catch(async () => {
       stop_reading_translation = null
-      await ease_volume({from: 0, to: 100, duration_ms: volume_change_duration / 2})
+      await ease_volume({from: 0, to: 100, duration_ms: volume_change_ms / 2})
     }).finally(() => {
       is_reading_translation = false
     })
@@ -136,12 +140,8 @@
   function user_wants_to_play_new_location({ start_ms, index }: { start_ms: number; index: number }) {
     intentionally_updated_at = Date.now()
     stop_reading_translation?.()
+    read_translation_for_caption = null
     start_player_at(start_ms)
-    select_caption(index)
-  }
-
-  function select_caption(index: number) {
-    selected_caption_index = index
     set_current_caption_index(index)
   }
 
@@ -155,7 +155,7 @@
   }
 
   function start_player_at(time_ms: number) {
-    seekToMs(time_ms - paddingMilliseconds)
+    seekToMs(time_ms - padding_ms)
     play()
   }
 
@@ -201,10 +201,10 @@
 </script>
 
 {#each sentences as sentence, index}
+  <div>{sentence.end_ms - sentence.start_ms}</div>
   <SentenceComponent {language} {changed_words} {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index} show={index < current_caption_index}
-    onClick={() => {
-      user_wants_to_play_new_location({ start_ms: sentence.start_ms, index })
-    }} />
+    ontouch={() => studySentence(sentences[index])}
+    onclick={() => user_wants_to_play_new_location({ start_ms: sentence.start_ms, index })} />
 {/each}
 
 <div class="contents" use:portal={'#playback-controls'}>

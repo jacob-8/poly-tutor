@@ -6,7 +6,8 @@
   import type { LanguageCode } from '$lib/i18n/locales'
 
   export let language: LanguageCode
-  export let onClick: () => void = undefined
+  export let onclick: () => void = undefined
+  export let ontouch: () => void = undefined
   export let id: string = undefined
   export let active = false
   export let sentence: Sentence
@@ -36,8 +37,8 @@
     {id}
     class="px-1 pb-3 flex flex-wrap relative hover:bg-gray-100 rounded relative group"
     class:bg-gray-200={active}
-    on:mousedown={onClick}
-    on:touchstart={onClick}>
+    on:click={onclick}
+    on:touchstart={ontouch}>
     {#if show || intersecting}
       {#if sentence.words}
         {#if mark_seen_based_on_visibility && add_seen_sentence && !has_been_seen}
