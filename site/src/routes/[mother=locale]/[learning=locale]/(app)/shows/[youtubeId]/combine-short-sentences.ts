@@ -123,7 +123,7 @@ if (import.meta.vitest) {
       expect(combined[0].start_ms).toBe(0)
       expect(combined[0].end_ms).toBe(2000)
       expect(combined[0].translation.en).toBe('I heard you speak. | What are you doing?')
-      expect(combined[0].words).toHaveLength(sentence1.words.length + sentence2.words.length)
+      expect(combined[0].words).toHaveLength(sentence1.words.length + 1 + sentence2.words.length)
     })
 
     // test('does not combine if there is a gap more than a second between sentences', () => {

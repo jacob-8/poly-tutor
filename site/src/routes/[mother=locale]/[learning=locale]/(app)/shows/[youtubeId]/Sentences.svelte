@@ -23,7 +23,7 @@
   export let padding_ms = 250
   const volume_change_duration_ms = 500
 
-  const COMBINE_IF_LESS_THAN_MS = 2000
+  const COMBINE_IF_LESS_THAN_MS = 1600
   $: captions = combine_short_sentences(sentences, COMBINE_IF_LESS_THAN_MS)
 
   let mode: 'normal' | 'repeat' | 'bilingual' = 'normal'
