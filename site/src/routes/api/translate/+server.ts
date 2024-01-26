@@ -21,12 +21,15 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
   if (!CREDENTIALS.project_id)
     error(ResponseCodes.INTERNAL_SERVER_ERROR, 'GOOGLE_TRANSLATE_NLP_CREDENTIALS not configured')
 
-  const { data: session_data, error: _error } = await getSession()
-  if (_error || !session_data?.user)
-    error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
+  console.info('translating')
 
-  if (!dev && session_data.user.email !== 'jacob@polylingual.dev')
-    error(ResponseCodes.UNAUTHORIZED, { message: 'Unauthorized' })
+  const { data: session_data, error: _error } = await getSession()
+  if (_error || !session_data?.user) {
+    console.info({ get_session_error: JSON.stringify(_error) })
+    error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
+  }
+
+  console.info('getting text')
 
   const { text, sourceLanguageCode, targetLanguageCode } = await request.json() as TranslateRequestBody
   const location = 'global'

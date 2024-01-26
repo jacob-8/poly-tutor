@@ -37,7 +37,7 @@ ON youtubes FOR SELECT
 USING ( true );
 
 CREATE TABLE user_youtubes (
-  user_id uuid REFERENCES auth.users NOT NULL DEFAULT auth.uid(),
+  user_id uuid REFERENCES auth.users NOT NULL DEFAULT auth.uid(), -- should have added ON DELETE CASCADE
   youtube_id text NOT NULL REFERENCES youtubes(id),
   added_at timestamp with time zone NOT NULL DEFAULT now(),
   PRIMARY KEY (user_id, youtube_id)
