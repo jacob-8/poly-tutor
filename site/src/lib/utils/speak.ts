@@ -66,17 +66,32 @@ export function set_preferred_voice(voice_name: string) {
     current_voice.set(selected_voice)
 }
 
-export function speakPromise({text, rate, locale, volume }: { text: string, rate: number, locale: LocaleCode, volume?: number}): Promise<void> {
-  return new Promise((resolve) => {
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = locale
-    utterance.rate = rate
-    const voice = get(current_voice)
-    if (voice) utterance.voice = voice
-    utterance.volume = volume || 1
-    utterance.onend = () => {
-      resolve()
-    }
-    speechSynthesis.speak(utterance)
+export function speech({text, rate, locale, volume }: { text: string, rate: number, locale: LocaleCode, volume?: number}): {stop: () => void, speak: Promise<void>} {
+  let resolve: () => void
+  let reject: (reason?: string) => void
+
+  const speak = new Promise<void>((res, rej) => {
+    resolve = res
+    reject = rej
   })
+
+  const utterance = new SpeechSynthesisUtterance(text)
+  utterance.lang = locale
+  utterance.rate = rate
+  const voice = get(current_voice)
+  if (voice) utterance.voice = voice
+  utterance.volume = volume || 1
+  speechSynthesis.speak(utterance)
+
+  utterance.onend = () => {
+    resolve()
+  }
+
+  return {
+    speak,
+    stop: () => {
+      speechSynthesis.cancel()
+      reject('canceled')
+    }
+  }
 }

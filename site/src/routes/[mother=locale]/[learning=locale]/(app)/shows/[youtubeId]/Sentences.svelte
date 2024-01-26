@@ -3,7 +3,7 @@
   import SentenceComponent from '$lib/components/Sentence.svelte'
   import { portal } from './portal'
   import type { LanguageCode } from '$lib/i18n/locales'
-  import { speakPromise } from '$lib/utils/speak'
+  import { speech } from '$lib/utils/speak'
 
   export let language: LanguageCode
   export let sentences: Sentence[] = []
@@ -31,6 +31,7 @@
 
   let read_translation_for_caption: number
   let is_reading_translation = false
+  let stop_reading_translation: () => void
 
   $: watch_time(currentTimeMs)
 
@@ -74,17 +75,25 @@
 
   const sleep = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-  async function read_translation_then_repeat_caption(index: number) {
+  function read_translation_then_repeat_caption(index: number) {
     const caption = sentences[index]
     is_reading_translation = true
     ease_volume({from: 100, to: 0, duration_ms: volume_change_duration})
-    await speakPromise({ text: caption.translation?.en, rate: 1, locale: 'en', volume: .8})
-    seekToMs(caption.start_ms - volume_change_duration)
-    await sleep(volume_change_duration / 2)
-    await ease_volume({from: 0, to: 100, duration_ms: volume_change_duration})
-    intentionally_updated_at = Date.now()
-    is_reading_translation = false
-    read_translation_for_caption = index
+    const { speak, stop } = speech({ text: caption.translation?.en, rate: 1, locale: 'en', volume: .7})
+    stop_reading_translation = stop
+    speak.then(async () => {
+      stop_reading_translation = null
+      seekToMs(caption.start_ms - volume_change_duration)
+      await sleep(volume_change_duration / 2)
+      await ease_volume({from: 0, to: 100, duration_ms: volume_change_duration})
+      intentionally_updated_at = Date.now()
+      read_translation_for_caption = index
+    }).catch(async () => {
+      stop_reading_translation = null
+      await ease_volume({from: 0, to: 100, duration_ms: volume_change_duration / 2})
+    }).finally(() => {
+      is_reading_translation = false
+    })
   }
 
   async function ease_volume({ from, to, duration_ms }: { from: number, to: number, duration_ms: number }): Promise<void> {
@@ -118,8 +127,9 @@
     document.querySelector(`#caption_${index}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' })
   }
 
-  function play_and_select({ start_ms, index }: { start_ms: number; index: number }) {
+  function user_wants_to_play_new_location({ start_ms, index }: { start_ms: number; index: number }) {
     intentionally_updated_at = Date.now()
+    stop_reading_translation?.()
     start_player_at(start_ms)
     select_caption(index)
   }
@@ -147,7 +157,7 @@
     current_caption_index = Math.max(0, current_caption_index + steps) // +1 for next and -1 for previous
     current_caption = sentences[current_caption_index]
     if (isPlaying) {
-      play_and_select({ start_ms: current_caption.start_ms, index: current_caption_index })
+      user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
     } else {
       seekToMs(current_caption.start_ms)
       studySentence(sentences[current_caption_index])
@@ -156,17 +166,17 @@
   function playCaptionOnLoop() {
     mode = 'repeat'
     current_caption = sentences[current_caption_index]
-    play_and_select({ start_ms: current_caption.start_ms, index: current_caption_index })
+    user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
   function playBilingual() {
     mode = 'bilingual'
     current_caption = sentences[current_caption_index]
-    play_and_select({ start_ms: current_caption.start_ms, index: current_caption_index })
+    user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
   function playNormal() {
     mode = 'normal'
     current_caption = sentences[current_caption_index]
-    play_and_select({ start_ms: current_caption.start_ms, index: current_caption_index })
+    user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
 
   let paused_for_study = false
@@ -183,7 +193,7 @@
 {#each sentences as sentence, index}
   <SentenceComponent {language} {changed_words} {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index} show={index < current_caption_index}
     onClick={() => {
-      play_and_select({ start_ms: sentence.start_ms, index })
+      user_wants_to_play_new_location({ start_ms: sentence.start_ms, index })
     }} />
 {/each}
 
