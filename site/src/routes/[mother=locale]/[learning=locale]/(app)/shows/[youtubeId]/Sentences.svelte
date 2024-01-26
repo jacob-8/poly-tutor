@@ -130,8 +130,9 @@
   }
 
   function set_current_caption_index(index: number) {
-    studySentence(sentences[index])
     current_caption_index = index
+    current_caption = sentences[index]
+    studySentence(current_caption)
   // const url = new URL($page.url.toString())
     // url.searchParams.set(CAPTION_SEARCH_PARAM, index.toString())
     // window.history.replaceState({}, '', url.toString())
@@ -154,18 +155,18 @@
   }
   function playCaptionOnLoop() {
     mode = 'repeat'
-    const currentCaption = sentences[current_caption_index]
-    play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index })
+    current_caption = sentences[current_caption_index]
+    play_and_select({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
   function playBilingual() {
     mode = 'bilingual'
-    const currentCaption = sentences[current_caption_index]
-    play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index })
+    current_caption = sentences[current_caption_index]
+    play_and_select({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
   function playNormal() {
     mode = 'normal'
-    const currentCaption = sentences[current_caption_index]
-    play_and_select({ start_ms: currentCaption.start_ms, index: current_caption_index })
+    current_caption = sentences[current_caption_index]
+    play_and_select({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
 
   let paused_for_study = false
