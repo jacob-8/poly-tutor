@@ -165,9 +165,10 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
       .single()
   }
 
-  async function translate(sentences: Sentence[]): Promise<Sentence[] | void> {
+  async function translate(): Promise<Sentence[] | void> {
     if (!get(user)) return open_auth()
-    const { data: sentences_with_translation, error: translate_error } = await post_request<YtTranslateRequestBody, Sentence[]>('/api/youtube/translate', { youtube_id, learning, mother, sentences }, fetch)
+    const transcript = await getTranscript()
+    const { data: sentences_with_translation, error: translate_error } = await post_request<YtTranslateRequestBody, Sentence[]>('/api/youtube/translate', { youtube_id, learning, mother, sentences: transcript.transcript.sentences }, fetch)
     if (translate_error) {
       console.error(translate_error.message)
       return alert(translate_error.message)

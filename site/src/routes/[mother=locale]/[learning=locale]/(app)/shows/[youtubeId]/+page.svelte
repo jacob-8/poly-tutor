@@ -175,9 +175,9 @@
 
         {#if sentences && !sentences?.[0]?.translation?.[data.mother]}
           <Button class="ml-auto" form="simple" size="sm" onclick={async () => {
-            const sentences_with_translations = await data.translate(sentences)
+            const sentences_with_translations = await data.translate()
             if (sentences_with_translations)
-              // eslint-disable-next-line require-atomic-updates
+
               sentences = sentences_with_translations
           }}>{$page.data.t.shows.translate}</Button>
         {/if}
