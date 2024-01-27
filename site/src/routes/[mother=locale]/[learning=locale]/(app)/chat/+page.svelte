@@ -5,6 +5,7 @@
   import { languageTutor } from './personalities'
   import type { ChatRequestBody, OpenAiChatStreamResponse } from '$lib/types'
   import { get_openai_api_key } from '$lib/client/UserInfo.svelte'
+  import { OpenAiChatModels } from '$lib/types/models'
 
   export let data
   $: ({user} = data)
@@ -37,7 +38,7 @@
       ...messages,
     ]
 
-    const eventSource = fetchSSE<ChatRequestBody>('/api/chat', { messages: messagesToSend, model: 'gpt-4-1106-preview', max_tokens: 1000, openai_api_key })
+    const eventSource = fetchSSE<ChatRequestBody>('/api/chat', { messages: messagesToSend, model: OpenAiChatModels.GPT4, max_tokens: 1000, openai_api_key })
     eventSource.addEventListener('message', handle_message)
     eventSource.addEventListener('error', handleError)
     eventSource.stream()

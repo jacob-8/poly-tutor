@@ -21,7 +21,12 @@
     <div class="sm:max-w-470px">
       <div class="bg-gray-200 rounded h-0 pb-56.25% relative">
         <div class="absolute inset-0 p-3 flex flex-col text-center justify-center h-full">
-          <div class="mb-2 text-xl">{$page.data.t.shows.paste_youtube_url}</div>
+          <div class="mb-2 text-xl">
+            {$page.data.t.shows.paste_youtube_url}
+            {#if youtube_id}
+              <span class="i-svg-spinners-3-dots-fade align--4px" />
+            {/if}
+          </div>
           <input placeholder={browser ? 'https://www.youtube.com/watch?v=...' : ''} bind:value={url} class="w-full sm:w-450px max-w-full p-2 border border-2 rounded" />
         </div>
       </div>

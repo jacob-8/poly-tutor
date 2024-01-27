@@ -1,20 +1,24 @@
 import { WordStatus, type Sentence } from '$lib/types'
 
 export function combine_short_sentences(sentences: Sentence[], minimum_ms: number): Sentence[] {
+  if (!sentences[0]?.translation?.en) return sentences
+
   const combined_sentences: Sentence[] = []
   let sentence_needing_buddy: Sentence
 
   for (const sentence of sentences) {
     if (sentence_needing_buddy) {
-      combined_sentences.push({
+      const combined_sentence: Sentence = {
         text: sentence_needing_buddy.text + ' | ' + sentence.text,
-        translation: {
-          en: sentence_needing_buddy.translation.en + ' | ' + sentence.translation.en,
-        },
         start_ms: sentence_needing_buddy.start_ms,
         end_ms: sentence.end_ms,
+        translation: {},
         words: [...sentence_needing_buddy.words, {text: ' | '}, ...sentence.words],
-      })
+      }
+      if (sentence_needing_buddy.translation?.en && sentence.translation?.en)
+        combined_sentence.translation.en = sentence_needing_buddy.translation.en + ' | ' + sentence.translation.en
+
+      combined_sentences.push(combined_sentence)
       sentence_needing_buddy = null
     } else if (sentence.end_ms - sentence.start_ms < minimum_ms) {
       sentence_needing_buddy = sentence
@@ -124,6 +128,15 @@ if (import.meta.vitest) {
       expect(combined[0].end_ms).toBe(2000)
       expect(combined[0].translation.en).toBe('I heard you speak. | What are you doing?')
       expect(combined[0].words).toHaveLength(sentence1.words.length + 1 + sentence2.words.length)
+    })
+
+    test('does not combine if no translation in first sentence', () => {
+      const sentence1_without_translation = {...sentence1, translation: {}}
+      const combined = combine_short_sentences([sentence1_without_translation, sentence2], 2000)
+
+      expect(combined).toHaveLength(2)
+      expect(combined[0].text).toBe('我听见你说话了。')
+      expect(combined[1].text).toBe('你在做什么？')
     })
 
     // test('does not combine if there is a gap more than a second between sentences', () => {

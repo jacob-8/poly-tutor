@@ -8,6 +8,7 @@ import { get, writable } from 'svelte/store'
 import { post_request } from '$lib/utils/post-request'
 import { browser } from '$app/environment'
 import { get_openai_api_key, open_auth } from '$lib/client/UserInfo.svelte'
+import { OpenAiChatModels, type ChatModels } from '$lib/types/models'
 
 export const load = (async ({ params: { youtubeId: youtube_id, mother, learning }, fetch, parent }) => {
   const learning_language = learning.replace(/-.*/, '') as 'zh' | 'en'
@@ -102,7 +103,7 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
       const openai_api_key = get_openai_api_key()
       if (!openai_api_key) return resolve()
 
-      const model = 'gpt-3.5-turbo-1106'
+      const model: ChatModels = OpenAiChatModels.GPT3_5
       const transcript = sentences.map(sentence => sentence.text).join('\n')
 
       const messagesToSend: ChatCompletionRequestMessage[] = [
@@ -196,7 +197,18 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     if (!browser) return undefined // don't use null as that will mistakenly show option to transcribe for a moment when we just need to wait until the client inits
     const transcript = await getTranscript()
     if (!transcript) return { sentences: null, study_words: null }
-    return await analyze_sentences(transcript.transcript.sentences)
+    const { sentences } = transcript.transcript
+    const index_of_sentence_over_30_minutes = sentences.findIndex(sentence => sentence.end_ms > 1000 * 60 * 30)
+
+    // TODO: chapters
+    // get chapters from DB (fetch and save if first time)
+    // check if chapter ID exists in URL
+    // If no chapters, then "make" chapters based on five minute sections. Don't orphan the last one at less than 1 minute though.
+
+    if (index_of_sentence_over_30_minutes > -1)
+      return await analyze_sentences(sentences.slice(0, index_of_sentence_over_30_minutes))
+
+    return await analyze_sentences(sentences)
   }
 
   return {

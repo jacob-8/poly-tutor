@@ -1,5 +1,6 @@
 import { createChunkDecoder } from '$lib/client/chunkDecoder'
 import type { ChatRequestBody } from '$lib/types'
+import { OpenAiChatModels } from '$lib/types/models'
 
 // This is a simple way to receive entire stream and return it
 async function getStream(url: string, lastMessage = 'normal') {
@@ -12,7 +13,7 @@ async function getStream(url: string, lastMessage = 'normal') {
       role: 'user',
       content: lastMessage
     }],
-    model: 'gpt-4-1106-preview',
+    model: OpenAiChatModels.GPT4,
     max_tokens: 1000,
     openai_api_key: 'not needed in mock'
   }

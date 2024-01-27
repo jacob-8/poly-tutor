@@ -1,6 +1,7 @@
 import type { google } from '@google-cloud/language/build/protos/protos'
 import type { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai-edge'
 import type { LocaleCode } from './i18n/locales'
+import type { ChatModels } from './types/models'
 
 // Books, Shows, Volumes, Pages, Paragraphs are all sections, this let's us nest as many layers as we need
 export interface Section {
@@ -165,7 +166,7 @@ export interface AnalyzeSyntaxRequestBody {
 
 export interface ChatRequestBody {
   messages: ChatCompletionRequestMessage[]
-  model: 'gpt-4-1106-preview' | 'gpt-3.5-turbo-1106'
+  model: ChatModels
   max_tokens: number
   openai_api_key: string
 }

@@ -4,6 +4,7 @@ import { authenticatedLocal, unAuthenticatedLocal } from '$lib/mocks/locals'
 import { ResponseCodes } from '$lib/responseCodes'
 import type { ChatRequestBody } from '$lib/types'
 import { createChunkDecoder } from '$lib/client/chunkDecoder'
+import { OpenAiChatModels } from '$lib/types/models'
 
 vi.mock('$env/static/private', () => {
   return {
@@ -47,7 +48,7 @@ describe(POST, () => {
 
   test('streams back mocked response', async () => {
     const body: ChatRequestBody = {
-      model: 'gpt-4-1106-preview',
+      model: OpenAiChatModels.GPT4,
       openai_api_key: 'bam',
       max_tokens: 1000,
       messages: [{
