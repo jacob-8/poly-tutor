@@ -199,15 +199,15 @@ export const load = (async ({ params: { youtubeId: youtube_id, mother, learning 
     const transcript = await getTranscript()
     if (!transcript) return { sentences: null, study_words: null }
     const { sentences } = transcript.transcript
-    const index_of_sentence_over_30_minutes = sentences.findIndex(sentence => sentence.end_ms > 1000 * 60 * 30)
+    const index_of_sentence_over_60_minutes = sentences.findIndex(sentence => sentence.end_ms > 1000 * 60 * 60)
 
     // TODO: chapters
     // get chapters from DB (fetch and save if first time)
     // check if chapter ID exists in URL
     // If no chapters, then "make" chapters based on five minute sections. Don't orphan the last one at less than 1 minute though.
 
-    if (index_of_sentence_over_30_minutes > -1)
-      return await analyze_sentences(sentences.slice(0, index_of_sentence_over_30_minutes))
+    if (index_of_sentence_over_60_minutes > -1)
+      return await analyze_sentences(sentences.slice(0, index_of_sentence_over_60_minutes))
 
     return await analyze_sentences(sentences)
   }
