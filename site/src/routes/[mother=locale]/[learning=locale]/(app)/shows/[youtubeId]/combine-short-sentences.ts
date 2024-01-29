@@ -13,7 +13,7 @@ export function combine_short_sentences(sentences: Sentence[], minimum_ms: numbe
         start_ms: sentence_needing_buddy.start_ms,
         end_ms: sentence.end_ms,
         translation: {},
-        words: [...sentence_needing_buddy.words, {text: ' | '}, ...sentence.words],
+        words: [...sentence_needing_buddy.words, {text: ' | '}, ...sentence.words], // TODO: error that sentence_needing_buddy.words is not iterable
       }
       if (sentence_needing_buddy.translation?.en && sentence.translation?.en)
         combined_sentence.translation.en = sentence_needing_buddy.translation.en + ' | ' + sentence.translation.en
