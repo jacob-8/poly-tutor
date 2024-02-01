@@ -1,35 +1,40 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Database as DatabaseGenerated, Tables } from './generated.types'
+import type { Database as DatabaseGenerated, Tables, TablesInsert } from './generated.types'
 import type { Merge } from 'type-fest'
-import type { Section } from '$lib/types'
+import type { YoutubeChapter, Sentence } from '$lib/types'
 
-export type Database = DatabaseGenerated
-// breaks types and does not work as Supabase describes
-// export type Database = MergeDeep<DatabaseGenerated,  SpecificyJsonValues>
-
-// interface SpecificyJsonValues {
+// export type Database = MergeDeep<DatabaseGenerated, {
 //   public: {
 //     Tables: {
-//       youtube_transcripts: {
+//       youtubes: {
 //         Row: {
-//           transcript: Section
+//           title: Sentence[],
+//           description: Sentence[],
+//           chapters: YoutubeChapter[],
 //         }
 //         Insert: {
-//           transcript: Section
+//           title: Sentence[],
+//           description?: Sentence[],
+//           chapters: YoutubeChapter[],
 //         }
 //         Update: {
-//           transcript: Section
+//           title?: Sentence[],
+//           description?: Sentence[],
+//           chapters?: YoutubeChapter[],
 //         }
 //       }
 //     }
 //   }
-// }
+// }>
 
+export type Database = DatabaseGenerated
 export type Supabase = SupabaseClient<Database>
 
-export type YouTube = Tables<'youtubes'>
 export type Channel = Tables<'youtube_channels'>
+export type YouTube = Merge<Tables<'youtubes'>, { title: Sentence[], description: Sentence[], chapters: YoutubeChapter[] }>
+export type Transcript = Merge<Tables<'youtube_transcripts'>, { sentences: Sentence[] }>
+export type Summary = Merge<Tables<'youtube_summaries'>, { sentences: Sentence[] }>
 
-export type Transcript = Tables<'youtube_transcripts'>
-export type Transcript2 = Merge<Tables<'youtube_transcripts'>, {transcript: Section}>
-export type Summary = Tables<'youtube_summaries'>
+export type YouTubeInsert = Merge<TablesInsert<'youtubes'>, { title: Sentence[], description: Sentence[], chapters: YoutubeChapter[] }>
+export type TranscriptInsert = Merge<TablesInsert<'youtube_transcripts'>, { sentences: Sentence[] }>
+export type SummaryInsert = Merge<TablesInsert<'youtube_summaries'>, { sentences: Sentence[] }>

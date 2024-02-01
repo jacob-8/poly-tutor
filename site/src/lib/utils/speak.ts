@@ -38,7 +38,7 @@ function load_preferred_voice() {
   window.speechSynthesis.onvoiceschanged = function() {
     available_voices = window.speechSynthesis.getVoices()
     if (!available_voices.length) return
-    console.info({voices: available_voices.map(({name}) => name)})
+    // console.info({voices: available_voices.map(({name}) => name)})
 
     const preferred_voice = available_voices.find(voice => voice.name === stored_voice_name)
     if (preferred_voice)

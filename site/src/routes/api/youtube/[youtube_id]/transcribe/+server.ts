@@ -1,21 +1,28 @@
 import { error, json, type Config } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { ResponseCodes } from '$lib/responseCodes'
-import type { ExternalYoutubeTranscribeRequestBody, Sentence, WhisperTranscript, YtTranscribeRequestBody } from '$lib/types'
+import type { ExternalYoutubeTranscribeRequestBody, Sentence, ExtenralYoutubeTranscribeRequestResponse } from '$lib/types'
 import { OPENAI_API_KEY, POLY_WHISPER_KEY } from '$env/static/private'
 import { calculate_chunk_seconds } from './calculate-chunk-seconds'
 import { post_request } from '$lib/utils/post-request'
+import type { LanguageCode } from '$lib/i18n/locales'
 
-export const config: Config = {
-  maxDuration: 300,
+export const config: Config = { maxDuration: 300 }
+
+export interface YoutubeTranscribeRequestBody {
+  language_code: LanguageCode
+  openai_api_key: string
+  duration_seconds: number
 }
 
-export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
+export type YoutubeTranscribeResponseBody = Sentence[]
+
+export const POST: RequestHandler = async ({ locals: { getSession }, params: { youtube_id }, request }) => {
   const { data: session_data, error: _error } = await getSession()
   if (_error || !session_data?.user)
     error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
-  const { youtube_id, openai_api_key, language_code, duration_seconds } = await request.json() as YtTranscribeRequestBody
+  const { openai_api_key, language_code, duration_seconds } = await request.json() as YoutubeTranscribeRequestBody
   console.info({ duration_seconds })
 
   let api_key = openai_api_key
@@ -38,7 +45,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
 
   // 目標是讓每個句子都在一個時間段內，以保持清晰。`
 
-  const { data, error: transcribe_error } = await post_request<ExternalYoutubeTranscribeRequestBody, WhisperTranscript>('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', {
+  const { data, error: transcribe_error } = await post_request<ExternalYoutubeTranscribeRequestBody, ExtenralYoutubeTranscribeRequestResponse>('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', {
     youtube_id,
     openai_api_key,
     poly_key: POLY_WHISPER_KEY,
@@ -56,7 +63,9 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
       end_ms: end_second * 1000,
     }))
 
-    return json(sentences)
+    // TODO: save transcript to db
+
+    return json(sentences satisfies YoutubeTranscribeResponseBody)
   } catch (err) {
     error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
   }

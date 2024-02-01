@@ -16,11 +16,12 @@ export async function handle({ event, resolve }) {
   }
 
   // only useful for things that are guaranteed to run server-side but not for passing to the client
-  event.locals.getSession = () => {
+  event.locals.getSession = async () => {
     const supabase = getSupabase()
     const access_token = event.cookies.get(ACCESS_TOKEN_COOKIE_NAME)
     const refresh_token = event.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
-    return getSession({ supabase, access_token, refresh_token })
+    const session = await getSession({ supabase, access_token, refresh_token })
+    return { ...session, supabase }
   }
 
   const response = await resolve(event, {

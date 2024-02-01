@@ -14,7 +14,8 @@ const user: User = {
 export const authenticatedLocal: App.Locals = {
   getSession: async () => ({
     data: { user, session: null },
-    error: null
+    error: null,
+    supabase: null,
   })
 }
 
@@ -26,6 +27,7 @@ export const unAuthenticatedLocal: App.Locals = {
       user: null,
       session: null,
     },
-    error
+    error,
+    supabase: null,
   })
 }

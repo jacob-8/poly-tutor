@@ -2,7 +2,7 @@ import { setupServer } from 'msw/node'
 import { handlers } from './server-handlers'
 import { writeFileSync } from 'node:fs'
 import { createChunkDecoder } from '$lib/client/chunkDecoder'
-import type { OpenAiChatStreamResponse } from '$lib/types'
+import type { OpenAiChatStreamResponse } from '$api/chat/+server'
 
 export const server = setupServer(...handlers)
 

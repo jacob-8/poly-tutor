@@ -1,3 +1,5 @@
+import type { LanguageCode } from '$lib/i18n/locales'
+import type { SummaryInsert, TranscriptInsert, YouTubeInsert } from '$lib/supabase/database.types'
 import type { TablesInsert } from '$lib/supabase/generated.types'
 export const seeded_user_id = '5e040c00-ce26-4f2f-8413-e0985ec1f4b2'
 
@@ -7,9 +9,9 @@ export const fake_ch_transcript = mocked_prefix + '這是模仿翻譯的假抄�
 
 export interface YouTubeWithAllData {
   channel: TablesInsert<'youtube_channels'>
-  youtube: TablesInsert<'youtubes'>
-  transcripts?: TablesInsert<'youtube_transcripts'>[]
-  summaries?: TablesInsert<'youtube_summaries'>[]
+  youtube: YouTubeInsert
+  transcripts?: TranscriptInsert[]
+  summaries?: SummaryInsert[]
 }
 
 const xiao_bai_channel: TablesInsert<'youtube_channels'> = {
@@ -44,51 +46,72 @@ const freeCodeCamp_channel: TablesInsert<'youtube_channels'> = {
 //   }
 // }
 
+const first_chapter_end_ms = 5 * 60 * 1000
+const chapters = [{start_ms: 0, end_ms: first_chapter_end_ms}, {start_ms: first_chapter_end_ms, end_ms: first_chapter_end_ms * 2}]
+
 export const zh_transcribed_summarized: YouTubeWithAllData = {
   channel: xiao_bai_channel,
   youtube: {
     language: 'zh',
     channel_id: xiao_bai_channel.id,
     id: '9ruqSX_p_48',
-    title: '自驾游贵州黔东南，花50元买了个竹篓，是不是特别洋气？【小白的奇幻旅行】',
-    description: 'YouTube 上沒有字幕的視頻，但字幕是使用 Whisper 轉錄的。 然後補充了一個總結。',
+    title: [
+      {text: '自驾游贵州黔东南，花50元买了个竹篓，是不是特别洋气？', translation: { en: 'Self-driving tour in Qiandongnan, Guizhou. Bought a bamboo basket for 50 yuan, isnt it stylish?' }},
+      {text:'【小白的奇幻旅行】', translation: { en: '【Xiao Bai\'s Fantastic Journey】' }}
+    ],
+    description: [
+      {text: 'YouTube 上沒有字幕的視頻，但字幕是使用 Whisper 轉錄的。', translation: {en: 'The video on YouTube does not have subtitles, but the subtitles are transcribed using Whisper.'}},
+      {text: '然後補充了一個總結。', translation: {en: 'Then a summary is added.'}}
+    ],
     duration_seconds: 614.2, // write with decimal for clarity that this is a 'real' number
     published_at: '2023-02-28T04:00:13Z',
     view_count: 136000,
     like_count: 7700,
+    chapters,
   },
   transcripts: [
     {
       youtube_id: '9ruqSX_p_48',
-      transcript: {
-        sentences: [
-          { text: '在贵州的第一天，我们就遇到了一位非常热情的当地人。' },
-          { text: '他推荐我们去尝试当地的特色美食，真是太美味了！' },
-          { text: '今天我们参观了一个古老的苗族村落，那里的风俗真是独特。' },
-          { text: '我被那里的手工艺品深深吸引，最后买了一个手织的挎包。' },
-          { text: '我们在黔东南的山路上自驾，风景实在是太壮观了。' },
-          { text: '下午我们去了一个当地的市场，那里的热闹程度超乎我的想象。' },
-          { text: '我尝试了一种当地的传统小吃，味道真是让人难忘。' },
-          { text: '晚上，我们在村子里的一个小旅馆住下，感受到了乡村的宁静。' },
-          { text: '村里的孩子们对我们的相机特别好奇，我们拍了很多照片。' },
-          { text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' }
-        ]
-      },
-      transcript_source: 'spoofing',
+      sentences: [
+        { start_ms: 0, end_ms: 2000, text: '在贵州的第一天，我们就遇到了一位非常热情的当地人。' },
+        { start_ms: 2000, end_ms: 4000, text: '他推荐我们去尝试当地的特色美食，真是太美味了！' },
+        { start_ms: 4000, end_ms: 6000, text: '今天我们参观了一个古老的苗族村落，那里的风俗真是独特。' },
+        { start_ms: 6000, end_ms: 8000, text: '我被那里的手工艺品深深吸引，最后买了一个手织的挎包。' },
+        { start_ms: 8000, end_ms: 10000, text: '我们在黔东南的山路上自驾，风景实在是太壮观了。' },
+        { start_ms: 10000, end_ms: 12000, text: '下午我们去了一个当地的市场，那里的热闹程度超乎我的想象。' },
+        { start_ms: 12000, end_ms: 14000, text: '我尝试了一种当地的传统小吃，味道真是让人难忘。' },
+        { start_ms: 14000, end_ms: 16000, text: '晚上，我们在村子里的一个小旅馆住下，感受到了乡村的宁静。' },
+        { start_ms: 16000, end_ms: 18000, text: '村里的孩子们对我们的相机特别好奇，我们拍了很多照片。' },
+        { start_ms: 18000, end_ms: 20000, text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' }
+      ],
+      source: 'spoofing',
       created_by: seeded_user_id
     },
   ],
   summaries: [
     {
       youtube_id: '9ruqSX_p_48',
-      summary: {
-        sentences: [
-          { text: '用於測試目的的非常簡短但虛假的摘要。' }
-        ]
-      },
-      summary_source: 'spoofing',
+      sentences: [
+        { text: '用於測試目的的非常簡短但虛假的摘要。' },
+        { text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' },
+        { text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' },
+        { text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' },
+        { text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' },
+      ],
+      source: 'spoofing',
       start_ms: 0,
-      end_ms: 10000,
+      end_ms: first_chapter_end_ms,
+      created_by: seeded_user_id
+    },
+    {
+      youtube_id: '9ruqSX_p_48',
+      sentences: [
+        { text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' },
+        { text: '用於測試目的的非常簡短但虛假的摘要。' },
+      ],
+      source: 'spoofing',
+      start_ms: first_chapter_end_ms,
+      end_ms: first_chapter_end_ms * 2,
       created_by: seeded_user_id
     }
   ],
@@ -100,15 +123,21 @@ export const zh_transcribed: YouTubeWithAllData = {
     language: 'zh',
     channel_id: xiao_bai_channel.id,
     id: 'UnlyETVcDzY',
-    title: 'An Elder Transforms a Village by Bringing Back 200 Apple Saplings with a Donkey – Truly Amazing!',
-    description: 'YouTube 上沒有字幕的視頻，但字幕是使用 Whisper 轉錄的。 然後補充了一個總結。',
+    chapters,
+    title: [
+      {text: '一位老人騎驢帶回200棵蘋果樹苗，讓村莊煥然一新 – 真是太神奇了！', translation: {en: 'An Elder Transforms a Village by Bringing Back 200 Apple Saplings with a Donkey – Truly Amazing!'}}
+    ],
+    description: [
+      {text: 'YouTube 上沒有字幕的視頻，但字幕是使用 Whisper 轉錄的。', translation: {en: 'The video on YouTube does not have subtitles, but the subtitles are transcribed using Whisper.'}},
+      {text: '然後補充了一個總結。', translation: {en: 'Then a summary is added.'}}
+    ],
     duration_seconds: 534
   },
   transcripts: [
     {
       youtube_id: 'UnlyETVcDzY',
-      transcript: { sentences: [{ text: fake_ch_transcript }] },
-      transcript_source: 'spoofing',
+      sentences: [{ text: fake_ch_transcript }],
+      source: 'spoofing',
       created_by: seeded_user_id
     }
   ]
@@ -120,8 +149,14 @@ export const zh_nothing: YouTubeWithAllData = {
     language: 'zh',
     channel_id: xiao_bai_channel.id,
     id: 'GlctfUFhbaM',
-    title: '在黄土高坡上，老奶奶打造出美丽乡村院落，美得像世外桃源啊【小白的奇幻旅行】',
-    description: 'description here...',
+    chapters,
+    title: [
+      {text: '在黄土高坡上，老奶奶打造出美丽乡村院落，美得像世外桃源啊【小白的奇幻旅行】', translation: {en: 'On the Loess Plateau, a Grandma Creates a Beautiful Rural Courtyard, As Lovely as a Hidden Paradise【Xiao Bais Fantastic Journey】'}}
+    ],
+    description: [
+      {text: '這段視頻展示了老奶奶如何在黃土高坡上用自己的雙手改造家園。', translation: {en: 'This video shows how the grandma transforms her home with her own hands on the Loess Plateau.'}},
+      {text: '她的院落不僅充滿綠色植物，還有許多傳統裝飾，充滿了鄉村的魅力。', translation: {en: 'Her courtyard is filled with green plants and numerous traditional decorations, brimming with rural charm.'}}
+    ],
     duration_seconds: 631
   }
 }
@@ -132,41 +167,43 @@ export const en_transcribed_translated_summarized: YouTubeWithAllData = {
     language: 'en',
     channel_id: freeCodeCamp_channel.id,
     id: 'HSZ_uaif57o',
-    title: 'Learn LangChain.js - Build LLM apps with JavaScript and OpenAI',
-    description: 'description here...',
+    chapters,
+    title: [
+      {text: 'Learn LangChain.js - Build LLM apps with JavaScript and OpenAI', translation: {'zh-CN': '学习LangChain.js - 使用JavaScript和OpenAI构建LLM应用'}}
+    ],
+    description: [
+      {text: 'This tutorial offers an in-depth guide on using LangChain.js to create powerful language model applications leveraging JavaScript and OpenAI technologies.', translation: {'zh-CN': '本教程提供了使用LangChain.js结合JavaScript和OpenAI技术创建强大语言模型应用的深入指南。'}},
+      {text: 'It covers everything from setup to advanced features, making it ideal for developers looking to integrate AI into their web applications.', translation: {'zh-CN': '它涵盖了从设置到高级功能的所有内容，非常适合希望将AI集成到其网络应用程序中的开发人员。'}}
+    ],
     duration_seconds: 5940
   },
   transcripts: [
     {
       youtube_id: 'HSZ_uaif57o',
-      transcript: {
-        sentences: [
-          {
-            text: 'Hello, everyone, and welcome to this video where I will show you how to use LangChain.js to build a language model application.',
-            translation: {
-              'zh-TW': '大家好，歡迎來到這個視頻，在這個視頻中，我將向您展示如何使用LangChain.js來構建語言模型應用程序。'
-            },
+      sentences: [
+        {
+          text: 'Hello, everyone, and welcome to this video where I will show you how to use LangChain.js to build a language model application.',
+          translation: {
+            'zh-TW': '大家好，歡迎來到這個視頻，在這個視頻中，我將向您展示如何使用LangChain.js來構建語言模型應用程序。'
           },
-          { text: 'So we are going to be using JavaScript and OpenAI to build a language model application.' },
-          { text: 'This is going to be a lot of fun.' },
-          { text: 'Lets get started.' },
-          { text: 'So the first thing we need to do is go to the LangChain.js website.' },
-          { text: 'So this is LangChain.js.' },
-        ]
-      },
-      transcript_source: 'spoofing',
+        },
+        { text: 'So we are going to be using JavaScript and OpenAI to build a language model application.' },
+        { text: 'This is going to be a lot of fun.' },
+        { text: 'Lets get started.' },
+        { text: 'So the first thing we need to do is go to the LangChain.js website.' },
+        { text: 'So this is LangChain.js.' },
+      ],
+      source: 'spoofing',
       created_by: seeded_user_id
     }
   ],
   summaries: [
     {
       youtube_id: 'HSZ_uaif57o',
-      summary: {
-        sentences: [
-          { text: 'A tutorial showing how to use LangChain.js to build a language model application.' }
-        ]
-      },
-      summary_source: 'spoofing',
+      sentences: [
+        { text: 'A tutorial showing how to use LangChain.js to build a language model application.' }
+      ],
+      source: 'spoofing',
       start_ms: 0,
       end_ms: 10000,
       created_by: seeded_user_id
@@ -180,8 +217,14 @@ export const en_nothing: YouTubeWithAllData = {
     language: 'en',
     channel_id: freeCodeCamp_channel.id,
     id: '8mAITcNt710',
-    title: 'Harvard CS50 – Full Computer Science University Course',
-    description: 'description here...',
+    chapters,
+    title: [
+      {text: 'Harvard CS50 – Full Computer Science University Course', translation: {'zh-TW': '哈佛大學CS50 - 完整的計算機科學大學課程'}}
+    ],
+    description: [
+      {text: 'This comprehensive course offers a deep dive into the world of computer science, covering fundamental concepts and practical skills taught at Harvard University.', translation: {'zh-TW': '這門全面的課程深入探討計算機科學的世界，涵蓋哈佛大學教授的基礎概念和實用技能。'}},
+      {text: 'From programming basics to advanced algorithms, this course is an excellent resource for anyone interested in pursuing a career in technology.', translation: {'zh-TW': '從編程基礎到高級算法，這門課程對任何有興趣從事科技行業職業生涯的人來說都是絕佳資源。'}}
+    ],
     duration_seconds: 2058
   }
 }
@@ -194,7 +237,7 @@ export const seeded_youtubes: Record<string, YouTubeWithAllData> = {
   en_nothing,
 }
 
-export const unseeded_youtubes: Record<'zh_captions_on_youtube__llama' | 'zh_no_captions__ai_camp', { id: string, language: 'zh' | 'en', channel_id?: string}> = {
+export const unseeded_youtubes: Record<'zh_captions_on_youtube__llama' | 'zh_no_captions__ai_camp', { id: string, language: LanguageCode, channel_id?: string}> = {
   zh_captions_on_youtube__llama: {
     id: 'lpyKfNjTZi8',
     language: 'zh',

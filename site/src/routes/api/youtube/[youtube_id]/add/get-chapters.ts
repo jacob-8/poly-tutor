@@ -1,3 +1,44 @@
+import type { YoutubeChapter } from '$lib/types'
+import { CORS_PROXY_URL } from '$env/static/private'
+
+export async function get_chapters({youtube_id, _fetch, duration_seconds}: { youtube_id: string, _fetch: typeof fetch, duration_seconds: number}): Promise<YoutubeChapter[]> {
+  if (!CORS_PROXY_URL)
+    throw new Error('CORS_PROXY_URL not configured')
+
+  try {
+    const response = await _fetch(`${CORS_PROXY_URL}/?https://www.youtube.com/watch?v=${youtube_id}`)
+    const html = await response.text()
+    const data = parse_data_from_html(html)
+    const chapters = extract_chapters_from_youtube_initial_data(data)
+    // TODO: translate chapter titles
+    return chapters
+  } catch (err) {
+    console.error(err.message)
+    return auto_calculate_chapters(duration_seconds)
+  }
+}
+
+function auto_calculate_chapters(duration_seconds: number): YoutubeChapter[] {
+  const duration_ms = duration_seconds * 1000
+  const desired_length_ms = 5 * 60 * 1000
+  const chapters: YoutubeChapter[] = []
+
+  for (let start_ms = 0; start_ms < duration_ms; start_ms += desired_length_ms) {
+    let end_ms = start_ms + desired_length_ms
+
+    // If the last block is less than 2 minutes long, merge it with the previous block
+    if (end_ms + 2 * 60 * 1000 > duration_ms && chapters.length > 0) {
+      chapters[chapters.length - 1].end_ms = duration_ms
+    } else {
+      end_ms = Math.min(end_ms, duration_ms)
+      chapters.push({ start_ms, end_ms })
+    }
+  }
+
+  return chapters
+}
+
+
 interface YouTubeInitialData {
   engagementPanels: {
     engagementPanelSectionListRenderer: {
@@ -39,18 +80,7 @@ interface YouTubeInitialData {
   }[]
 }
 
-export interface YoutubeChapter {
-  title: string;
-  start_ms: number;
-  end_ms: number;
-  thumbnails: {
-      url: string;
-      width: number;
-      height: number;
-  }[];
-}
-
-export function parse_data_from_html(html: string): YouTubeInitialData {
+function parse_data_from_html(html: string): YouTubeInitialData {
   const ytInitialDataRE = /var ytInitialData = (?<json>.*?);<\/script>/
   const match = ytInitialDataRE.exec(html)
 
@@ -65,7 +95,7 @@ export function parse_data_from_html(html: string): YouTubeInitialData {
   }
 }
 
-export function extract_chapters_from_youtube_initial_data(youtube_initial_data: YouTubeInitialData): YoutubeChapter[] | null {
+function extract_chapters_from_youtube_initial_data(youtube_initial_data: YouTubeInitialData): YoutubeChapter[] | null {
   const { engagementPanels } = youtube_initial_data
   const chapters_engagement_panel = engagementPanels.find(panel => panel.engagementPanelSectionListRenderer.panelIdentifier === 'engagement-panel-macro-markers-description-chapters')
   const { contents } = chapters_engagement_panel.engagementPanelSectionListRenderer.content.macroMarkersListRenderer

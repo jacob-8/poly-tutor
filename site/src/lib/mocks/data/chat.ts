@@ -1,4 +1,4 @@
-import type { OpenAiChatStreamResponse } from '$lib/types'
+import type { OpenAiChatStreamResponse } from '$api/chat/+server'
 
 export const streamResponses: OpenAiChatStreamResponse[] = [
   {

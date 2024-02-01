@@ -1,13 +1,11 @@
 import type { google } from '@google-cloud/language/build/protos/protos'
-import type { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai-edge'
 import type { LocaleCode } from './i18n/locales'
-import type { ChatModels } from './types/models'
 
 // Books, Shows, Volumes, Pages, Paragraphs are all sections, this let's us nest as many layers as we need
-export interface Section {
-  sentences?: Sentence[]
-  children?: Section[]
-}
+// export interface Section {
+//   sentences?: Sentence[]
+//   children?: Section[]
+// }
 
 export interface Sentence {
   text?: string
@@ -110,31 +108,19 @@ export interface GoogleAuthUserMetaData{
 
 export type UserMetaData = GoogleAuthUserMetaData
 
-// API
-
-export interface YtAddRequestBody {
-  youtube_id: string
-  language_code: 'en' | 'zh'
+export interface YoutubeChapter {
+  start_ms: number;
+  end_ms: number;
+  title?: string;
+  translation?: Translation;
+  thumbnails?: {
+      url: string;
+      width: number;
+      height: number;
+  }[];
 }
 
-export interface YtCaptionsRequestBody {
-  youtube_id: string
-  locale: LocaleCode
-}
-
-export interface YtTranscribeRequestBody {
-  youtube_id: string
-  openai_api_key: string
-  language_code: 'en' | 'zh'
-  duration_seconds: number
-}
-
-export interface YtTranslateRequestBody {
-  youtube_id: string
-  sentences: Sentence[]
-  mother: LocaleCode
-  learning: LocaleCode
-}
+// External APIs
 
 export interface ExternalYoutubeTranscribeRequestBody {
   youtube_id: string
@@ -145,39 +131,10 @@ export interface ExternalYoutubeTranscribeRequestBody {
   seconds_per_chunk?: number
 }
 
-export interface WhisperTranscript {
+export interface ExtenralYoutubeTranscribeRequestResponse {
   transcript: {
     text: string,
     start_second: number,
     end_second: number,
   }[]
 }
-
-export interface TranslateRequestBody {
-  text: string
-  sourceLanguageCode: LocaleCode // https://cloud.google.com/translate/docs/languages
-  targetLanguageCode: LocaleCode
-}
-
-export interface AnalyzeSyntaxRequestBody {
-  text: string
-  sourceLanguageCode: string
-}
-
-export interface ChatRequestBody {
-  messages: ChatCompletionRequestMessage[]
-  model: ChatModels
-  max_tokens: number
-  openai_api_key: string
-}
-
-export interface OpenAiChatStreamResponse extends Omit<CreateChatCompletionResponse, 'usage'> {
-  choices: {
-    index: number;
-    delta: {
-      content?: string;
-    };
-    finish_reason: string | null;
-  }[];
-}
-

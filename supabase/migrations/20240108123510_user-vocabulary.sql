@@ -7,7 +7,7 @@ CREATE TABLE word_updates (
   "language" language not null,
   "status" int not null,
   views int not null,
-  created_by uuid references auth.users not null default auth.uid(), -- should have added ON DELETE CASCADE
+  created_by uuid NOT NULL DEFAULT auth.uid() REFERENCES auth.users ON DELETE CASCADE,
   created_at timestamp with time zone DEFAULT now() NOT NULL
 );
 

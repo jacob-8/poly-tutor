@@ -7,12 +7,15 @@
     "send_code": "Send Code",
     "sent_code": "Sent code",
     "enter_6_digit_code_sent_to": "Enter 6-digit code sent to",
-    "error": "Error"
+    "error": "Error",
+    "loading": "Loading"
   },
   "shows": {
     "paste_youtube_url": "Paste YouTube URL",
     "summary": "Summary",
     "summarize": "Summarize",
+    "summarize_chapter": "Summarize Chapter",
+    "chapter_summary": "Chapter Summary",
     "get_captions": "Get Captions",
     "analyze": "Analyze",
     "translate": "Translate",

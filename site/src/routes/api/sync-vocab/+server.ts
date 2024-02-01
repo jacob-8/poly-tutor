@@ -6,9 +6,10 @@ import { WordStatus } from '$lib/types'
 import { getAdminSupabaseClient } from '$lib/supabase/admin'
 import type { Config } from '@sveltejs/adapter-vercel'
 
-export const config: Config = {
-  maxDuration: 300,
-}
+export const config: Config = { maxDuration: 300 }
+
+export interface SyncVocabRequestBody { url: string }
+export interface SyncVocabResponseBody { result: string }
 
 interface Timestamp {
   seconds: number;
@@ -37,14 +38,14 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request, fe
   if (_error || !session_data?.user)
     error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
-  const { url } = await request.json()
+  const { url } = await request.json() as SyncVocabRequestBody
   // const url = '/j-import.json'
   const response = await fetch(url)
   const json_string = await response.text()
   const words = JSON.parse(json_string) as Word[]
 
   const count = await reset_and_migrate_vocab(words, session_data.user.id)
-  return json(`Migrated ${count} words for ${url}`)
+  return json({result: `Migrated ${count} words for ${url}`} satisfies SyncVocabResponseBody)
 }
 
 async function reset_and_migrate_vocab(words: Word[], user_id: string) {

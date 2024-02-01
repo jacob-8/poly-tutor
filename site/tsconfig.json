@@ -16,6 +16,12 @@
       ],
       "$lib/*": [
         "./src/lib/*"
+      ],
+      "$api": [
+        "./src/routes/api"
+      ],
+      "$api/*": [
+        "./src/routes/api/*"
       ]
     },
     "baseUrl": ".",

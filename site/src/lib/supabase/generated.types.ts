@@ -1,4 +1,4 @@
-import type { Section } from '$lib/types'
+import type { Sentence, YoutubeChapter } from '$lib/types'
 
 export type Json =
   | string
@@ -11,68 +11,6 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      playlists: {
-        Row: {
-          created_at: string
-          created_by: string
-          id: string
-          name: string
-          public: string | null
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string
-          id?: string
-          name: string
-          public?: string | null
-        }
-        Update: {
-          created_at?: string
-          created_by?: string
-          id?: string
-          name?: string
-          public?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'playlists_created_by_fkey'
-            columns: ['created_by']
-            isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          }
-        ]
-      }
-      playlists_youtubes: {
-        Row: {
-          playlist_id: string
-          youtube_id: string
-        }
-        Insert: {
-          playlist_id: string
-          youtube_id: string
-        }
-        Update: {
-          playlist_id?: string
-          youtube_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'playlists_youtubes_playlist_id_fkey'
-            columns: ['playlist_id']
-            isOneToOne: false
-            referencedRelation: 'playlists'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'playlists_youtubes_youtube_id_fkey'
-            columns: ['youtube_id']
-            isOneToOne: false
-            referencedRelation: 'youtubes'
-            referencedColumns: ['id']
-          }
-        ]
-      }
       user_youtubes: {
         Row: {
           added_at: string
@@ -110,7 +48,7 @@ export interface Database {
         Row: {
           created_at: string
           created_by: string
-          id: string
+          id: number
           language: Database['public']['Enums']['language']
           status: number
           views: number
@@ -119,7 +57,7 @@ export interface Database {
         Insert: {
           created_at?: string
           created_by?: string
-          id?: string
+          id?: number
           language: Database['public']['Enums']['language']
           status: number
           views: number
@@ -128,7 +66,7 @@ export interface Database {
         Update: {
           created_at?: string
           created_by?: string
-          id?: string
+          id?: number
           language?: Database['public']['Enums']['language']
           status?: number
           views?: number
@@ -184,9 +122,9 @@ export interface Database {
           description: string | null
           end_ms: number
           id: string
+          sentences: Sentence[]
+          source: string
           start_ms: number
-          summary: Section
-          summary_source: string
           title: string | null
           updated_at: string
           youtube_id: string
@@ -197,9 +135,9 @@ export interface Database {
           description?: string | null
           end_ms: number
           id?: string
+          sentences: Sentence[]
+          source: string
           start_ms: number
-          summary: Section
-          summary_source: string
           title?: string | null
           updated_at?: string
           youtube_id: string
@@ -210,9 +148,9 @@ export interface Database {
           description?: string | null
           end_ms?: number
           id?: string
+          sentences?: Sentence[]
+          source?: string
           start_ms?: number
-          summary?: Section
-          summary_source?: string
           title?: string | null
           updated_at?: string
           youtube_id?: string
@@ -240,8 +178,8 @@ export interface Database {
           created_by: string
           description: string | null
           id: string
-          transcript: Section
-          transcript_source: string
+          sentences: Sentence[]
+          source: string
           updated_at: string
           youtube_id: string
         }
@@ -250,8 +188,8 @@ export interface Database {
           created_by?: string
           description?: string | null
           id?: string
-          transcript: Section
-          transcript_source: string
+          sentences: Sentence[]
+          source: string
           updated_at?: string
           youtube_id: string
         }
@@ -260,8 +198,8 @@ export interface Database {
           created_by?: string
           description?: string | null
           id?: string
-          transcript?: Section
-          transcript_source?: string
+          sentences?: Sentence[]
+          source?: string
           updated_at?: string
           youtube_id?: string
         }
@@ -285,38 +223,41 @@ export interface Database {
       youtubes: {
         Row: {
           channel_id: string
+          chapters: YoutubeChapter[]
           created_at: string
-          description: string | null
+          description: Sentence[] | null
           duration_seconds: number | null
           id: string
           language: Database['public']['Enums']['language']
           like_count: number | null
           published_at: string | null
-          title: string
+          title: Sentence[]
           view_count: number | null
         }
         Insert: {
           channel_id: string
+          chapters: YoutubeChapter[]
           created_at?: string
-          description?: string | null
+          description?: Sentence[] | null
           duration_seconds?: number | null
           id: string
           language: Database['public']['Enums']['language']
           like_count?: number | null
           published_at?: string | null
-          title: string
+          title: Sentence[]
           view_count?: number | null
         }
         Update: {
           channel_id?: string
+          chapters?: YoutubeChapter[]
           created_at?: string
-          description?: string | null
+          description?: Sentence[] | null
           duration_seconds?: number | null
           id?: string
           language?: Database['public']['Enums']['language']
           like_count?: number | null
           published_at?: string | null
-          title?: string
+          title?: Sentence[]
           view_count?: number | null
         }
         Relationships: [

@@ -52,7 +52,7 @@
       {/if}
     </div>
     <div class="sm:w-50% overflow-y-auto relative sm:pl-2 pt-2 sm:pt-0">
-      <slot name="sentences" in_view={active_view === 'main'} />
+      <slot name="sentences" in_view={active_view === 'main'} {scroll_to_study} />
     </div>
   </div>
 

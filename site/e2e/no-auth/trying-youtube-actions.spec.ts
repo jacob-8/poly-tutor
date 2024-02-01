@@ -9,7 +9,7 @@ test('signing up from youtube succesfully adds youtube after auth is saved to db
   await page.getByRole('link', { name: 'Back Button' }).click()
   await expect(page
     .getByTestId('my-videos')
-    .filter({ has: page.getByText(seeded_youtubes.zh_transcribed_summarized.youtube.title.slice(0, 10)) }))
+    .filter({ has: page.getByText(seeded_youtubes.zh_transcribed_summarized.youtube.title.map(sentence => sentence.text).join(' ').slice(0, 10)) }))
     .toBeVisible()
 }) // this is to avoid a race-timing bug that is hard to find but nows it's not showing up
 

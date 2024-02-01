@@ -1,8 +1,7 @@
 import { request } from '$lib/mocks/sveltekit-endpoint-helper'
-import { POST } from './+server'
+import { POST, type YoutubeTranscribeRequestBody } from './+server'
 import { authenticatedLocal, unAuthenticatedLocal } from '$lib/mocks/locals'
 import { ResponseCodes } from '$lib/responseCodes'
-import type { YtTranscribeRequestBody } from '$lib/types'
 import { unseeded_youtubes } from '$lib/mocks/seed/youtubes'
 
 vi.mock('$env/static/private', () => {
@@ -36,13 +35,12 @@ describe(POST, () => {
   })
 
   test('properly passes on error from transcriber', async () => {
-    const body: YtTranscribeRequestBody = {
-      youtube_id: unseeded_youtubes.zh_no_captions__ai_camp.id,
+    const body: YoutubeTranscribeRequestBody = {
       language_code: 'fr' as 'en',
       duration_seconds: 100,
       openai_api_key: 'foo',
     }
-    await expect(() => request(POST, { locals: authenticatedLocal, body })).rejects.toThrowErrorMatchingInlineSnapshot(`
+    await expect(() => request(POST, { locals: authenticatedLocal, params: { youtube_id: unseeded_youtubes.zh_no_captions__ai_camp.id }, body })).rejects.toThrowErrorMatchingInlineSnapshot(`
       HttpError {
         "body": {
           "message": "French language not supported",
@@ -53,13 +51,12 @@ describe(POST, () => {
   })
 
   test('returns proper sentences after successful transcription', async () => {
-    const body: YtTranscribeRequestBody = {
-      youtube_id: unseeded_youtubes.zh_captions_on_youtube__llama.id,
+    const body: YoutubeTranscribeRequestBody = {
       language_code: 'zh',
       duration_seconds: 100,
       openai_api_key: 'fee',
     }
-    const response = await request(POST, { locals: authenticatedLocal, body })
+    const response = await request(POST, { locals: authenticatedLocal, params: { youtube_id: unseeded_youtubes.zh_captions_on_youtube__llama.id }, body })
     expect(response.status).toBe(ResponseCodes.OK)
     expect(await response.json()).toMatchFileSnapshot('./result.snap.json5')
   })

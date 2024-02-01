@@ -1,49 +1,84 @@
-import { error, json } from '@sveltejs/kit'
+import { error, json, type Config } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { ResponseCodes } from '$lib/responseCodes'
-import type { YtAddRequestBody } from '$lib/types'
-import type { Supabase } from '$lib/supabase/database.types'
+import type { Supabase, YouTube } from '$lib/supabase/database.types'
 import { getAdminSupabaseClient } from '$lib/supabase/admin'
 import { YOUTUBE_API_3_KEY } from '$env/static/private'
 import { youtube_pt_format_duration_to_seconds } from './duration-to-seconds'
+import type { LanguageCode, LocaleCode } from '$lib/i18n/locales'
+import type { Sentence } from '$lib/types'
+import { split_into_sentences } from './split_string_into_sentences'
+import { get_chapters } from './get-chapters'
+import { save_youtube_captions_as_transcript_if_exists } from './captions/get-captions'
+import { translate_sentences } from '$api/translate/translate-sentences'
 
-export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
-  const { data: session_data, error: _error } = await getSession()
+export const config: Config = { maxDuration: 300 }
+
+export interface YoutubeAddRequestBody {
+  mother: LocaleCode
+  learning: LocaleCode
+}
+
+export type YoutubeAddResponseBody = YouTube
+
+export const POST: RequestHandler = async ({ locals: { getSession }, params: { youtube_id }, request, fetch }) => {
+  const { data: session_data, error: _error, supabase } = await getSession()
   if (_error || !session_data?.user)
     error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
-  const { youtube_id, language_code } = await request.json() as YtAddRequestBody
-
-  if (!youtube_id)
-    error(ResponseCodes.BAD_REQUEST, 'No youtube_id found in request body')
+  const { mother, learning } = await request.json() as YoutubeAddRequestBody
 
   try {
-    const { channel_id, title, description, locale, published_at, duration_seconds } = await get_youtube_info_from_youtube(youtube_id)
+    const { channel_id, title: youtube_title, description: youtube_description, locale: youtube_locale, published_at, duration_seconds } = await get_youtube_info_from_youtube(youtube_id)
 
-    const adminSupabase = getAdminSupabaseClient()
+    if (youtube_locale) {
+      const video_is_chinese = youtube_locale.includes('zh')
+      if (video_is_chinese && learning === 'en')
+        error(ResponseCodes.BAD_REQUEST, 'Cannot add a Chinese video when studying English. Please switch languages first.')
+      if (!video_is_chinese && learning.includes('zh'))
+        error(ResponseCodes.BAD_REQUEST, '不能添加英文视频，因为你正在学习中文。请先切换语言。')
+    }
 
-    const channel_exists = await channel_is_in_db(channel_id, adminSupabase)
-    if (!channel_exists)
-      await add_channel(channel_id, adminSupabase)
+    const language: LanguageCode = youtube_locale
+      ? (youtube_locale.includes('zh') ? 'zh' : 'en')
+      : learning.split('-')[0] as LanguageCode
+    const admin_supabase = getAdminSupabaseClient()
 
-    const language = locale
-      ? (locale.includes('zh') ? 'zh' : 'en')
-      : language_code
+    const channel_in_db = async () => {
+      const channel_exists = await channel_is_in_db(channel_id, admin_supabase)
+      if (!channel_exists)
+        await add_channel(channel_id, admin_supabase)
+    }
 
-    const { data, error: _error2 } = await adminSupabase.from('youtubes').insert({
+    const split_and_translate = async ({ text, mother, learning}: {text: string, mother: LocaleCode, learning: LocaleCode}) => {
+      const sentences: Sentence[] = split_into_sentences(text).map(sentence => ({ text: sentence }))
+      return await translate_sentences({ sentences, mother, learning, _fetch: fetch })
+    }
+
+    const [title, description, chapters] = await Promise.all([
+      split_and_translate({ text: youtube_title, mother, learning}),
+      split_and_translate({text: youtube_description, mother, learning}),
+      get_chapters({youtube_id, _fetch: fetch, duration_seconds}),
+      channel_in_db(),
+    ])
+
+    const { data: youtube, error: save_youtube_error } = await admin_supabase.from('youtubes').insert({
       id: youtube_id,
-      title,
-      description,
       channel_id,
       language,
       published_at,
-      duration_seconds
-    })
-      .select()
+      title,
+      description,
+      duration_seconds,
+      chapters,
+    }).select()
       .single()
-    if (_error2)
-      throw new Error(_error2.message)
-    return json(data)
+    if (save_youtube_error)
+      throw new Error(save_youtube_error.message)
+
+    await save_youtube_captions_as_transcript_if_exists({youtube_id, locale: learning, supabase})
+
+    return json(youtube satisfies YoutubeAddResponseBody)
   } catch (err) {
     console.error(err.message)
     error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
@@ -232,4 +267,3 @@ interface YouTubeChannelSnippetData {
     }
   }[];
 }
-

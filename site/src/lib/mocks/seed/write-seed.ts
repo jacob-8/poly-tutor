@@ -1,14 +1,22 @@
-import { userString, youtube_channels, youtubes, youtube_transcripts, youtube_summaries, word_updates } from './tables'
+import { youtube_channels, youtubes, youtube_transcripts, youtube_summaries, word_updates, users } from './tables'
 
 function convert_to_sql_string(value: string | number | object) {
   if (typeof value === 'boolean')
     return `${value}`
   if (typeof value === 'string')
-    return `'${value}'`
+    return `'${value.replace(/'/g, '\'\'')}'` // Escape single quotes
   if (typeof value === 'number')
     return `${value}`
-  if (Array.isArray(value))
+  if (Array.isArray(value)) {
+    if (value.length > 0 && typeof value[0] === 'object')
+      return `'{${value.map(item => `"${JSON.stringify(item).replace(/"/g, '\\"').replace(/'/g, '\'\'')}"`).join(',')}}'::jsonb[]`
     return `'{${value.join(',')}}'`
+  }
+  if (Array.isArray(value)) {
+    if (value.length > 0 && typeof value[0] === 'object')
+      return `'[${value.map(item => JSON.stringify(item)).join(',').replace(/'/g, '\'\'')}]'`
+    return `'{${value.join(',')}}'`
+  }
   if (!value) // must come here to avoid snatching up 0, empty string, or false, but not after object
     return 'null'
   if (typeof value === 'object')
@@ -42,6 +50,13 @@ if (import.meta.vitest) {
             b: 1
           }
         },
+        jsonb_array: [
+          {
+            a: {
+              b: 'it\'s'
+            }
+          }
+        ],
       },
       {
         real: 12.4,
@@ -61,7 +76,7 @@ if (import.meta.vitest) {
 }
 
 export function exportToSql() {
-  const sql = `${userString}
+  const sql = `${write_sql_file_string('auth.users', users)}
 
 ${write_sql_file_string('youtube_channels', youtube_channels)}
 

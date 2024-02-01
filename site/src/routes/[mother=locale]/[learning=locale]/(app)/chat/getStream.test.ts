@@ -1,5 +1,5 @@
+import type { ChatRequestBody } from '$api/chat/+server'
 import { createChunkDecoder } from '$lib/client/chunkDecoder'
-import type { ChatRequestBody } from '$lib/types'
 import { OpenAiChatModels } from '$lib/types/models'
 
 // This is a simple way to receive entire stream and return it

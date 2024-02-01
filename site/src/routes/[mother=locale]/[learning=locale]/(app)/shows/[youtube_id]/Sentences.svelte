@@ -30,7 +30,7 @@
   let bilingual_loop_back = false
   let intentionally_updated_at: number | null = null
 
-  let current_caption_index = 0
+  let current_caption_index = -1
   let current_caption: Sentence
 
   let read_translation_for_caption: number

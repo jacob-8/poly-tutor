@@ -1,14 +1,29 @@
 import type { RequestHandler } from './$types'
-import type { CreateChatCompletionRequest } from 'openai-edge'
+import type { CreateChatCompletionRequest, ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai-edge'
 import { OPENAI_API_KEY } from '$env/static/private'
 import { error } from '@sveltejs/kit'
 import type { Config } from '@sveltejs/adapter-vercel'
 import { ResponseCodes } from '$lib/responseCodes'
-import type { ChatRequestBody } from '$lib/types'
+import type { ChatModels } from '$lib/types/models'
 // import { createChunkDecoder } from '$lib/client/chunkDecoder'
 
-export const config: Config = {
-  runtime: 'edge',
+export const config: Config = { runtime: 'edge' }
+
+export interface OpenAiChatStreamResponse extends Omit<CreateChatCompletionResponse, 'usage'> {
+  choices: {
+    index: number;
+    delta: {
+      content?: string;
+    };
+    finish_reason: string | null;
+  }[];
+}
+
+export interface ChatRequestBody {
+  messages: ChatCompletionRequestMessage[]
+  model: ChatModels
+  max_tokens: number
+  openai_api_key: string
 }
 
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {

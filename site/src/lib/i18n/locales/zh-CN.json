@@ -7,12 +7,15 @@
     "sent_code": "发送验证码",
     "error": "错误",
     "enter_6_digit_code_sent_to": "输入发送至的 6 位数代码",
-    "enter_email_address": "输入电邮邮件"
+    "enter_email_address": "输入电邮邮件",
+    "loading": "加载中"
   },
   "shows": {
     "paste_youtube_url": "粘贴 YouTube 视频网址",
     "summary": "摘要",
     "summarize": "摘要",
+    "summarize_chapter": "总结章节",
+    "chapter_summary": "章节摘要",
     "get_captions": "取得字幕",
     "analyze": "分析",
     "translate": "翻译",

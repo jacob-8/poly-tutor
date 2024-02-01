@@ -1,5 +1,5 @@
 import type { LocaleCode } from '$lib/i18n/locales'
-import type { YoutubeCaptionTrack } from './+server'
+import type { YoutubeCaptionTrack } from './get-captions'
 
 const zh_TW_code_preferences = ['zh-TW', 'zh-Hant', 'zh', 'zh-CN', 'zh-Hans']
 const zh_CN_code_preferences = ['zh-CN', 'zh-Hans', 'zh', 'zh-TW', 'zh-Hant']
