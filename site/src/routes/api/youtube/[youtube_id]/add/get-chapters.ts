@@ -114,6 +114,12 @@ function extract_chapters_from_youtube_initial_data(youtube_initial_data: YouTub
 }
 
 if (import.meta.vitest) {
+  vi.mock('$env/static/private', () => {
+    return {
+      CORS_PROXY_URL: 'foo',
+    }
+  })
+
   test(parse_data_from_html, () => {
     const html = `<!DOCTYPE html>
 <html>

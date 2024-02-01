@@ -3,10 +3,16 @@
     "end_ms": 4000,
     "start_ms": 0,
     "text": "這是一個模擬的Whisper轉錄",
+    "translation": {
+      "en": "translated-這是一個模擬的Whisper轉錄",
+    },
   },
   {
     "end_ms": 8000,
     "start_ms": 4000,
     "text": "還有一個句子",
+    "translation": {
+      "en": "translated-還有一個句子",
+    },
   },
 ]

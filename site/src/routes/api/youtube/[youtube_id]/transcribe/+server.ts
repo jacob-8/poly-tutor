@@ -72,7 +72,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
       .single()
     if (saving_error) throw new Error(saving_error.message)
 
-    return json(sentences satisfies YoutubeTranscribeResponseBody)
+    return json(sentences_with_translation satisfies YoutubeTranscribeResponseBody)
   } catch (err) {
     error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)
   }

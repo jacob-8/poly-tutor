@@ -3,11 +3,18 @@ import { POST, type YoutubeTranscribeRequestBody } from './+server'
 import { authenticatedLocal, unAuthenticatedLocal } from '$lib/mocks/locals'
 import { ResponseCodes } from '$lib/responseCodes'
 import { unseeded_youtubes } from '$lib/mocks/seed/youtubes'
+import type { Sentence } from '$lib/types'
 
 vi.mock('$env/static/private', () => {
   return {
     OPENAI_API_KEY: 'test-key',
     POLY_WHISPER_KEY: 'test-key',
+  }
+})
+
+vi.mock('$api/translate/translate-sentences', () => {
+  return {
+    translate_sentences: ({sentences}: {sentences: Sentence[]}) => sentences.map(sentence => ({ ...sentence, translation: { en: `translated-${sentence.text}` }}))
   }
 })
 
