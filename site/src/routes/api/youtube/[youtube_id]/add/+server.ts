@@ -67,16 +67,16 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
       channel_id,
       language,
       published_at,
-      title,
-      description,
-      duration_seconds,
+      title: title || [],
+      description: description || [],
+      duration_seconds: 123,
       chapters,
     }).select()
       .single()
     if (save_youtube_error)
       throw new Error(save_youtube_error.message)
 
-    await save_youtube_captions_as_transcript_if_exists({youtube_id, locale: learning, supabase})
+    await save_youtube_captions_as_transcript_if_exists({youtube_id, mother, learning, supabase, _fetch: fetch})
 
     return json(youtube satisfies YoutubeAddResponseBody)
   } catch (err) {

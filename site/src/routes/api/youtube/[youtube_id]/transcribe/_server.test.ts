@@ -36,9 +36,12 @@ describe(POST, () => {
 
   test('properly passes on error from transcriber', async () => {
     const body: YoutubeTranscribeRequestBody = {
+      mother: 'zh-CN',
+      learning: 'en',
       language_code: 'fr' as 'en',
       duration_seconds: 100,
       openai_api_key: 'foo',
+      prompt: 'foo',
     }
     await expect(() => request(POST, { locals: authenticatedLocal, params: { youtube_id: unseeded_youtubes.zh_no_captions__ai_camp.id }, body })).rejects.toThrowErrorMatchingInlineSnapshot(`
       HttpError {
@@ -52,9 +55,12 @@ describe(POST, () => {
 
   test('returns proper sentences after successful transcription', async () => {
     const body: YoutubeTranscribeRequestBody = {
+      mother: 'en',
+      learning: 'zh-TW',
       language_code: 'zh',
       duration_seconds: 100,
       openai_api_key: 'fee',
+      prompt: 'fee',
     }
     const response = await request(POST, { locals: authenticatedLocal, params: { youtube_id: unseeded_youtubes.zh_captions_on_youtube__llama.id }, body })
     expect(response.status).toBe(ResponseCodes.OK)

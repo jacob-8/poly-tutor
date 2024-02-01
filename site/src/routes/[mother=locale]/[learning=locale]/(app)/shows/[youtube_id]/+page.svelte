@@ -222,7 +222,7 @@
               <!-- <ShowMeta {language} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.summary} settings={$settings} sentence={$summary[0]} {studySentence} add_seen_sentence={user_vocabulary.add_seen_sentence} /> -->
             {:else}
               <!-- <div class="mb-2 px-2 sm:px-0"> -->
-              <Button form="menu" onclick={async () => summary = await data.summarize_chapter(chapter_index)}><span class="i-material-symbols-page-info-outline text-xl -mb-1 mr-1" />{$page.data.t.shows.summarize_chapter}</Button>
+              <Button form="menu" onclick={async () => summary = await data.summarize_chapter({sentences, start_ms: chapter.start_ms, end_ms: chapter.end_ms})}><span class="i-material-symbols-page-info-outline text-xl -mb-1 mr-1" />{$page.data.t.shows.summarize_chapter}</Button>
               <!-- </div> -->
             {/if}
 

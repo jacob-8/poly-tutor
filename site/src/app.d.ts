@@ -7,7 +7,7 @@ import type { Supabase } from '$lib/supabase/database.types'
 declare global {
 	namespace App {
 		interface Locals {
-			getSession(): Promise<AuthResponse> | null
+			getSession(): Promise<AuthResponse & { supabase: Supabase}> | null
     }
     interface PageData {
 			// root +layout.ts

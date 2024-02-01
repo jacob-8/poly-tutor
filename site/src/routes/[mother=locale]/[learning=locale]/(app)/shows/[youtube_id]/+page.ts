@@ -50,7 +50,20 @@ export const load = (async ({ params: { youtube_id, mother, learning }, fetch, p
   async function transcribe(whisper_chunk_minutes = 5): Promise<Sentence[]> {
     const openai_api_key = get_openai_api_key()
     if (!openai_api_key) return
-    const { data: sentences, error } = await post_request<YoutubeTranscribeRequestBody, YoutubeTranscribeResponseBody>(`/api/youtube/${youtube_id}/transcribe`, { openai_api_key, language_code: language, duration_seconds: whisper_chunk_minutes * 60 }, fetch)
+    const prompt = learning === 'zh-TW'
+      ? '請使用繁體字。'
+      : learning === 'zh-CN'
+        ? '请使用简体字。'
+        : 'Please use punctuation marks.'
+
+    // const puncPrompt = 'Whisper, as you transcribe speech into text, please ensure to include punctuation marks as accurately as possible. Additionally, when creating the timeline for the subtitles, try to split at the punctuation marks to ensure that sentences are not divided across different time segments. The goal is to have each sentence contained within a single time segment for clarity and coherence. 請使用繁體字。'
+    //   const punc_prompt_ch = `請盡量準確地加上標點符號。
+
+    // 在製作字幕的時間軸時，在標點符號處分割，以避免句子被分散在不同時間段。
+
+    // 目標是讓每個句子都在一個時間段內，以保持清晰。`
+
+    const { data: sentences, error } = await post_request<YoutubeTranscribeRequestBody, YoutubeTranscribeResponseBody>(`/api/youtube/${youtube_id}/transcribe`, { openai_api_key, prompt, mother, learning, language_code: language, duration_seconds: whisper_chunk_minutes * 60 }, fetch)
     if (error) {
       console.error(error.message)
       throw new Error(error.message)
@@ -58,15 +71,16 @@ export const load = (async ({ params: { youtube_id, mother, learning }, fetch, p
     return sentences
   }
 
-  async function summarize_chapter(chapter_index: number): Promise<Sentence[]> {
+  async function summarize_chapter({start_ms, end_ms, sentences}: { start_ms: number, end_ms: number, sentences: Sentence[]}): Promise<Sentence[]> {
     const openai_api_key = get_openai_api_key()
     if (!openai_api_key) return
-    const { data: sentences, error } = await post_request<YoutubeSummarizeRequestBody, YoutubeSummarizeResponseBody>(`/api/youtube/${youtube_id}/summarize`, { openai_api_key, chapter_index }, fetch)
+    const transcript = sentences.map(({ text }) => text).join('\n')
+    const { data: summary, error } = await post_request<YoutubeSummarizeRequestBody, YoutubeSummarizeResponseBody>(`/api/youtube/${youtube_id}/summarize`, { openai_api_key, mother, learning, start_ms, end_ms, transcript }, fetch)
     if (error) {
       console.error(error.message)
       throw new Error(error.message)
     }
-    return sentences
+    return summary
   }
 
   return {
