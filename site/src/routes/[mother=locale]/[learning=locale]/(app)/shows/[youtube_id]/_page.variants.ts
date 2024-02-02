@@ -4,12 +4,11 @@ import type Component from './+page.svelte'
 import { mockBobUser, mockLayoutData } from '$lib/mocks/data/page'
 import type { YouTube } from '$lib/supabase/database.types'
 import {  readable } from 'svelte/store'
-import type { UserVocabulary } from '$lib/types'
+import { WordStatus, type UserVocabulary } from '$lib/types'
 import { zh_transcribed_summarized } from '$lib/mocks/seed/youtubes'
 import { get_analysis_functions } from '$lib/analysis'
-// import { curious, known, pronunciation, todo, tone } from '$lib/mocks/data/j-words'
-import { known } from '$lib/mocks/data/j-words'
 import { ResponseCodes } from '$lib/responseCodes'
+import { word_lists } from '$lib/vocab/word-lists'
 
 const youtube: YouTube = {
   ...zh_transcribed_summarized.youtube,
@@ -18,18 +17,18 @@ const youtube: YouTube = {
 
 const user_vocabulary = {
   ...readable<UserVocabulary>({
-    // ...curious.reduce((acc, word) => ({...acc, [word]: {views: 1, status: 'unknown'}}), {}),
-    // ...todo.reduce((acc, word) => ({...acc, [word]: {views: 3, status: 'unknown'}}), {}),
-    // ...pronunciation.reduce((acc, word) => ({...acc, [word]: {views: 10, status: 'pronunciation'}}), {}),
-    // ...tone.reduce((acc, word) => ({...acc, [word]: {views: 20, status: 'tone'}}), {}),
-    ...known.splice(0,1000).reduce((acc, word) => ({...acc, [word]: {views: 30, status: 'known'}}), {}),
+    ...word_lists.時代華語2Bw.reduce((acc, word) => ({...acc, [word]: {views: 3, status: WordStatus.unknown}}), {}),
+    ...word_lists.時代華語2Aw.slice(200).reduce((acc, word) => ({...acc, [word]: {views: 10, status: WordStatus.pronunciation}}), {}),
+    ...word_lists.時代華語2Aw.slice(0,200).reduce((acc, word) => ({...acc, [word]: {views: 20, status: WordStatus.tone}}), {}),
+    ...word_lists.時代華語1w.reduce((acc, word) => ({...acc, [word]: {views: 30, status: WordStatus.known}}), {}),
   }),
   change_word_status: null,
   add_seen_sentence: null,
   changed_words: readable<UserVocabulary>({})
 }
 
-const { analyze_sentences, split_sentences } = await get_analysis_functions({learning: 'zh-TW', user_vocabulary, emphasis_limits: readable({high_view_count_max: 10, common_in_this_context_max: 10, improve_pronunciation_or_tone_max: 2})})
+const analysis_functions = get_analysis_functions({learning: 'zh-TW', user_vocabulary, emphasis_limits: readable({high_view_count_max: 10, common_in_this_context_max: 10, improve_pronunciation_or_tone_max: 2})})
+analysis_functions.then(() => console.info('analysis functions ready'))
 
 function delay<T>(value: T, delay_ms = 1000): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(value), delay_ms))
@@ -38,8 +37,8 @@ function delay<T>(value: T, delay_ms = 1000): Promise<T> {
 const noop_page_functions = {
   load_transcript: () => delay(null, 2000),
   load_summaries: () => delay(null),
-  analyze_sentences,
-  split_sentences,
+  analyze_sentences: (args) => analysis_functions.then(({analyze_sentences}) => analyze_sentences(args)),
+  split_sentences: (args) => analysis_functions.then(({split_sentences}) => split_sentences(args)),
   transcribe: async () => {
     await delay(null)
     alert('Sign In')
