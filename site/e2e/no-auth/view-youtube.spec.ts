@@ -7,7 +7,7 @@ test('visitor opens video with transcripts, summary, and translation in db and s
   await page.waitForLoadState('networkidle')
 
   // Transcript
-  const [first_sentence] = video.transcripts[0].transcript.sentences
+  const [first_sentence] = video.transcripts[0].sentences
   const [first_word] = first_sentence.text.split(' ')
   await expect(page.getByText(first_word)).toBeVisible()
   // Summary

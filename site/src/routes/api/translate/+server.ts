@@ -4,18 +4,26 @@ import type { RequestHandler } from './$types'
 import { GOOGLE_TRANSLATE_NLP_CREDENTIALS } from '$env/static/private'
 import { ResponseCodes } from '$lib/responseCodes'
 import { dev } from '$app/environment'
-import type { TranslateRequestBody } from '$lib/types'
 import { mocked_prefix } from '$lib/mocks/seed/youtubes'
-
-export const config: Config = {
-  maxDuration: 300,
-}
+import type { LocaleCode } from '$lib/i18n/locales'
 
 const CREDENTIALS = JSON.parse(GOOGLE_TRANSLATE_NLP_CREDENTIALS)
 const translationClient = new TranslationServiceClient({
   credentials: CREDENTIALS,
   projectId: CREDENTIALS.project_id,
 })
+
+export const config: Config = { maxDuration: 300 }
+
+export interface TranslateRequestBody {
+  text: string
+  sourceLanguageCode: LocaleCode // https://cloud.google.com/translate/docs/languages
+  targetLanguageCode: LocaleCode
+}
+
+export interface TranslateResponseBody {
+  line_separated_translations: string
+}
 
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
   if (!CREDENTIALS.project_id)
@@ -40,7 +48,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
   // Mock for E2E
   if (dev && text.startsWith(mocked_prefix)) {
     console.info(`Mocked translation for ${text.length} characters`)
-    return json({ line_separated_translations: text.split('\n').map(t => 'Mocked translation: ' + t).join('\n') })
+    return json({ line_separated_translations: text.split('\n').map(t => 'Mocked translation: ' + t).join('\n') } satisfies TranslateResponseBody)
   }
 
   console.info({ translate_text_request_length: text.length })
@@ -59,7 +67,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
       return translation
     }))
 
-    return json({line_separated_translations: textTranslations.join('\n')})
+    return json({line_separated_translations: textTranslations.join('\n')} satisfies TranslateResponseBody)
   } catch (err) {
     console.error(err.message)
     error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)

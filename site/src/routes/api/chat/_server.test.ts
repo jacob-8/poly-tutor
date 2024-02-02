@@ -1,8 +1,7 @@
 import { request } from '$lib/mocks/sveltekit-endpoint-helper'
-import { POST } from './+server'
+import { POST, type ChatRequestBody } from './+server'
 import { authenticatedLocal, unAuthenticatedLocal } from '$lib/mocks/locals'
 import { ResponseCodes } from '$lib/responseCodes'
-import type { ChatRequestBody } from '$lib/types'
 import { createChunkDecoder } from '$lib/client/chunkDecoder'
 import { OpenAiChatModels } from '$lib/types/models'
 

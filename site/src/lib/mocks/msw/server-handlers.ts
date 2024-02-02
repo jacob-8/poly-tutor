@@ -1,4 +1,4 @@
-import type { WhisperTranscript, ExternalYoutubeTranscribeRequestBody, ChatRequestBody } from '$lib/types'
+import type { ExtenralYoutubeTranscribeRequestResponse, ExternalYoutubeTranscribeRequestBody } from '$lib/types'
 import { http, HttpResponse, passthrough } from 'msw'
 import { ResponseCodes } from '$lib/responseCodes'
 import { create_chat_completion_data } from '../data/create_chat_completion'
@@ -10,6 +10,7 @@ import youtube_api_video_id_9OkddyYQBec from '../data/youtube_api_video_id_9Okdd
 import youtube_api_channel_id_UCkceO_uT0eWlMhX from '../data/youtube_api_channel_id_UCkceO_uT0eWlMhX-04rxAMQ.json'
 import youtube_api_video_id_lpyKfNjTZi8 from '../data/youtube_api_video_id_lpyKfNjTZi8.json'
 import youtube_api_channel_id_UCs53vwIrtmBTr from '../data/youtube_api_channel_id_UCs53vwIrtmBTr-NAfqYYt6w.json'
+import type { ChatRequestBody } from '$api/chat/+server'
 
 export const handlers = [
   http.post('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', async ({request}) => {
@@ -27,7 +28,7 @@ export const handlers = [
       })
     }
 
-    const body: WhisperTranscript = {
+    const body: ExtenralYoutubeTranscribeRequestResponse = {
       transcript: [
         {
           text: language === 'en' ? 'This is a mocked Whisper transcription' : '這是一個模擬的Whisper轉錄',

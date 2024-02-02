@@ -12,10 +12,11 @@ export const load = (async ({parent, params: { learning }}) => {
       added_at,
       youtube:youtubes!inner(
         id,
+        language,
         title,
         description,
-        language,
         duration_seconds,
+        chapters,
         channel:youtube_channels(
           id,
           title,
@@ -29,12 +30,12 @@ export const load = (async ({parent, params: { learning }}) => {
   if (error)
     console.error(error)
 
-  const user_youtubes: YouTubeWithAllData[] = user_youtubes_data.map(y => ({
+  const user_youtubes: YouTubeWithAllData[] = user_youtubes_data.map(({youtube}) => ({
     youtube: {
-      ...y.youtube,
-      channel_id: y.youtube.channel.id,
+      ...youtube,
+      channel_id: youtube.channel.id,
     },
-    channel: y.youtube.channel,
+    channel: youtube.channel,
   }))
 
   const user_youtube_ids = user_youtubes.map(({youtube}) => youtube.id)
@@ -43,10 +44,11 @@ export const load = (async ({parent, params: { learning }}) => {
     .from('youtubes')
     .select(`
       id,
+      language,
       title,
       description,
-      language,
       duration_seconds,
+      chapters,
       created_at,
       channel:youtube_channels(
         id,
@@ -63,12 +65,12 @@ export const load = (async ({parent, params: { learning }}) => {
   if (error2)
     console.error(error2)
 
-  const other_youtubes: YouTubeWithAllData[] = other_youtubes_data.map(y => ({
+  const other_youtubes: YouTubeWithAllData[] = other_youtubes_data.map(youtube => ({
     youtube: {
-      ...y,
-      channel_id: y.channel.id,
+      ...youtube,
+      channel_id: youtube.channel.id,
     },
-    channel: y.channel,
+    channel: youtube.channel,
   }))
 
   return {

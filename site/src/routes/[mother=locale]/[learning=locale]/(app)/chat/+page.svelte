@@ -3,9 +3,9 @@
   import { fetchSSE } from '$lib/client/fetchSSE'
   import type { ChatCompletionRequestMessage } from 'openai-edge'
   import { languageTutor } from './personalities'
-  import type { ChatRequestBody, OpenAiChatStreamResponse } from '$lib/types'
   import { get_openai_api_key } from '$lib/client/UserInfo.svelte'
   import { OpenAiChatModels } from '$lib/types/models'
+  import type { ChatRequestBody, OpenAiChatStreamResponse } from '$api/chat/+server'
 
   export let data
   $: ({user} = data)

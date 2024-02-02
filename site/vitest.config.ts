@@ -4,6 +4,7 @@ export default defineProject({
   test: {
     alias: {
       $lib: new URL('./src/lib', import.meta.url).pathname,
+      $api: new URL('./src/routes/api', import.meta.url).pathname,
     },
     name: 'unit',
     globals: true,

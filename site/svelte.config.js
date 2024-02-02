@@ -10,7 +10,10 @@ const config = {
   ],
 
   kit: {
-    adapter: adapter()
+    adapter: adapter(),
+    alias: {
+      '$api': 'src/routes/api',
+    }
   },
 
   // https://github.com/sveltejs/language-tools/issues/650#issuecomment-1337317336

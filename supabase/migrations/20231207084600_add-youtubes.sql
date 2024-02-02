@@ -5,7 +5,7 @@ CREATE TABLE youtube_channels (
   thumbnail_url text not null,
   subscriber_count int null,
   video_count int null,
-  view_count int null,
+  view_count bigint null,
   updated_at timestamp with time zone not null default now()
 );
 
@@ -19,10 +19,11 @@ CREATE TYPE language as ENUM('en', 'zh');
 
 CREATE TABLE youtubes (
   id text unique primary key, -- youtube video_id
-  title text not null,
-  "description" text null,
-  duration_seconds real null,
+  title jsonb[] not null, -- Sentences[]
+  "description" jsonb[] null, -- Sentences[]
   "language" language not null,
+  duration_seconds real null,
+  chapters jsonb[] not null,
   channel_id text references youtube_channels(id) not null,
   published_at timestamp with time zone null,
   view_count int null,
@@ -37,7 +38,7 @@ ON youtubes FOR SELECT
 USING ( true );
 
 CREATE TABLE user_youtubes (
-  user_id uuid REFERENCES auth.users NOT NULL DEFAULT auth.uid(), -- should have added ON DELETE CASCADE
+  user_id uuid NOT NULL DEFAULT auth.uid() REFERENCES auth.users ON DELETE CASCADE,
   youtube_id text NOT NULL REFERENCES youtubes(id),
   added_at timestamp with time zone NOT NULL DEFAULT now(),
   PRIMARY KEY (user_id, youtube_id)

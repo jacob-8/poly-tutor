@@ -5,13 +5,19 @@ import type { RequestHandler } from './$types'
 import { GOOGLE_TRANSLATE_NLP_CREDENTIALS } from '$env/static/private'
 import { ResponseCodes } from '$lib/responseCodes'
 import { dev } from '$app/environment'
-import type { AnalyzeSyntaxRequestBody } from '$lib/types'
 
 const CREDENTIALS = JSON.parse(GOOGLE_TRANSLATE_NLP_CREDENTIALS)
 const languageServiceClient = new LanguageServiceClient({
   credentials: CREDENTIALS,
   projectId: CREDENTIALS.project_id,
 })
+
+export interface AnalyzeSyntaxRequestBody {
+  text: string
+  sourceLanguageCode: string
+}
+
+export type AnalyzeSyntaxResponseBody = google.cloud.language.v1.IAnalyzeSyntaxResponse
 
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
   if (!CREDENTIALS.project_id)
@@ -61,3 +67,22 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
 }
 
 // learn more at https://cloud.google.com/natural-language/docs/analyzing-syntax
+
+
+// If using, move into an endpoint to allow for analyzing others's captions
+// async function analyze_syntax(sentences: Sentence[]) {
+//   const text = sentences.map(sentence => sentence.text).join('\n')
+//   const { data, error } = await post_request<AnalyzeSyntaxRequestBody, Sentence['syntax']>('/api/analyze_syntax', { text, sourceLanguageCode: learning_language }, fetch)
+//   if (error) {
+//     console.error(error.message)
+//     return alert(error.message)
+//   }
+
+//   const sentencesWithSyntax = merge_syntax(data, sentences)
+//   const { error: savingError } = await updateTranscript(sentencesWithSyntax)
+//   if (savingError) {
+//     console.error(savingError.message)
+//     return alert(savingError.message)
+//   }
+//   invalidateAll()
+// }
