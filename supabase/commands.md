@@ -14,12 +14,12 @@
 ## Types
 
 - `supabase gen types typescript --local --schema public > site/src/lib/supabase/generated.types.ts`
-- `supabase gen types typescript --project-id=tjxlervwzlcvaibrrime --schema public > packages/site/src/lib/supabase/generated.types.ts`
+- `supabase gen types typescript --project-id=tjsnduoporqqlrbbpola --schema public > packages/site/src/lib/supabase/generated.types.ts`
 
 ## Push changes to cloud project
 
 - `supabase login`
-- `supabase link --project-ref=tjxlervwzlcvaibrrime --password=<DB password>`
+- `supabase link --project-ref=tjsnduoporqqlrbbpola --password=<DB password>`
 - `supabase db push`
 
 ## Misc
