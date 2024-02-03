@@ -113,6 +113,7 @@
       <div class="mr-auto" />
       {#if study_words}
         <button type="button" class="header-btn" on:click={() => {
+          youtubeComponent.pause()
           scroll_to_study()
           currentStudySentence = null
         }}>
@@ -253,6 +254,7 @@
           {/if}
 
           <Button form="menu" class="sm:hidden! flex items-center" onclick={() => {
+            youtubeComponent.pause()
             scroll_to_study()
             currentStudySentence = null
           }}>
@@ -272,6 +274,7 @@
               pause={youtubeComponent.pause}
               set_volume={youtubeComponent.set_volume}
               seekToMs={youtubeComponent.seekToMs}
+              is_last_chapter={chapter_index == youtube.chapters.length - 1}
               {isPlaying}
               {current_time_ms}
               {studySentence}

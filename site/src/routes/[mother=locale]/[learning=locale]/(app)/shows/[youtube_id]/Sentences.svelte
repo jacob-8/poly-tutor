@@ -22,6 +22,7 @@
   export let seekToMs: (ms: number) => void
   export let add_seen_sentence: (words: string[]) => void
   export let in_view: boolean
+  export let is_last_chapter: boolean
   export let padding_ms = 250
   const volume_change_duration_ms = 500
 
@@ -32,7 +33,7 @@
   let bilingual_loop_back = false
   let intentionally_updated_at: number | null = null
 
-  let current_caption_index = 0
+  let current_caption_index: number
   let current_caption: Sentence
 
   let read_translation_for_caption: number
@@ -67,15 +68,16 @@
     const time_based_caption_index = find_caption_index_by_time(time_ms)
     if (current_caption_index === time_based_caption_index) return
 
-    if (mode === 'bilingual') {
-      const next_caption = captions[current_caption_index + 1]
-      if (!next_caption) {
-        // TODO: check if is end of chapter and then pause
-        // TODO: make speak work other direction
-        pause()
-        const { speak } = speech({ text: 'End of chapter. Review unknown words.', rate: 1.2, locale: mother, volume: .6})
-        speak()
-      }
+    const next_caption = captions[current_caption_index + 1]
+    if (isPlaying && !next_caption && !is_last_chapter) {
+      pause()
+      const text = mother === 'en' ? 'End of chapter. Review unknown words.' : '本章结束。复习生词。'
+      const { speak } = speech({ text, rate: 1.2, locale: mother, volume: .6})
+      speak()
+      return
+    }
+
+    if (mode === 'bilingual' && next_caption) {
       if (time_ms > current_caption.end_ms && time_ms < next_caption.end_ms) {
         if (read_translation_for_caption !== current_caption_index)
           return read_translation(current_caption_index)
