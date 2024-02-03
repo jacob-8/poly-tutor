@@ -1,11 +1,14 @@
-const youtube_video_id_pattern = /^[a-zA-Z0-9_-]{11}$/
+export const YOUTUBE_VIDEO_ID_PATTERN = /^[a-zA-Z0-9_-]{11}$/
 
-export function get_youtube_video_id(url: string): string | null {
-  const pattern = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
-  const match = url?.match(pattern)
+export function get_youtube_video_id(url_or_id: string): string | null {
+  if (url_or_id?.match(YOUTUBE_VIDEO_ID_PATTERN))
+    return url_or_id
 
-  if (match?.[7]?.match(youtube_video_id_pattern))
-    return match[7]
+  const pattern = /(?:youtu.be\/|v\/|\/u\/\w\/|embed\/|watch\?v=|watch\?.*&v=)(?<video_id>[^#&?]*).*/
+  const match = url_or_id?.match(pattern)
+
+  if (match?.groups?.video_id?.match(YOUTUBE_VIDEO_ID_PATTERN))
+    return match.groups.video_id
 
   return null
 }
@@ -33,6 +36,11 @@ if (import.meta.vitest) {
 
     test.each(testCases)('returns the correct video ID for URL: %p', ({ url, expectedId }) => {
       expect(get_youtube_video_id(url)).toEqual(expectedId)
+    })
+
+    test('handles just an id', () => {
+      const video_id = 'tvdB5GG22j0'
+      expect(get_youtube_video_id(video_id)).toEqual(video_id)
     })
   })
 }

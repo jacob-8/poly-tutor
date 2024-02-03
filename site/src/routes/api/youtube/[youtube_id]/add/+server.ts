@@ -29,14 +29,16 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
   const { mother, learning } = await request.json() as YoutubeAddRequestBody
 
   try {
-    const { channel_id, title: youtube_title, description: youtube_description, locale: youtube_locale, published_at, duration_seconds } = await get_youtube_info_from_youtube(youtube_id)
+    const { channel_id, title: youtube_title, description: youtube_description, locale: youtube_locale, published_at, duration_seconds, like_count, view_count } = await get_youtube_info_from_youtube(youtube_id)
+
+    // The uploader of HGX4_sg3mfA miscategorized the video as English so the following check won't allow it to be added, but not sure I want to remove it as it prevents users miscategorizing videos in most use cases. Will need to keep an eye on this.
 
     if (youtube_locale) {
       const video_is_chinese = youtube_locale.includes('zh')
       if (video_is_chinese && learning === 'en')
-        error(ResponseCodes.BAD_REQUEST, 'Cannot add a Chinese video when studying English. Please switch languages first.')
+        throw new Error('不能添加中文视频，因为你正在学习英文。请先切换语言。')
       if (!video_is_chinese && learning.includes('zh'))
-        error(ResponseCodes.BAD_REQUEST, '不能添加英文视频，因为你正在学习中文。请先切换语言。')
+        throw new Error('Cannot add an English video when studying Chinese. Please switch languages first.')
     }
 
     const language: LanguageCode = youtube_locale
@@ -58,7 +60,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
     const [title, description, chapters] = await Promise.all([
       split_and_translate({ text: youtube_title, mother, learning}),
       split_and_translate({text: youtube_description, mother, learning}),
-      get_chapters({youtube_id, _fetch: fetch, duration_seconds}),
+      get_chapters({youtube_id, duration_seconds}),
       channel_in_db(),
     ])
 
@@ -66,10 +68,12 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
       id: youtube_id,
       channel_id,
       language,
+      like_count,
+      view_count,
       published_at,
       title: title || [],
       description: description || [],
-      duration_seconds: 123,
+      duration_seconds,
       chapters,
     }).select()
       .single()
@@ -110,8 +114,8 @@ async function get_youtube_info_from_youtube(youtube_id: string) {
     published_at,
     locale,
     duration_seconds: youtube_pt_format_duration_to_seconds(duration),
-    view_count: viewCount ? parseInt(viewCount, 10) : null,
-    like_count: likeCount ? parseInt(likeCount, 10) : null,
+    view_count: viewCount ? parseInt(viewCount) : null,
+    like_count: likeCount ? parseInt(likeCount) : null,
   }
   return result
 }

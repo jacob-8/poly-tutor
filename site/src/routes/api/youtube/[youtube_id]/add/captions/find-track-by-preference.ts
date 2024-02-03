@@ -6,6 +6,11 @@ const zh_CN_code_preferences = ['zh-CN', 'zh-Hans', 'zh', 'zh-TW', 'zh-Hant']
 
 // TODO: handle zh-Hant and zh-Hans better
 export function find_track_by_preference(tracks: YoutubeCaptionTrack[], locale: LocaleCode): YoutubeCaptionTrack {
+  if (!tracks.length)  {
+    console.info('no caption tracks found')
+    return
+  }
+
   if (locale === 'en') {
     const preferredTrack = tracks.find(({ language_code }) => language_code.startsWith('en'))
     if (preferredTrack)
@@ -36,7 +41,7 @@ export function find_track_by_preference(tracks: YoutubeCaptionTrack[], locale: 
       return preferredTrack
   }
 
-  throw new Error(`No track found for locale: ${locale}. Tracks that exist are: ${tracks.map(({ language_code }) => language_code).join(', ')}`)
+  console.info(`No track found for locale: ${locale}. Tracks that exist are: ${tracks.map(({ language_code }) => language_code).join(', ')}`)
 }
 
 if (import.meta.vitest) {

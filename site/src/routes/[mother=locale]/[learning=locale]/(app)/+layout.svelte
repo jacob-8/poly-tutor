@@ -10,7 +10,7 @@
   export let data
 </script>
 
-{#if !$page.data.youtube}
+{#if !$page.data.youtube_id}
   <div class="flex items-center space-x-1 py-1 pl-1" data-sveltekit-preload-data="tap">
     <div class="text-lg font-semibold flex items-center truncate py-1">
       {#if $page.url.pathname.includes('shows')}

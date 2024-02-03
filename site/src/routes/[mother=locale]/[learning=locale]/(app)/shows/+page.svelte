@@ -38,11 +38,11 @@
   </div>
 </div>
 
-<div data-testid="other-videos" class="sm:px-3">
+<!-- <div data-testid="other-videos" class="sm:px-3">
   <h2 class=" my-3 font-semibold text-xl">Others are watching...</h2>
   <div class="grid sm:grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
     {#each data.other_youtubes as youtube}
       <ShowThumbnail youtube={youtube.youtube} channel={youtube.channel} />
     {/each}
   </div>
-</div>
+</div> -->

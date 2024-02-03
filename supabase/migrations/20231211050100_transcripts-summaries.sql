@@ -3,7 +3,7 @@ CREATE TABLE youtube_transcripts (
   youtube_id text references youtubes(id) not null,
   sentences jsonb[] not null,
   source text not null,
-  "description" text null, -- user added metadata, like what Whisper prompt was used, what GPT3.5 revision prompt was used
+  "description" text null, -- user added metadata, like what Whisper prompt was used
   created_by uuid references auth.users not null default auth.uid(),
   created_at timestamp with time zone not null default now(),
   updated_at timestamp with time zone not null default now()

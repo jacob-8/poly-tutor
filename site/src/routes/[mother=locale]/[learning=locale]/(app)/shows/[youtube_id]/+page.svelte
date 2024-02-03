@@ -20,12 +20,13 @@
   export let data
   $: ({ youtube_id, youtube_promise, user, supabase, settings, user_vocabulary, language } = data)
   $: ({ changed_words } = user_vocabulary)
-  $: chapter_index = $page.url.searchParams.get('chapter') ? parseInt($page.url.searchParams.get('chapter')) : 0
 
+  let chapter_index = $page.url.searchParams.get('chapter') ? parseInt($page.url.searchParams.get('chapter')) : 0
   let youtube: YouTube
   let adding_youtube_error: string
   let entire_transcript: Sentence[]
   let summaries: Summary[]
+  let transcript_status: 'checking-db' | 'none' | 'exists' = 'checking-db'
 
   onMount(async () => {
     const { data: _youtube, error } = await youtube_promise
@@ -38,6 +39,7 @@
     })
     data.load_transcript().then(_transcript => {
       entire_transcript = _transcript
+      transcript_status = _transcript ? 'exists' : 'none'
     })
   })
 
@@ -50,11 +52,8 @@
 
   async function prepare_chapter(index: number, transcript: Sentence[]) {
     chapter = youtube.chapters[index]
-    if (!transcript) {
-      if (transcript !== undefined)
-        sentences = null // mark as null so page can know to show transcribe button
+    if (!transcript)
       return
-    }
 
     const current_summary = summaries?.find(sum => sum.start_ms === chapter.start_ms && sum.end_ms === chapter.end_ms)
     summary = current_summary?.sentences || null
@@ -70,7 +69,7 @@
   }
 
   function handle_chapter_select(event) {
-    const chapter_index = event.target.value
+    chapter_index = event.target.value
     const url = new URL($page.url.toString())
     url.searchParams.set('chapter', chapter_index.toString())
     window.history.replaceState({}, '', url.toString())
@@ -110,12 +109,14 @@
         {youtube?.title.map(sentence => sentence.text).join(' ').substring(0, 30) || ''}
       </span>
       <div class="mr-auto" />
-      <button type="button" class="header-btn" on:click={() => {
-        scroll_to_study()
-        currentStudySentence = null
-      }}>
-        <span class="i-ic-baseline-manage-search text-xl" />
-      </button>
+      {#if study_words}
+        <button type="button" class="header-btn" on:click={() => {
+          scroll_to_study()
+          currentStudySentence = null
+        }}>
+          <span class="i-ic-baseline-manage-search text-xl" />
+        </button>
+      {/if}
       <div id="playback-controls" class="contents" />
 
       {#if browser}
@@ -177,7 +178,7 @@
         {/if}
       </div>
     {:else if !youtube}
-      <div class="px-2">{$page.data.t.layout.loading}...</div>
+      <div class="px-2 sm:px-0">{$page.data.t.layout.loading}<span class="i-svg-spinners-3-dots-fade align--4px ml-1" /></div>
     {:else if youtube}
       <div class="px-2 sm:px-0 flex">
         <div class="font-semibold line-clamp-1 overflow-hidden">
@@ -205,58 +206,71 @@
         <ShowMeta {language} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.description} settings={$settings} {sentence} {studySentence} add_seen_sentence={user_vocabulary.add_seen_sentence} />
       {/await} -->
 
-      <SelectChapter {handle_chapter_select} {chapter_index} {youtube} />
-
       {#await delay_render_to_not_slow_page_transition then _}
-        {#if sentences === undefined}
-          <div class="px-2">{$page.data.t.layout.loading}...</div>
-        {:else}
-          {#if sentences}
-            {#if summary?.length}
-              <div class="bg-gray-200 p-2 sm:rounded my-2">
-                <div class="text-sm">{$page.data.t.shows.chapter_summary}</div>
-                <div class="line-clamp-2 overflow-hidden">
-                  {summary.map(({text}) => text).join('')}
-                </div>
+        {#if transcript_status === 'checking-db'}
+          <div class="px-2 sm:px-0">{$page.data.t.layout.loading}<span class="i-svg-spinners-3-dots-fade align--4px ml-1" /></div>
+        {:else if transcript_status === 'none'}
+          <Button size="lg" form="filled" class="mx-2 sm:mx-0 mt-2 mb-10" onclick={async () => {
+            const result = await data.transcribe()
+            if (result) {
+              entire_transcript = result
+              transcript_status = 'exists'
+            }
+          }}>{$page.data.t.shows.get_captions}</Button>
+        {:else if sentences}
+          <SelectChapter {handle_chapter_select} {chapter_index} {youtube} />
+
+          {#if summary?.length}
+            <div class="bg-gray-200 p-2 sm:rounded my-2">
+              <div class="text-sm">{$page.data.t.shows.chapter_summary}</div>
+              <div class="line-clamp-2 overflow-hidden">
+                {summary.map(({text}) => text).join('')}
               </div>
-              <!-- <ShowMeta {language} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.summary} settings={$settings} sentence={$summary[0]} {studySentence} add_seen_sentence={user_vocabulary.add_seen_sentence} /> -->
-            {:else}
-              <!-- <div class="mb-2 px-2 sm:px-0"> -->
-              <Button form="menu" onclick={async () => summary = await data.summarize_chapter({sentences, start_ms: chapter.start_ms, end_ms: chapter.end_ms})}><span class="i-material-symbols-page-info-outline text-xl -mb-1 mr-1" />{$page.data.t.shows.summarize_chapter}</Button>
-              <!-- </div> -->
-            {/if}
-
-            <Button form="menu" class="sm:hidden! flex items-center" onclick={() => {
-              scroll_to_study()
-              currentStudySentence = null
-            }}>
-              <span class="i-ic-baseline-manage-search text-xl -mb-1 mr-1" /> Preview Unknown Words
-            </Button>
-
-            <Sentences
-              {in_view}
-              {language}
-              changed_words={$changed_words}
-              {study_words_object}
-              settings={$settings}
-              add_seen_sentence={user_vocabulary.add_seen_sentence}
-              play={youtubeComponent.play}
-              pause={youtubeComponent.pause}
-              set_volume={youtubeComponent.set_volume}
-              seekToMs={youtubeComponent.seekToMs}
-              {isPlaying} {current_time_ms} {studySentence} {sentences} />
-
-            <SelectChapter {handle_chapter_select} {chapter_index} {youtube} />
-
-            <SelectSpeechSynthesisVoice />
-
+            </div>
+            <!-- <ShowMeta {language} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.summary} settings={$settings} sentence={$summary[0]} {studySentence} add_seen_sentence={user_vocabulary.add_seen_sentence} /> -->
           {:else}
-            <Button size="lg" form="filled" class="mx-2 sm:mx-0 mb-10" onclick={async () => {
-              const result = await data.transcribe()
-              if (result)
-                entire_transcript = result
-            }}>{$page.data.t.shows.get_captions}</Button>
+            <!-- <div class="mb-2 px-2 sm:px-0"> -->
+            <Button form="menu" onclick={async () => {
+              summary = await data.summarize_chapter({sentences, start_ms: chapter.start_ms, end_ms: chapter.end_ms})
+              summaries.push({
+                sentences: summary,
+                start_ms: chapter.start_ms,
+                end_ms: chapter.end_ms,
+                created_at: new Date().toISOString(),
+                created_by: $user.id,
+                id: null,
+                updated_at: null,
+                source: null,
+                youtube_id: youtube.id,
+                title: '',
+                description: '',
+              })
+            }}><span class="i-material-symbols-page-info-outline text-xl -mb-1 mr-1" />{$page.data.t.shows.summarize_chapter}</Button>
+            <!-- </div> -->
           {/if}
+
+          <Button form="menu" class="sm:hidden! flex items-center" onclick={() => {
+            scroll_to_study()
+            currentStudySentence = null
+          }}>
+            <span class="i-ic-baseline-manage-search text-xl -mb-1 mr-1" /> Preview Unknown Words
+          </Button>
+
+          <Sentences
+            {in_view}
+            {language}
+            changed_words={$changed_words}
+            {study_words_object}
+            settings={$settings}
+            add_seen_sentence={user_vocabulary.add_seen_sentence}
+            play={youtubeComponent.play}
+            pause={youtubeComponent.pause}
+            set_volume={youtubeComponent.set_volume}
+            seekToMs={youtubeComponent.seekToMs}
+            {isPlaying} {current_time_ms} {studySentence} {sentences} />
+
+          <SelectChapter {handle_chapter_select} {chapter_index} {youtube} />
+          <SelectSpeechSynthesisVoice />
         {/if}
       {/await}
     {/if}

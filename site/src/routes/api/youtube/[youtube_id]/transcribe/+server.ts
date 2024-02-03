@@ -27,7 +27,6 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
     error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
   const { openai_api_key, mother, learning, language_code, duration_seconds, prompt } = await request.json() as YoutubeTranscribeRequestBody
-  console.info({ duration_seconds })
 
   let api_key = openai_api_key
 
@@ -50,7 +49,8 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
     seconds_per_chunk: calculate_chunk_seconds(duration_seconds),
   })
 
-  if (transcribe_error) error(ResponseCodes.INTERNAL_SERVER_ERROR, transcribe_error.message)
+  if (transcribe_error)
+    error(ResponseCodes.INTERNAL_SERVER_ERROR, transcribe_error.message)
 
   try {
     const sentences: Sentence[] = data.transcript.map(({ text, start_second, end_second }) => ({

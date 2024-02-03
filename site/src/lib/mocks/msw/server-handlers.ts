@@ -10,7 +10,7 @@ import youtube_api_video_id_9OkddyYQBec from '../data/youtube_api_video_id_9Okdd
 import youtube_api_channel_id_UCkceO_uT0eWlMhX from '../data/youtube_api_channel_id_UCkceO_uT0eWlMhX-04rxAMQ.json'
 import youtube_api_video_id_lpyKfNjTZi8 from '../data/youtube_api_video_id_lpyKfNjTZi8.json'
 import youtube_api_channel_id_UCs53vwIrtmBTr from '../data/youtube_api_channel_id_UCs53vwIrtmBTr-NAfqYYt6w.json'
-import type { ChatRequestBody } from '$api/chat/+server'
+import type { CreateChatCompletionRequest } from 'openai-edge'
 
 export const handlers = [
   http.post('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', async ({request}) => {
@@ -92,7 +92,10 @@ export const handlers = [
   }),
 
   http.post('https://api.openai.com/v1/chat/completions', async ({request}) => {
-    const { messages } = await request.json() as ChatRequestBody
+    const clonedRequest = request.clone()
+    const { messages, stream: is_streaming } = await clonedRequest.json() as CreateChatCompletionRequest
+    if (!is_streaming)
+      return passthrough()
     const lastMessage = messages[messages.length - 1].content
     if (lastMessage === 'BUG!') throw new Error('BUG!')
 

@@ -24,21 +24,15 @@ export async function save_youtube_captions_as_transcript_if_exists({ youtube_id
   if (!CAPTIONS_URL) throw new Error('CAPTIONS_URL not configured')
 
   const { data: tracks, error: tracks_error } = await get_request<YoutubeCaptionTrack[]>(`${CAPTIONS_URL}?v=${youtube_id}&type=list`)
-  if (tracks_error) {
-    console.warn({tracks_error})
+  if (tracks_error)
     return
-  }
-
-  if (!tracks.length)  {
-    console.info('no caption tracks found')
-    return
-  }
 
   const track = find_track_by_preference(tracks, learning)
+  if (!track) return
 
   const { data: captions_from_youtube, error: captions_error } = await get_request<YoutubeCaption[]>(`${CAPTIONS_URL}?v=${youtube_id}&lang=${track.language_code}&fmt=srv3`)
   if (captions_error) {
-    console.warn({captions_error})
+    console.error({captions_error})
     return
   }
 

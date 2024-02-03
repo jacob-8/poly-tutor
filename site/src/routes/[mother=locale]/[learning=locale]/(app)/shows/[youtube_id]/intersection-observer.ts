@@ -24,4 +24,4 @@ export const visible: Action<HTMLDivElement, { threshold?: number | number[], ro
 }
 
 // Usage example
-// use:visible={{threshold: 0.5}} on:observed={({detail}) => console.log({detail})}
+// use:visible={{threshold: 0.5}} on:observed={({detail}) => console.info({detail})}

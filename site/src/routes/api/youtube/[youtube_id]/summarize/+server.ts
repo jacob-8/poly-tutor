@@ -20,7 +20,7 @@ export interface YoutubeSummarizeRequestBody {
 }
 export type YoutubeSummarizeResponseBody = Sentence[]
 
-export const POST: RequestHandler = async ({ locals: { getSession }, params: { youtube_id }, request, fetch }) => {
+export const POST: RequestHandler = async ({ locals: { getSession }, params: { youtube_id }, request, fetch: _fetch }) => {
   const { data: session_data, error: _error, supabase } = await getSession()
   if (_error || !session_data?.user)
     error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
@@ -61,7 +61,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
     const reply = completion.choices[0].message.content
 
     const sentences: Sentence[] = split_into_sentences(reply).map(text => ({ text }))
-    const sentences_with_translation = await translate_sentences({ sentences, mother, learning, _fetch: fetch })
+    const sentences_with_translation = await translate_sentences({ sentences, mother, learning, _fetch })
     const { error: saving_error } = await supabase
       .from('youtube_summaries')
       .insert({

@@ -11,7 +11,15 @@
   {#if youtube.chapters.length > 1}
     <select on:change={handle_chapter_select} class="py-1 px-2 border border-gray rounded w-full">
       {#each youtube.chapters as chapter, index}
-        <option value={index} selected={chapter_index === index}>Chapter {index + 1} ({format_time(chapter.start_ms / 1000)}-{format_time(chapter.end_ms / 1000)})</option>
+        <option value={index} selected={chapter_index === index}>
+          {#if chapter.title}
+            {chapter.title}
+          {:else}
+            Chapter {index + 1}
+          {/if}
+
+          ({format_time(chapter.start_ms / 1000)}-{format_time(chapter.end_ms / 1000)})
+        </option>
       {/each}
     </select>
   {:else}
