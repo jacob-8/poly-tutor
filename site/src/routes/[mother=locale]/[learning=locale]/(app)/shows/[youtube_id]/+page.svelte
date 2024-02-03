@@ -59,6 +59,7 @@
     const current_summary = summaries?.find(sum => sum.start_ms === chapter.start_ms && sum.end_ms === chapter.end_ms)
     summary = current_summary?.sentences || null
 
+    // TODO: When YouTube chapters are larger than 15 minutes, need to split into smaller chunks (sub-chapters) for listening and study words, but still retain the chapter bounds for summary as the measurements for how to split YouTube chapters is flexible. We don't want to create summaries for section sizes that may change in the future.
     const sentences_for_chapter = transcript.filter(sent => sent.start_ms >= chapter.start_ms && sent.start_ms <= chapter.end_ms);
     ({sentences, study_words} = await data.analyze_sentences(sentences_for_chapter))
   }
