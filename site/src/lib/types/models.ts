@@ -1,7 +1,6 @@
 export enum OpenAiChatModels {
   'GPT4' = 'gpt-4-0125-preview', // $0.01 / 1K tokens input and $0.03 / 1K tokens output
-  'GPT3_5' = 'gpt-3.5-turbo-1106', // $0.0005 /1K tokens input and $0.0015 /1K tokens output
-  // 'gpt-3.5-turbo-0125' - coming out in a week, already using this price for simplicity
+  'GPT3_5' = 'gpt-3.5-turbo-0125', // $0.0005 /1K tokens input and $0.0015 /1K tokens output
 }
 
 export type ChatModels = `${OpenAiChatModels}`

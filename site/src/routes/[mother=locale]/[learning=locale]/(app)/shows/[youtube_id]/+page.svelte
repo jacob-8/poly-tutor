@@ -16,6 +16,7 @@
   import SelectSpeechSynthesisVoice from '$lib/components/SelectSpeechSynthesisVoice.svelte'
   import type { Summary, YouTube } from '$lib/supabase/database.types'
   import SelectChapter from './SelectChapter.svelte'
+  import { calculate_tokens_cost } from '$lib/utils/calculate-cost'
 
   export let data
   $: ({ youtube_id, youtube_promise, user, supabase, settings, user_vocabulary, language } = data)
@@ -245,7 +246,7 @@
                 title: '',
                 description: '',
               })
-            }}><span class="i-material-symbols-page-info-outline text-xl -mb-1 mr-1" />{$page.data.t.shows.summarize_chapter}</Button>
+            }}><span class="i-material-symbols-page-info-outline text-xl -mb-1 mr-1" />{$page.data.t.shows.summarize_chapter} ({calculate_tokens_cost({sentences, language})})</Button>
             <!-- </div> -->
           {/if}
 

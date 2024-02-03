@@ -5,7 +5,7 @@ export const streamResponses: OpenAiChatStreamResponse[] = [
     'id':'chatcmpl-7fk6EXGWflbli7Xj3Bmv3dOhIq0Wk',
     'object':'chat.completion.chunk',
     'created':1690183010,
-    'model':'gpt-3.5-turbo-0613',
+    'model':'gpt-3.5-turbo-0125',
     'choices':[
       {
         'index':0,
@@ -18,7 +18,7 @@ export const streamResponses: OpenAiChatStreamResponse[] = [
     'id':'chatcmpl-7fk6EXGWflbli7Xj3Bmv3dOhIq0Wk',
     'object':'chat.completion.chunk',
     'created':1690183010,
-    'model':'gpt-3.5-turbo-0613',
+    'model':'gpt-3.5-turbo-0125',
     'choices':[
       {
         'index':0,
@@ -31,7 +31,7 @@ export const streamResponses: OpenAiChatStreamResponse[] = [
     'id':'chatcmpl-7fk6EXGWflbli7Xj3Bmv3dOhIq0Wk',
     'object':'chat.completion.chunk',
     'created':1690183010,
-    'model':'gpt-3.5-turbo-0613',
+    'model':'gpt-3.5-turbo-0125',
     'choices':[
       {
         'index':0,
