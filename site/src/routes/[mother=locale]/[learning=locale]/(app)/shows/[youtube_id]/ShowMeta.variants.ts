@@ -6,28 +6,16 @@ export const viewports: Viewport[] = [{width: 400, height: 200}]
 
 export const variants: Variant<Component>[] = [
   {
-    name: 'not-analyzed',
-    props: {
-      language: 'zh',
-      label: 'Description',
-      sentence: {text: 'This is just a plain text string.'},
-      studySentence: (sentence) => console.info({sentence}),
-      settings: {font_size_em: 1.5, show_definition: true, show_pronunciation: true},
-      study_words_object: null,
-      add_seen_sentence: null,
-    },
-  },
-  {
-    name: 'analyzed',
     viewports: [{width: 700, height: 250}],
     props: {
       language: 'zh',
       label: 'Description',
-      sentence: title_sentence,
+      sentences: [title_sentence],
+      mother: 'en',
+      split_sentences: (sentences) => sentences,
       studySentence: (sentence) => console.info({sentence}),
       settings: {font_size_em: 1.5, show_definition: true, show_pronunciation: true},
       study_words_object: null,
-      add_seen_sentence: null,
     },
   },
 ]

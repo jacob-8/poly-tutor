@@ -22,8 +22,7 @@
     "captions": "字幕",
     "description": "描述",
     "title": "标题",
-    "remove_video": "删除视频",
-    "click_to_study": "点击句子进行学习。"
+    "remove_video": "删除视频"
   },
   "home": {
     "chat": "闲聊",

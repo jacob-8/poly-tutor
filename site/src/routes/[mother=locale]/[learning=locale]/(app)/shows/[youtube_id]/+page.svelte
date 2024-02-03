@@ -17,6 +17,7 @@
   import type { Summary, YouTube } from '$lib/supabase/database.types'
   import SelectChapter from './SelectChapter.svelte'
   import { calculate_tokens_cost, calculate_transcription_cost } from '$lib/utils/calculate-cost'
+  import ShowMeta from './ShowMeta.svelte'
 
   export let data
   $: ({ youtube_id, youtube_promise, user, supabase, settings, user_vocabulary, language, mother } = data)
@@ -168,7 +169,6 @@
       <StudySentence {language} changed_words={$changed_words} change_word_status={user_vocabulary.change_word_status} {study_words_object} sentence={currentStudySentence} />
     {:else}
       <StudyLesson changed_words={$changed_words} change_word_status={user_vocabulary.change_word_status} {study_words} />
-      <!-- {$page.data.t.shows.click_to_study} -->
     {/if}
   </div>
 
@@ -183,31 +183,9 @@
     {:else if !youtube}
       <div class="px-2 sm:px-0">{$page.data.t.layout.loading}<span class="i-svg-spinners-3-dots-fade align--4px ml-1" /></div>
     {:else if youtube}
-      <div class="px-2 sm:px-0 flex">
-        <div class="font-semibold line-clamp-1 overflow-hidden">
-          {youtube.title.map(sentence => sentence.text).join(' ')}
-        </div>
-        {#if $user}
-          <Button class="-mt-.5" color="red" form="simple" size="sm" title={$page.data.t.shows.remove_video} onclick={async () => {
-            await data.remove_from_my_videos(youtube.id, supabase)
-            goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
-          }}><span class="i-fa6-regular-trash-can -mb-.5" /></Button>
-        {/if}
-      </div>
+      <ShowMeta {language} {mother} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.title} settings={$settings} sentences={youtube.title} {studySentence} split_sentences={data.split_sentences} />
 
-      <!-- await data.split_sentences -->
-      <!-- {#await title then [sentence]}
-        <ShowMeta {language} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.title} settings={$settings} {sentence} {studySentence} add_seen_sentence={user_vocabulary.add_seen_sentence} />
-      {/await} -->
-
-      <div class="px-2 sm:px-0 my-2">
-        <div class="text-sm line-clamp-2 overflow-hidden">
-          {$page.data.t.shows.description}: {youtube.description.map(sentence => sentence.text).join(' ')}
-        </div>
-      </div>
-      <!-- {#await description then [sentence]}
-        <ShowMeta {language} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.description} settings={$settings} {sentence} {studySentence} add_seen_sentence={user_vocabulary.add_seen_sentence} />
-      {/await} -->
+      <ShowMeta {language} {mother} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.description} settings={$settings} sentences={youtube.description} {studySentence} split_sentences={data.split_sentences} />
 
       {#await delay_render_to_not_slow_page_transition then _}
         {#if transcript_status === 'checking-db'}
@@ -225,16 +203,9 @@
           <SelectChapter {handle_chapter_select} {chapter_index} {youtube} />
 
           {#if summary?.length}
-            <div class="bg-gray-200 p-2 sm:rounded my-2">
-              <div class="text-sm">{$page.data.t.shows.chapter_summary}</div>
-              <div class="line-clamp-2 overflow-hidden">
-                {summary.map(({text}) => text).join('')}
-              </div>
-            </div>
-            <!-- <ShowMeta {language} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.summary} settings={$settings} sentence={$summary[0]} {studySentence} add_seen_sentence={user_vocabulary.add_seen_sentence} /> -->
+            <ShowMeta {language} {mother} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.chapter_summary} settings={$settings} sentences={summary} {studySentence} split_sentences={data.split_sentences} />
           {:else}
-            <!-- <div class="mb-2 px-2 sm:px-0"> -->
-            <Button form="menu" onclick={async () => {
+            <Button class="mb-2" form="menu" onclick={async () => {
               summary = await data.summarize_chapter({sentences, start_ms: chapter.start_ms, end_ms: chapter.end_ms})
               summaries.push({
                 sentences: summary,
@@ -250,10 +221,9 @@
                 description: '',
               })
             }}><span class="i-material-symbols-page-info-outline text-xl -mb-1 mr-1" />{$page.data.t.shows.summarize_chapter} ({calculate_tokens_cost({sentences, language})})</Button>
-            <!-- </div> -->
           {/if}
 
-          <Button form="menu" class="sm:hidden! flex items-center" onclick={() => {
+          <Button form="menu" class="mb-2 sm:hidden! flex items-center" onclick={() => {
             youtubeComponent.pause()
             scroll_to_study()
             currentStudySentence = null
@@ -281,19 +251,21 @@
               {sentences} />
           {/key}
 
+          <div class="mt-2"></div>
           <SelectChapter {handle_chapter_select} {chapter_index} {youtube} />
           <SelectSpeechSynthesisVoice />
+
+          {#if $user}
+            <Button class="mb-2" color="red" form="simple" size="sm" title={$page.data.t.shows.remove_video} onclick={async () => {
+              await data.remove_from_my_videos(youtube.id, supabase)
+              goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
+            }}><span class="i-fa6-regular-trash-can -mb-.5" /> {$page.data.t.shows.remove_video}</Button>
+          {/if}
         {/if}
       {/await}
     {/if}
   </div>
 </ShowLayout>
-
-<!-- {#if translation_on_mobile && currentStudySentence?.translation?.[$page.data.mother]}
-  <div class="fixed bottom-11.25 left-0 right-0 bg-white border-t p-2 z-2 text-sm">
-    {currentStudySentence?.translation?.[$page.data.mother]}
-  </div>
-{/if} -->
 
 <style>
   a {

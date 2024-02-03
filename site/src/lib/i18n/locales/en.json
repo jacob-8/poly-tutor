@@ -22,8 +22,7 @@
     "captions": "captions",
     "description": "Description",
     "title": "Title",
-    "remove_video": "Remove Video",
-    "click_to_study": "Click on sentence to study."
+    "remove_video": "Remove Video"
   },
   "home": {
     "chat": "Chat",
