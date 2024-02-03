@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import type { YouTube } from '$lib/supabase/database.types'
   import { format_time } from '$lib/utils/format_time'
 
@@ -23,7 +24,10 @@
       {/each}
     </select>
   {:else}
-    <div class=" text-gray-500/80">
+    <div class="text-xs">
+      <span class="text-xs bg-gray-200 rounded px-1">
+        {$page.data.t.shows.duration}
+      </span>
       {format_time(youtube.duration_seconds)}
     </div>
   {/if}

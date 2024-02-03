@@ -253,7 +253,7 @@
 
           <div class="mt-2"></div>
           <SelectChapter {handle_chapter_select} {chapter_index} {youtube} />
-          <SelectSpeechSynthesisVoice />
+          <SelectSpeechSynthesisVoice locale={mother} />
 
           {#if $user}
             <Button class="mb-2" color="red" form="simple" size="sm" title={$page.data.t.shows.remove_video} onclick={async () => {

@@ -41,17 +41,28 @@
 
 <div class="p-2">
   <div>
-    Unknown: {unknown_words.length},
-    Pronunciation: {pronunciation_words.length},
-    Tone: {tone_words.length},
+    {#if data.mother === 'en'}
+      Pronunciation: {pronunciation_words.length},
+      Tone: {tone_words.length},
+    {/if}
     Known: {known_words.length},
     Total: {Object.keys($user_vocabulary).length}
   </div>
 
-  {#each unknown_words.slice(0, 100) as word}
-    <div>{word.word} - {word.views}</div>
+  <div class="flex">
+    <div class="w-1/2">
+      {#each known_words.slice(0, 100) as word}
+        <div>{word.word} - {word.views}</div>
+      {/each}
+    </div>
+    <div class="w-1/2">
+      Unknown: {unknown_words.length}
+      {#each unknown_words.slice(0, 100) as word}
+        <div>{word.word} - {word.views}</div>
+      {/each}
+    </div>
+  </div>
 
-  {/each}
 
 
   <!-- <pre>{JSON.stringify($user_vocabulary, null, 2)}</pre> -->

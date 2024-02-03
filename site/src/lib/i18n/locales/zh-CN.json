@@ -22,7 +22,9 @@
     "captions": "字幕",
     "description": "描述",
     "title": "标题",
-    "remove_video": "删除视频"
+    "remove_video": "删除视频",
+    "voice": "中文语音",
+    "duration": "期间"
   },
   "home": {
     "chat": "闲聊",

@@ -29,9 +29,11 @@
 
 <div class="absolute top-.5 left-0 z-1 text-white stroke" out:fade={{ delay: 1000, duration: 1000 }}>
   {#each words as word}
-    <div class="px-1">
-      {word.pinyin?.replaceAll(' ', '')}
-    </div>
+    {#if word.pinyin}
+      <div class="px-1">
+        {word.pinyin.replaceAll(' ', '')}
+      </div>
+    {/if}
     <div class="flex items-center">
       <div class="text-lg px-1">
         {word.text}

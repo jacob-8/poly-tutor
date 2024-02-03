@@ -22,7 +22,9 @@
     "captions": "captions",
     "description": "Description",
     "title": "Title",
-    "remove_video": "Remove Video"
+    "remove_video": "Remove Video",
+    "voice": "English voice",
+    "duration": "Duration"
   },
   "home": {
     "chat": "Chat",
