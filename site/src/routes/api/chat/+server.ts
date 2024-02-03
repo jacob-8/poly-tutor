@@ -24,6 +24,7 @@ export interface ChatRequestBody {
   model: ChatModels
   max_tokens: number
   openai_api_key: string
+  stream?: boolean
 }
 
 export const POST: RequestHandler = async ({ locals: { getSession }, request }) => {
@@ -31,7 +32,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
   if (_error || !session_data?.user)
     error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
-  const { messages, model, max_tokens, openai_api_key } = await request.json() as ChatRequestBody
+  const { messages, model, max_tokens, openai_api_key, stream } = await request.json() as ChatRequestBody
 
   let api_key = openai_api_key
 
@@ -47,7 +48,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
       model,
       messages,
       max_tokens,
-      stream: true,
+      stream: stream ?? true,
       temperature: 0,
     }
 

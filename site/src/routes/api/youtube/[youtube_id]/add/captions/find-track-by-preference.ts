@@ -70,12 +70,12 @@ if (import.meta.vitest) {
       expect(find_track_by_preference(tracks, 'en')).toEqual(tracks[1])
     })
 
-    test('throws error if no track found', () => {
+    test('return undefined if no track found', () => {
       const tracks = [
         { language_code: 'fr' },
         { language_code: 'de' },
       ] as YoutubeCaptionTrack[]
-      expect(() => find_track_by_preference(tracks, 'zh-CN')).toThrowErrorMatchingInlineSnapshot(`[Error: No track found for locale: zh-CN. Tracks that exist are: fr, de]`)
+      expect(find_track_by_preference(tracks, 'zh-CN')).toBeFalsy()
     })
   })
 }

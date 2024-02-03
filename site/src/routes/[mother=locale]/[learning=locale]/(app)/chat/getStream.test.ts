@@ -15,7 +15,8 @@ async function getStream(url: string, lastMessage = 'normal') {
     }],
     model: OpenAiChatModels.GPT4,
     max_tokens: 1000,
-    openai_api_key: 'not needed in mock'
+    openai_api_key: 'not needed in mock',
+    stream: true,
   }
 
   // try {
