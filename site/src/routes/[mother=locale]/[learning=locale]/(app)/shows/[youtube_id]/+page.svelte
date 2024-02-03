@@ -16,10 +16,10 @@
   import SelectSpeechSynthesisVoice from '$lib/components/SelectSpeechSynthesisVoice.svelte'
   import type { Summary, YouTube } from '$lib/supabase/database.types'
   import SelectChapter from './SelectChapter.svelte'
-  import { calculate_tokens_cost } from '$lib/utils/calculate-cost'
+  import { calculate_tokens_cost, calculate_transcription_cost } from '$lib/utils/calculate-cost'
 
   export let data
-  $: ({ youtube_id, youtube_promise, user, supabase, settings, user_vocabulary, language } = data)
+  $: ({ youtube_id, youtube_promise, user, supabase, settings, user_vocabulary, language, mother } = data)
   $: ({ changed_words } = user_vocabulary)
 
   let chapter_index = $page.url.searchParams.get('chapter') ? parseInt($page.url.searchParams.get('chapter')) : 0
@@ -218,7 +218,8 @@
               entire_transcript = result
               transcript_status = 'exists'
             }
-          }}>{$page.data.t.shows.get_captions}</Button>
+          }}>{$page.data.t.shows.get_captions} ({calculate_transcription_cost({duration_seconds: youtube.duration_seconds * 2})})</Button>
+          <!-- doubled the duration because the Google Translate costs are roughly equivalent to the speech-to-text costs -->
         {:else if sentences}
           <SelectChapter {handle_chapter_select} {chapter_index} {youtube} />
 
@@ -258,18 +259,24 @@
             <span class="i-ic-baseline-manage-search text-xl -mb-1 mr-1" /> Preview Unknown Words
           </Button>
 
-          <Sentences
-            {in_view}
-            {language}
-            changed_words={$changed_words}
-            {study_words_object}
-            settings={$settings}
-            add_seen_sentence={user_vocabulary.add_seen_sentence}
-            play={youtubeComponent.play}
-            pause={youtubeComponent.pause}
-            set_volume={youtubeComponent.set_volume}
-            seekToMs={youtubeComponent.seekToMs}
-            {isPlaying} {current_time_ms} {studySentence} {sentences} />
+          {#key chapter_index}
+            <Sentences
+              {in_view}
+              {language}
+              {mother}
+              changed_words={$changed_words}
+              {study_words_object}
+              settings={$settings}
+              add_seen_sentence={user_vocabulary.add_seen_sentence}
+              play={youtubeComponent.play}
+              pause={youtubeComponent.pause}
+              set_volume={youtubeComponent.set_volume}
+              seekToMs={youtubeComponent.seekToMs}
+              {isPlaying}
+              {current_time_ms}
+              {studySentence}
+              {sentences} />
+          {/key}
 
           <SelectChapter {handle_chapter_select} {chapter_index} {youtube} />
           <SelectSpeechSynthesisVoice />

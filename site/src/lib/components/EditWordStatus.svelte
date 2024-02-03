@@ -42,8 +42,8 @@
       {sort_definitions(definitions).join(', ') || ''}
 
       <span class="ml-1 bg-gray-700/80 rounded py-.5 px-1 text-white">
-        {#if common_in_this_context}
-          {context_sentence_indexes?.length}
+        {#if common_in_this_context && context_sentence_indexes}
+          {context_sentence_indexes.length}
         {:else}
           {views}
         {/if}

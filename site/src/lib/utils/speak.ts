@@ -66,7 +66,7 @@ export function set_preferred_voice(voice_name: string) {
     current_voice.set(selected_voice)
 }
 
-export function speech({text, rate, locale, volume }: { text: string, rate: number, locale: LocaleCode, volume?: number}): {stop: () => void, speak: Promise<void>} {
+export function speech({text, rate, locale, volume }: { text: string, rate: number, locale: LocaleCode, volume?: number}): {stop: () => void, speak: () => Promise<void>} {
   let resolve: () => void
   let reject: (reason?: string) => void
 
@@ -88,7 +88,7 @@ export function speech({text, rate, locale, volume }: { text: string, rate: numb
   }
 
   return {
-    speak,
+    speak: () => speak,
     stop: () => {
       speechSynthesis.cancel()
       reject('canceled')

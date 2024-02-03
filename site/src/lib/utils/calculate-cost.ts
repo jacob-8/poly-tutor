@@ -1,6 +1,15 @@
 import type { LanguageCode } from '$lib/i18n/locales'
 import type { Sentence } from '$lib/types'
 
+const WHISPER_COST_PER_SECOND = 0.006 / 60
+
+export function calculate_transcription_cost({ duration_seconds }: { duration_seconds: number }): string {
+  const cost = (duration_seconds * WHISPER_COST_PER_SECOND).toFixed(3)
+  const cost_without_trailing_zero = cost.replace(/\.?0+$/, '')
+
+  return `$${cost_without_trailing_zero}`
+}
+
 const GPT3_5_INPUT_COST_PER_TOKEN = 0.0005 / 1000
 // const GPT3_5_OUTPUT_COST_PER_1000 = 0.0015
 // const GPT4_INPUT_COST_PER_1000 = 0.01

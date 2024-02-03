@@ -43,6 +43,7 @@ export function analyze_chinese_sentences({ sentences, user_vocabulary, dictiona
 
   const common_in_this_context = unknown_sorted_by_user_views
     .slice(high_view_count.length)
+    .filter((word) => word.context_sentence_indexes.length > 1)
     .sort((a, b) => b.context_sentence_indexes.length - a.context_sentence_indexes.length)
     .slice(0, common_in_this_context_max)
 

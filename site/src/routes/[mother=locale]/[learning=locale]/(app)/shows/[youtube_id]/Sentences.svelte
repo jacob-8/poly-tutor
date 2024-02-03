@@ -2,11 +2,13 @@
   import type { Sentence, Settings, StudyWordsObject, UserVocabulary } from '$lib/types'
   import SentenceComponent from '$lib/components/Sentence.svelte'
   import { portal } from './portal'
-  import type { LanguageCode } from '$lib/i18n/locales'
+  import type { LanguageCode, LocaleCode } from '$lib/i18n/locales'
   import { speech } from '$lib/utils/speak'
   import { combine_short_sentences } from './combine-short-sentences'
+  import { onMount } from 'svelte'
 
   export let language: LanguageCode
+  export let mother: LocaleCode
   export let sentences: Sentence[] = []
   export let study_words_object: StudyWordsObject
   export let changed_words: UserVocabulary = {}
@@ -30,12 +32,17 @@
   let bilingual_loop_back = false
   let intentionally_updated_at: number | null = null
 
-  let current_caption_index = -1
+  let current_caption_index = 0
   let current_caption: Sentence
 
   let read_translation_for_caption: number
   let is_reading_translation = false
   let stop_reading_translation: () => void
+
+  onMount(() => {
+    current_caption_index = 0
+    current_caption = null
+  })
 
   $: watch_time(current_time_ms)
 
@@ -60,9 +67,15 @@
     const time_based_caption_index = find_caption_index_by_time(time_ms)
     if (current_caption_index === time_based_caption_index) return
 
-    const next_caption = captions[current_caption_index + 1]
-
     if (mode === 'bilingual') {
+      const next_caption = captions[current_caption_index + 1]
+      if (!next_caption) {
+        // TODO: check if is end of chapter and then pause
+        // TODO: make speak work other direction
+        pause()
+        const { speak } = speech({ text: 'End of chapter. Review unknown words.', rate: 1.2, locale: mother, volume: .6})
+        speak()
+      }
       if (time_ms > current_caption.end_ms && time_ms < next_caption.end_ms) {
         if (read_translation_for_caption !== current_caption_index)
           return read_translation(current_caption_index)
@@ -86,9 +99,9 @@
 
     is_reading_translation = true
     ease_volume({from: 100, to: 0, duration_ms: volume_change_duration_ms})
-    const { speak, stop } = speech({ text: caption.translation?.en, rate: 1.2, locale: 'en', volume: .6})
+    const { speak, stop } = speech({ text: caption.translation?.[mother], rate: 1.2, locale: mother, volume: .6})
     stop_reading_translation = stop
-    speak.then(async () => {
+    speak().then(async () => {
       stop_reading_translation = null
       if (bilingual_loop_back) {
         seekToMs(caption.start_ms - volume_change_duration_ms)
