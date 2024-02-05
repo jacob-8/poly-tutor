@@ -21,21 +21,22 @@
   export let set_volume: (volume: number) => void
   export let seekToMs: (ms: number) => void
   export let add_seen_sentence: (words: string[]) => void
+  export let next_chapter: () => void
   export let in_view: boolean
   export let is_last_chapter: boolean
   export let padding_ms = 250
   const volume_change_duration_ms = 500
 
-  const COMBINE_IF_LESS_THAN_MS = 1600
+  const COMBINE_IF_LESS_THAN_MS = 2000
   $: captions = combine_short_sentences(sentences, COMBINE_IF_LESS_THAN_MS)
 
   let mode: 'normal' | 'repeat' | 'bilingual' = 'normal'
   let bilingual_loop_back = false
-  let intentionally_updated_at: number | null = null
 
   let current_caption_index: number
   let current_caption: Sentence
 
+  let intentionally_updated_at: number | null = null
   let read_translation_for_caption: number
   let is_reading_translation = false
   let stop_reading_translation: () => void
@@ -68,17 +69,18 @@
     const time_based_caption_index = find_caption_index_by_time(time_ms)
     if (current_caption_index === time_based_caption_index) return
 
-    const next_caption = captions[current_caption_index + 1]
-    if (isPlaying && !next_caption && !is_last_chapter) {
-      pause()
-      const text = mother === 'en' ? 'End of chapter. Review unknown words.' : '本章结束。复习生词。'
-      const { speak } = speech({ text, rate: 1.2, locale: mother, volume: .6})
-      speak()
-      return
-    }
+    if (mode === 'bilingual') {
+      const next_caption = captions[current_caption_index + 1]
 
-    if (mode === 'bilingual' && next_caption) {
-      if (time_ms > current_caption.end_ms && time_ms < next_caption.end_ms) {
+      if (isPlaying && !next_caption && !is_last_chapter) {
+        pause_and_reset_bilingual()
+        const text = mother === 'en' ? 'End of chapter. Review unknown words.' : '本章结束。复习生词。'
+        const { speak } = speech({ text, rate: 1.2, locale: mother, volume: .6})
+        speak()
+        return
+      }
+
+      if (next_caption && time_ms > current_caption.end_ms - padding_ms && time_ms < next_caption.end_ms) {
         if (read_translation_for_caption !== current_caption_index)
           return read_translation(current_caption_index)
       }
@@ -88,13 +90,22 @@
       const playing_prior_to_first_caption = time_ms < captions[0]?.start_ms
       if (playing_prior_to_first_caption)
         set_current_caption_index(0)
+
+      const last_caption_index = captions.length - 1
+      const is_last_caption = captions.length > 0 && current_caption_index === last_caption_index
+      if (!is_last_chapter && is_last_caption && time_ms > current_caption?.end_ms) {
+        intentionally_updated_at = Date.now()
+        next_chapter()
+        set_current_caption_index(0)
+        current_caption = null
+      }
       return
     }
 
     set_current_caption_index(time_based_caption_index)
   }
 
-  const sleep = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
   function read_translation(index_to_read_translation: number) {
     const caption = captions[index_to_read_translation]
@@ -154,9 +165,7 @@
   }
 
   function user_wants_to_play_new_location({ start_ms, index }: { start_ms: number; index: number }) {
-    intentionally_updated_at = Date.now()
-    stop_reading_translation?.()
-    read_translation_for_caption = null
+    pause_and_reset_bilingual()
     start_player_at(start_ms)
     set_current_caption_index(index)
   }
@@ -192,7 +201,7 @@
     user_wants_to_play_new_location({ start_ms: current_caption.start_ms, index: current_caption_index })
   }
   function playBilingual(loop_back: boolean) {
-    if (mode === 'bilingual' && bilingual_loop_back === loop_back && isPlaying) return pause()
+    if (mode === 'bilingual' && bilingual_loop_back === loop_back && isPlaying) return pause_and_reset_bilingual()
     mode = 'bilingual'
     bilingual_loop_back = loop_back
     current_caption = captions[current_caption_index]
@@ -207,12 +216,20 @@
 
   let paused_for_study = false
   $: if (isPlaying && !in_view) {
-    pause()
+    pause_and_reset_bilingual()
     paused_for_study = true
   }
   $: if (paused_for_study && in_view) {
     play()
     paused_for_study = false
+  }
+
+  function pause_and_reset_bilingual() {
+    pause()
+    stop_reading_translation?.()
+    // is_reading_translation = false
+    read_translation_for_caption = null
+    intentionally_updated_at = Date.now()
   }
 </script>
 
@@ -243,7 +260,7 @@
     const SPACEBAR = ' '
     if (event.key === SPACEBAR) {
       if (isPlaying)
-        pause()
+        pause_and_reset_bilingual()
       else
         play()
       event.preventDefault()

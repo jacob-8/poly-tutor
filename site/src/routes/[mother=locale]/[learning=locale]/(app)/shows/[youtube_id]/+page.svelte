@@ -71,8 +71,8 @@
     data.check_is_in_my_videos(youtube.id, supabase)
   }
 
-  function handle_chapter_select(event) {
-    chapter_index = event.target.value
+  function change_chapter(index: number) {
+    chapter_index = index
     const url = new URL($page.url.toString())
     url.searchParams.set('chapter', chapter_index.toString())
     window.history.replaceState({}, '', url.toString())
@@ -200,7 +200,9 @@
           }}>{$page.data.t.shows.get_captions} ({calculate_transcription_cost({duration_seconds: youtube.duration_seconds * 2})})</Button>
           <!-- doubled the duration because the Google Translate costs are roughly equivalent to the speech-to-text costs -->
         {:else if sentences}
-          <SelectChapter {handle_chapter_select} {chapter_index} {youtube} />
+          <SelectChapter handle_chapter_select={event => {
+            // @ts-ignore
+            change_chapter(event.target.value)}} {chapter_index} {youtube} />
 
           {#if summary?.length}
             <ShowMeta {language} {mother} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.chapter_summary} settings={$settings} sentences={summary} {studySentence} split_sentences={data.split_sentences} />
@@ -244,6 +246,7 @@
               pause={youtubeComponent.pause}
               set_volume={youtubeComponent.set_volume}
               seekToMs={youtubeComponent.seekToMs}
+              next_chapter={() => change_chapter(+chapter_index + 1)}
               is_last_chapter={chapter_index == youtube.chapters.length - 1}
               {isPlaying}
               {current_time_ms}
@@ -252,7 +255,9 @@
           {/key}
 
           <div class="mt-2"></div>
-          <SelectChapter {handle_chapter_select} {chapter_index} {youtube} />
+          <SelectChapter handle_chapter_select={event => {
+            // @ts-ignore
+            change_chapter(event.target.value)}} {chapter_index} {youtube} />
           <SelectSpeechSynthesisVoice locale={mother} />
 
           {#if $user}
