@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm -F site dev",
+    "prod": "pnpm -F site prod",
     "build": "pnpm -F site build",
     "preview": "pnpm -F site preview",
     "postinstall": "simple-git-hooks",

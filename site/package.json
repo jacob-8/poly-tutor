@@ -3,6 +3,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev --host",
+		"prod": "vite dev --host --mode production",
 		"build": "vite build",
 		"preview": "pnpm build && vite preview",
 		"sync": "svelte-kit sync",
