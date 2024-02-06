@@ -1,12 +1,10 @@
 import { ResponseCodes } from '$lib/responseCodes'
 import { type Config, error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import type { Sentence } from '$lib/types'
+import type { Translation } from '$lib/types'
 import { OpenAiChatModels, type ChatModels } from '$lib/types/models'
 import type { ChatCompletionRequestMessage, CreateChatCompletionRequest, CreateChatCompletionResponse } from 'openai-edge'
 import type { LocaleCode } from '$lib/i18n/locales'
-import { translate_sentences } from '$api/translate/translate-sentences'
-import { split_into_sentences } from '../add/split_string_into_sentences'
 
 export const config: Config = { maxDuration: 300 }
 
@@ -17,29 +15,32 @@ export interface YoutubeSummarizeRequestBody {
   end_ms: number
   mother: LocaleCode
   learning: LocaleCode
+  title: string
 }
-export type YoutubeSummarizeResponseBody = Sentence[]
+export type YoutubeSummarizeResponseBody = Translation
 
 export const POST: RequestHandler = async ({ locals: { getSession }, params: { youtube_id }, request, fetch: _fetch }) => {
   const { data: session_data, error: _error, supabase } = await getSession()
   if (_error || !session_data?.user)
     error(ResponseCodes.UNAUTHORIZED, { message: _error.message || 'Unauthorized' })
 
-  const { openai_api_key, start_ms, end_ms, mother, learning, transcript } = await request.json() as YoutubeSummarizeRequestBody
+  const { openai_api_key, start_ms, end_ms, mother, learning, transcript, title } = await request.json() as YoutubeSummarizeRequestBody
 
   try {
-    // Future TODO: ask gpt for a title from the summary (if none from youtube) and return both (add a title translations field to the youtube_summaries table)
+    // TODO: ask gpt for a title from the summary (if none on chapter from youtube) and return both (add a title translations field to the youtube_summaries table)
     const model: ChatModels = OpenAiChatModels.GPT3_5
 
-    const requested_language = learning === 'zh-TW'
+    const requested_language = mother === 'zh-TW'
       ? '繁體中文。'
-      : learning === 'zh-CN'
+      : mother === 'zh-CN'
         ? '简体中文。'
         : 'English.'
 
     const messages: ChatCompletionRequestMessage[] = [
-      { role: 'system', content: `You are a professional language teacher who helps students learn language by watching films. Summarize the following transcript in less than 200 words to provide a quick preview before watching. Keep your speech simple and use ${requested_language}.` },
-      { role: 'user', content: `Transcript: ${transcript}` },
+      { role: 'system', content: `I am learning ${learning === 'en' ? 'English' : '中文'}. Summarize the following transcript from a portion of a YouTube video. Use less than 200 words to provide a quick preview before I watch. Use ${requested_language}.` },
+      { role: 'user', content: `Video title: ${title}
+     
+Transcript: ${transcript}` },
     ]
 
     const completionRequest: CreateChatCompletionRequest = {
@@ -59,16 +60,15 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
     })
     const completion = await response.json() as CreateChatCompletionResponse
     const reply = completion.choices[0].message.content
+    const summary: Translation = { [mother]: reply }
 
-    const sentences: Sentence[] = split_into_sentences(reply).map(text => ({ text }))
-    const sentences_with_translation = await translate_sentences({ sentences, mother, learning, _fetch })
     const { error: saving_error } = await supabase
       .from('youtube_summaries')
       .insert({
         youtube_id,
         start_ms,
         end_ms,
-        sentences: sentences_with_translation,
+        translations: summary,
         source: model,
       })
       .select()
@@ -76,7 +76,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
     if (saving_error)
       throw new Error(saving_error.message)
 
-    return json(sentences_with_translation satisfies YoutubeSummarizeResponseBody)
+    return json(summary satisfies YoutubeSummarizeResponseBody)
   } catch (err) {
     console.error(err.message)
     error(ResponseCodes.INTERNAL_SERVER_ERROR, err.message)

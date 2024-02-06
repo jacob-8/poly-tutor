@@ -1,4 +1,4 @@
-import type { Sentence, YoutubeChapter } from '$lib/types'
+import type { Sentence, Translation, YoutubeChapter } from '$lib/types'
 
 export type Json =
   | string
@@ -122,7 +122,7 @@ export interface Database {
           description: string | null
           end_ms: number
           id: string
-          sentences: Sentence[]
+          translations: Translation
           source: string
           start_ms: number
           title: string | null
@@ -135,7 +135,7 @@ export interface Database {
           description?: string | null
           end_ms: number
           id?: string
-          sentences: Sentence[]
+          translations: Translation
           source: string
           start_ms: number
           title?: string | null
@@ -148,7 +148,7 @@ export interface Database {
           description?: string | null
           end_ms?: number
           id?: string
-          sentences?: Sentence[]
+          translations?: Translation
           source?: string
           start_ms?: number
           title?: string | null

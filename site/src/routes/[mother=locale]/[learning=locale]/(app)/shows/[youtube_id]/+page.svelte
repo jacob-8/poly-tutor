@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import Youtube, { PlayerState } from './Youtube.svelte'
-  import type { Sentence, StudyWords, YoutubeChapter } from '$lib/types'
+  import type { Sentence, StudyWords, Translation, YoutubeChapter } from '$lib/types'
   import StudySentence from './StudySentence.svelte'
   import { Button } from 'svelte-pieces'
   import Sentences from './Sentences.svelte'
@@ -18,6 +18,7 @@
   import SelectChapter from './SelectChapter.svelte'
   import { calculate_tokens_cost, calculate_transcription_cost } from '$lib/utils/calculate-cost'
   import ShowMeta from './ShowMeta.svelte'
+  import SummaryComponent from './Summary.svelte'
 
   export let data
   $: ({ youtube_id, youtube_promise, user, supabase, settings, user_vocabulary, language, mother } = data)
@@ -46,7 +47,7 @@
   })
 
   let chapter: YoutubeChapter
-  let summary: Sentence[]
+  let summary: Translation
   let sentences: Sentence[]
   let study_words: StudyWords
   $: study_words_object = get_study_words_object(study_words)
@@ -58,7 +59,7 @@
       return
 
     const current_summary = summaries?.find(sum => sum.start_ms === chapter.start_ms && sum.end_ms === chapter.end_ms)
-    summary = current_summary?.sentences || null
+    summary = current_summary?.translations || null
 
     // TODO: When YouTube chapters are larger than 15 minutes, need to split into smaller chunks (sub-chapters) for listening and study words, but still retain the chapter bounds for summary as the measurements for how to split YouTube chapters is flexible. We don't want to create summaries for section sizes that may change in the future.
     const sentences_for_chapter = transcript.filter(sent => sent.start_ms >= chapter.start_ms && sent.start_ms <= chapter.end_ms);
@@ -100,8 +101,6 @@
   function studySentence(sentence: Sentence) {
     currentStudySentence = sentence
   }
-
-  const delay_render_to_not_slow_page_transition = new Promise(r => setTimeout(r, 200))
 </script>
 
 <ShowLayout>
@@ -187,87 +186,85 @@
 
       <ShowMeta {language} {mother} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.description} settings={$settings} sentences={youtube.description} {studySentence} split_sentences={data.split_sentences} />
 
-      {#await delay_render_to_not_slow_page_transition then _}
-        {#if transcript_status === 'checking-db'}
-          <div class="px-2 sm:px-0">{$page.data.t.layout.loading}<span class="i-svg-spinners-3-dots-fade align--4px ml-1" /></div>
-        {:else if transcript_status === 'none'}
-          <Button size="lg" form="filled" class="mx-2 sm:mx-0 mt-2 mb-10" onclick={async () => {
-            const result = await data.transcribe()
-            if (result) {
-              entire_transcript = result
-              transcript_status = 'exists'
-            }
-          }}>{$page.data.t.shows.get_captions} ({calculate_transcription_cost({duration_seconds: youtube.duration_seconds * 2})})</Button>
-          <!-- doubled the duration because the Google Translate costs are roughly equivalent to the speech-to-text costs -->
-        {:else if sentences}
+      {#if transcript_status === 'checking-db'}
+        <div class="px-2 sm:px-0">{$page.data.t.layout.loading}<span class="i-svg-spinners-3-dots-fade align--4px ml-1" /></div>
+      {:else if transcript_status === 'none'}
+        <Button size="lg" form="filled" class="mx-2 sm:mx-0 mt-2 mb-10" onclick={async () => {
+          const result = await data.transcribe()
+          if (result) {
+            entire_transcript = result
+            transcript_status = 'exists'
+          }
+        }}>{$page.data.t.shows.get_captions} ({calculate_transcription_cost({duration_seconds: youtube.duration_seconds * 2})})</Button>
+        <!-- doubled the duration because the Google Translate costs are roughly equivalent to the speech-to-text costs -->
+      {:else if sentences}
+        <SelectChapter handle_chapter_select={event => {
+          // @ts-ignore
+          change_chapter(event.target.value)}} {chapter_index} {youtube} />
+
+        <SummaryComponent {summary} {mother}>
+          <Button class="mb-2" form="menu" onclick={async () => {
+            summary = await data.summarize_chapter({sentences, start_ms: chapter.start_ms, end_ms: chapter.end_ms, title: youtube.title.map(s => s.text).join(' ')})
+            summaries.push({
+              translations: summary,
+              start_ms: chapter.start_ms,
+              end_ms: chapter.end_ms,
+              created_at: new Date().toISOString(),
+              created_by: $user.id,
+              id: null,
+              updated_at: null,
+              source: null,
+              youtube_id: youtube.id,
+              title: '',
+              description: '',
+            })
+          }}><span class="i-material-symbols-page-info-outline text-xl -mb-1 mr-1" />{$page.data.t.shows.summarize_chapter} ({calculate_tokens_cost({sentences, language})})</Button>
+        </SummaryComponent>
+
+        <Button form="menu" class="mb-2 sm:hidden! flex items-center" onclick={() => {
+          youtubeComponent.pause()
+          scroll_to_study()
+          currentStudySentence = null
+        }}>
+          <span class="i-ic-baseline-manage-search text-xl -mb-1 mr-1" /> Preview Unknown Words
+        </Button>
+
+        {#key chapter_index}
+          <Sentences
+            {in_view}
+            {language}
+            {mother}
+            changed_words={$changed_words}
+            {study_words_object}
+            settings={$settings}
+            add_seen_sentence={user_vocabulary.add_seen_sentence}
+            play={youtubeComponent.play}
+            pause={youtubeComponent.pause}
+            set_volume={youtubeComponent.set_volume}
+            seekToMs={youtubeComponent.seekToMs}
+            next_chapter={() => change_chapter(+chapter_index + 1)}
+            is_last_chapter={chapter_index == youtube.chapters.length - 1}
+            {isPlaying}
+            {current_time_ms}
+            {studySentence}
+            {sentences} />
+        {/key}
+
+        <div class="mt-2"></div>
+        {#if sentences.length > 10}
           <SelectChapter handle_chapter_select={event => {
             // @ts-ignore
             change_chapter(event.target.value)}} {chapter_index} {youtube} />
-
-          {#if summary?.length}
-            <ShowMeta {language} {mother} changed_words={$changed_words} {study_words_object} label={$page.data.t.shows.chapter_summary} settings={$settings} sentences={summary} {studySentence} split_sentences={data.split_sentences} />
-          {:else}
-            <Button class="mb-2" form="menu" onclick={async () => {
-              summary = await data.summarize_chapter({sentences, start_ms: chapter.start_ms, end_ms: chapter.end_ms})
-              summaries.push({
-                sentences: summary,
-                start_ms: chapter.start_ms,
-                end_ms: chapter.end_ms,
-                created_at: new Date().toISOString(),
-                created_by: $user.id,
-                id: null,
-                updated_at: null,
-                source: null,
-                youtube_id: youtube.id,
-                title: '',
-                description: '',
-              })
-            }}><span class="i-material-symbols-page-info-outline text-xl -mb-1 mr-1" />{$page.data.t.shows.summarize_chapter} ({calculate_tokens_cost({sentences, language})})</Button>
-          {/if}
-
-          <Button form="menu" class="mb-2 sm:hidden! flex items-center" onclick={() => {
-            youtubeComponent.pause()
-            scroll_to_study()
-            currentStudySentence = null
-          }}>
-            <span class="i-ic-baseline-manage-search text-xl -mb-1 mr-1" /> Preview Unknown Words
-          </Button>
-
-          {#key chapter_index}
-            <Sentences
-              {in_view}
-              {language}
-              {mother}
-              changed_words={$changed_words}
-              {study_words_object}
-              settings={$settings}
-              add_seen_sentence={user_vocabulary.add_seen_sentence}
-              play={youtubeComponent.play}
-              pause={youtubeComponent.pause}
-              set_volume={youtubeComponent.set_volume}
-              seekToMs={youtubeComponent.seekToMs}
-              next_chapter={() => change_chapter(+chapter_index + 1)}
-              is_last_chapter={chapter_index == youtube.chapters.length - 1}
-              {isPlaying}
-              {current_time_ms}
-              {studySentence}
-              {sentences} />
-          {/key}
-
-          <div class="mt-2"></div>
-          <SelectChapter handle_chapter_select={event => {
-            // @ts-ignore
-            change_chapter(event.target.value)}} {chapter_index} {youtube} />
-          <SelectSpeechSynthesisVoice locale={mother} />
-
-          {#if $user}
-            <Button class="mb-2" color="red" form="simple" size="sm" title={$page.data.t.shows.remove_video} onclick={async () => {
-              await data.remove_from_my_videos(youtube.id, supabase)
-              goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
-            }}><span class="i-fa6-regular-trash-can -mb-.5" /> {$page.data.t.shows.remove_video}</Button>
-          {/if}
         {/if}
-      {/await}
+        <SelectSpeechSynthesisVoice locale={mother} />
+
+        {#if $user}
+          <Button class="mb-2" color="red" form="simple" size="sm" title={$page.data.t.shows.remove_video} onclick={async () => {
+            await data.remove_from_my_videos(youtube.id, supabase)
+            goto(`/${$page.params.mother}/${$page.params.learning}/shows`)
+          }}><span class="i-fa6-regular-trash-can -mb-.5" /> {$page.data.t.shows.remove_video}</Button>
+        {/if}
+      {/if}
     {/if}
   </div>
 </ShowLayout>

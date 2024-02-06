@@ -16,7 +16,7 @@ export interface Sentence {
   syntax?: google.cloud.language.v1.IAnalyzeSyntaxResponse
 }
 
-type Translation = Partial<Record<LocaleCode, string>>
+export type Translation = Partial<Record<LocaleCode, string>>
 
 export interface VocabularyWordStats {
   status?: WordStatus

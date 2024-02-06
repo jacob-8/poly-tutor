@@ -5,7 +5,6 @@ export const seeded_user_id = '5e040c00-ce26-4f2f-8413-e0985ec1f4b2'
 
 export const mocked_prefix = 'Mocked: '
 export const fake_ch__penguin_summary = mocked_prefix + '企鹅(qǐ\'é)。你喜欢企鹅吗？为什么？'
-export const fake_ch_transcript = mocked_prefix + '這是模仿翻譯的假抄本。'
 
 export interface YouTubeWithAllData {
   channel: TablesInsert<'youtube_channels'>
@@ -91,13 +90,9 @@ export const zh_transcribed_summarized: YouTubeWithAllData = {
   summaries: [
     {
       youtube_id: '9ruqSX_p_48',
-      sentences: [
-        { text: '用於測試目的的非常簡短但虛假的摘要。' },
-        { text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' },
-        { text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' },
-        { text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' },
-        { text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' },
-      ],
+      translations: {
+        'en': 'A summary for testing purposes. This one will be for the first chapter and then we will have another summary for the second chapter. This self-driving tour gave me a deeper understanding of the natural scenery and culture of Guizhou.',
+      },
       source: 'spoofing',
       start_ms: 0,
       end_ms: first_chapter_end_ms,
@@ -105,10 +100,7 @@ export const zh_transcribed_summarized: YouTubeWithAllData = {
     },
     {
       youtube_id: '9ruqSX_p_48',
-      sentences: [
-        { text: '这次自驾游让我对贵州的自然风光和文化有了更深的了解。' },
-        { text: '用於測試目的的非常簡短但虛假的摘要。' },
-      ],
+      translations: { 'en': 'This self-driving tour gave me a deeper understanding of the natural scenery and culture of Guizhou. A very short but fake summary for testing purposes.' },
       source: 'spoofing',
       start_ms: first_chapter_end_ms,
       end_ms: first_chapter_end_ms * 2,
@@ -136,7 +128,7 @@ export const zh_transcribed: YouTubeWithAllData = {
   transcripts: [
     {
       youtube_id: 'UnlyETVcDzY',
-      sentences: [{ text: fake_ch_transcript }],
+      sentences: [{ text: 'need to do this' }],
       source: 'spoofing',
       created_by: seeded_user_id
     }
@@ -186,12 +178,49 @@ export const en_transcribed_translated_summarized: YouTubeWithAllData = {
           translation: {
             'zh-TW': '大家好，歡迎來到這個視頻，在這個視頻中，我將向您展示如何使用LangChain.js來構建語言模型應用程序。'
           },
+          start_ms: 0,
+          end_ms: 4000
         },
-        { text: 'So we are going to be using JavaScript and OpenAI to build a language model application.' },
-        { text: 'This is going to be a lot of fun.' },
-        { text: 'Lets get started.' },
-        { text: 'So the first thing we need to do is go to the LangChain.js website.' },
-        { text: 'So this is LangChain.js.' },
+        {
+          text: 'So we are going to be using JavaScript and OpenAI to build a language model application.',
+          translation: {
+            'zh-TW': '所以我們將使用JavaScript和OpenAI來構建語言模型應用程序。'
+          },
+          start_ms: 4000,
+          end_ms: 8000
+        },
+        {
+          text: 'This is going to be a lot of fun.',
+          translation: {
+            'zh-TW': '這將是非常有趣的。'
+          },
+          start_ms: 8000,
+          end_ms: 12000
+        },
+        {
+          text: 'Lets get started.',
+          translation: {
+            'zh-TW': '讓我們開始吧。'
+          },
+          start_ms: 12000,
+          end_ms: 16000
+        },
+        {
+          text: 'So the first thing we need to do is go to the LangChain.js website.',
+          translation: {
+            'zh-TW': '所以我們需要做的第一件事是去LangChain.js的網站。'
+          },
+          start_ms: 16000,
+          end_ms: 20000
+        },
+        {
+          text: 'So this is LangChain.js.',
+          translation: {
+            'zh-TW': '這就是LangChain.js。'
+          },
+          start_ms: 20000,
+          end_ms: 24000
+        },
       ],
       source: 'spoofing',
       created_by: seeded_user_id
@@ -200,9 +229,7 @@ export const en_transcribed_translated_summarized: YouTubeWithAllData = {
   summaries: [
     {
       youtube_id: 'HSZ_uaif57o',
-      sentences: [
-        { text: 'A tutorial showing how to use LangChain.js to build a language model application.' }
-      ],
+      translations: { en: 'A tutorial showing how to use LangChain.js to build a language model application.' },
       source: 'spoofing',
       start_ms: 0,
       end_ms: 10000,

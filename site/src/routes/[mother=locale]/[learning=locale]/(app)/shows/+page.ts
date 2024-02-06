@@ -38,43 +38,43 @@ export const load = (async ({parent, params: { learning }}) => {
     channel: youtube.channel,
   }))
 
-  // const user_youtube_ids = user_youtubes.map(({youtube}) => youtube.id)
+  const user_youtube_ids = user_youtubes.map(({youtube}) => youtube.id)
 
-  // const { data: other_youtubes_data, error: error2 } = await supabase
-  //   .from('youtubes')
-  //   .select(`
-  //     id,
-  //     language,
-  //     title,
-  //     description,
-  //     duration_seconds,
-  //     chapters,
-  //     created_at,
-  //     channel:youtube_channels(
-  //       id,
-  //       title,
-  //       description,
-  //       thumbnail_url
-  //     )
-  //   `)
-  //   .eq('language', language)
-  //   .not('id', 'in', `(${user_youtube_ids.join(',')})`)
-  //   .order('created_at', { ascending: false })
-  //   .limit(20)
+  const { data: other_youtubes_data, error: error2 } = await supabase
+    .from('youtubes')
+    .select(`
+      id,
+      language,
+      title,
+      description,
+      duration_seconds,
+      chapters,
+      created_at,
+      channel:youtube_channels(
+        id,
+        title,
+        description,
+        thumbnail_url
+      )
+    `)
+    .eq('language', language)
+    .not('id', 'in', `(${user_youtube_ids.join(',')})`)
+    .order('created_at', { ascending: false })
+    .limit(10)
 
-  // if (error2)
-  //   console.error(error2)
+  if (error2)
+    console.error(error2)
 
-  // const other_youtubes: YouTubeWithAllData[] = other_youtubes_data.map(youtube => ({
-  //   youtube: {
-  //     ...youtube,
-  //     channel_id: youtube.channel.id,
-  //   },
-  //   channel: youtube.channel,
-  // }))
+  const other_youtubes: YouTubeWithAllData[] = other_youtubes_data.map(youtube => ({
+    youtube: {
+      ...youtube,
+      channel_id: youtube.channel.id,
+    },
+    channel: youtube.channel,
+  }))
 
   return {
     user_youtubes,
-    other_youtubes: [],
+    other_youtubes,
   }
 }) satisfies PageLoad

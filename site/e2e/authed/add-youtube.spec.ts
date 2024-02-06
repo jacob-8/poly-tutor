@@ -10,7 +10,7 @@ test('new user sees existing videos in his language but not other languages', as
   await page.goto('/')
   await page.getByRole('link', { name: 'YouTube' }).click()
   await expect(page.getByText('自驾游贵州')).toBeVisible()
-  await expect(page.getByText('An Elder Transforms')).toBeVisible()
+  await expect(page.getByText('一位老人騎驢帶回200棵蘋果樹苗')).toBeVisible()
   await expect(page.getByText('在黄土高坡上')).toBeVisible()
   await expect(page.getByText('Harvard')).not.toBeVisible()
 })

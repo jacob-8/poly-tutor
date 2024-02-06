@@ -82,7 +82,7 @@ export const variants: Variant<Component>[] = [
         youtube_promise: delay({ data: youtube}, 500),
         user: mockBobUser,
         transcribe: () => delay(zh_transcribed_summarized.transcripts[0].sentences),
-        summarize_chapter: () => delay(zh_transcribed_summarized.summaries[0].sentences),
+        summarize_chapter: () => delay(zh_transcribed_summarized.summaries[0].translations),
       }
     },
   },

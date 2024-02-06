@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types'
-import type { Sentence } from '$lib/types'
+import type { Sentence, Translation } from '$lib/types'
 import { check_is_in_my_videos, remove_from_my_videos, youtube_in_db } from './check-youtube'
 import type { Summary, YouTube } from '$lib/supabase/database.types'
 import { post_request } from '$lib/utils/post-request'
@@ -71,16 +71,16 @@ export const load = (async ({ params: { youtube_id, mother, learning }, fetch, p
     return sentences
   }
 
-  async function summarize_chapter({start_ms, end_ms, sentences}: { start_ms: number, end_ms: number, sentences: Sentence[]}): Promise<Sentence[]> {
+  async function summarize_chapter({start_ms, end_ms, sentences, title}: { start_ms: number, end_ms: number, sentences: Sentence[], title: string}): Promise<Translation> {
     const openai_api_key = get_openai_api_key()
     if (!openai_api_key) return
     const transcript = sentences.map(({ text }) => text).join('\n')
-    const { data: summary, error } = await post_request<YoutubeSummarizeRequestBody, YoutubeSummarizeResponseBody>(`/api/youtube/${youtube_id}/summarize`, { openai_api_key, mother, learning, start_ms, end_ms, transcript }, fetch)
+    const { data: translations, error } = await post_request<YoutubeSummarizeRequestBody, YoutubeSummarizeResponseBody>(`/api/youtube/${youtube_id}/summarize`, { openai_api_key, mother, learning, start_ms, end_ms, transcript, title }, fetch)
     if (error) {
       console.error(error.message)
       throw new Error(error.message)
     }
-    return summary
+    return translations
   }
 
   return {

@@ -30,7 +30,7 @@ CREATE TABLE youtube_summaries (
   id uuid primary key default uuid_generate_v4(),
   youtube_id text references youtubes(id) not null,
   title text null,
-  sentences jsonb[] not null,
+  sentences jsonb[] not null, -- dropped in exchange for translations
   source text not null,
   start_ms int not null,
   end_ms int not null,
