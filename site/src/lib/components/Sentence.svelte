@@ -4,6 +4,7 @@
   import { IntersectionObserverShared } from 'svelte-pieces'
   import ImSeen from './ImSeen.svelte'
   import type { LanguageCode } from '$lib/i18n/locales'
+  import EnglishWord from './EnglishWord.svelte'
 
   export let language: LanguageCode
   export let onclick: () => void = undefined
@@ -48,7 +49,7 @@
           {#if language === 'zh'}
             <ChineseWord {changed_words} {study_words_object} {word} {settings} />
           {:else}
-            <div class="mr-1">{word.text}</div>
+            <EnglishWord {changed_words} {study_words_object} {word} {settings} />
           {/if}
         {/each}
       {:else}

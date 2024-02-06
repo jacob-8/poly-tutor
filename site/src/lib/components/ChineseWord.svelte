@@ -9,7 +9,6 @@
   export let changed_words: UserVocabulary = {}
 
   $: ({text, definitions, neighbors_understood, status: db_status, pinyin, tone_change } = word)
-
   $: status = changed_words?.[text]?.status ?? db_status
 </script>
 

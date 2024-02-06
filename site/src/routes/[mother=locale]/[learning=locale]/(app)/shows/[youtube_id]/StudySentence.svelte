@@ -57,7 +57,6 @@
 {/each}
 
 <div class="opacity-20 hover:opacity-100">
-
   {#if known_words.length}
     <hr>
     <div class="text-xs text-gray mb-2">

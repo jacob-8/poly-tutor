@@ -1,4 +1,4 @@
-export enum WordLists {
+export enum ChineseWordLists {
   時代華語1w = '時代華語 Book 1 Words',
   時代華語1c = '時代華語 Book 1 Characters',
   時代華語2Aw = '時代華語 Book 2 L1-L8 Words',
@@ -62,4 +62,12 @@ export enum WordLists {
   // hsknew9c = 'HSK-New 9 Characters',
 }
 
-export type WordList = keyof typeof WordLists
+enum EnglishWordLists {
+  toefl = 'TOEFL', // to study in USA
+  toeic = 'TOEIC', // to work in Taiwan
+  ielts = 'International English Language Testing System', // to study  in Europe
+  tw_7000 = 'Taiwan HS 7000 Words',
+}
+
+export type ChineseWordList = keyof typeof ChineseWordLists
+export type EnglishWordList = keyof typeof EnglishWordLists

@@ -3,7 +3,7 @@ import { WordStatus, type UserVocabulary, type VocabularyWordStats } from '$lib/
 import type { Supabase } from '../supabase/database.types'
 import type { AuthResponse } from '@supabase/supabase-js'
 import { derived, get, readable, type Readable } from 'svelte/store'
-import type { WordList } from './word-lists.interface'
+import type { ChineseWordList, EnglishWordList } from './word-lists.interface'
 import { browser } from '$app/environment'
 import type { TablesInsert } from '$lib/supabase/generated.types'
 import { navigating } from '$app/stores'
@@ -13,9 +13,8 @@ import { VOCAB_KEY_PATH, VOCAB_STORE_NAME, createIndexedDBStore } from '$lib/uti
 
 type VocabItem = VocabularyWordStats & { updated_at?: string }
 
-const DEFAULT_ZH_LISTS = []
-const DEFAULT_EN_LISTS = []
-// const DEFAULT_ZH_LISTS = ['時代華語1w', '時代華語2Aw', '時代華語2Bw', '時代華語3Aw', '時代華語3Bw', '時代華語4Aw']
+const DEFAULT_ZH_LISTS: ChineseWordList[] = [] // ['時代華語1w', '時代華語2Aw', '時代華語2Bw', '時代華語3Aw', '時代華語3Bw', '時代華語4Aw']
+const DEFAULT_EN_LISTS: EnglishWordList[] = ['tw_7000']
 
 export function createVocabStore({ supabase, authResponse, language, log = false }: { supabase: Supabase, authResponse: AuthResponse, language: LanguageCode, log?: boolean }) {
   if (!browser)
@@ -27,7 +26,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
   const user_with_language_key = `${user_id || 'no_user'}_${language}`
   const user_vocabulary = createIndexedDBStore<UserVocabulary>({store_name: VOCAB_STORE_NAME, key_path: VOCAB_KEY_PATH, key: user_with_language_key, initial_value: {}, log})
   const seen_sentences_this_route = createPersistedStore<Record<string, string[]>>(`seen_sentences_this_route_${user_with_language_key}`, {}, { syncTabs: true })
-  const word_lists = createPersistedStore<WordList[]>(`word_lists_${user_with_language_key}`, language === 'en' ? DEFAULT_EN_LISTS : DEFAULT_ZH_LISTS, { syncTabs: true })
+  const word_lists = createPersistedStore<(ChineseWordList | EnglishWordList)[]>(`word_lists_${user_with_language_key}`, language === 'en' ? DEFAULT_EN_LISTS : DEFAULT_ZH_LISTS, { syncTabs: true })
 
   if (user_id) {
     supabase
@@ -70,7 +69,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     const current_sentences = get(seen_sentences_this_route)
     const key = words.join('_')
     current_sentences[key] = words
-    seen_sentences_this_route.set(current_sentences)
+    // seen_sentences_this_route.set(current_sentences)
   }
 
   let last_process_seen_sentences: Date
@@ -141,7 +140,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     if (error) throw error
   }
 
-  const vocab_with_word_lists = derived<[Readable<UserVocabulary>, Readable<WordList[]>], UserVocabulary>([user_vocabulary, word_lists], ([$user_vocabulary, $word_lists], set) => {
+  const vocab_with_word_lists = derived<[Readable<UserVocabulary>, Readable<(ChineseWordList | EnglishWordList)[]>], UserVocabulary>([user_vocabulary, word_lists], ([$user_vocabulary, $word_lists], set) => {
     if ($word_lists.length) {
       const words = { ...$user_vocabulary }
       import('./word-lists').then(({ word_lists }) => {

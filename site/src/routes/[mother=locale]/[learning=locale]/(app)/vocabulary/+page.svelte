@@ -33,6 +33,11 @@
     .filter(([_word, {status}]) => status === WordStatus.known)
     .sort((a, b) => b[1].views - a[1].views)
     .map(([word, {views}]) => ({word, views}))
+
+  $: word_list_words = Object.entries($user_vocabulary)
+    .filter(([_word, {status}]) => status === WordStatus.wordlist)
+    .sort((a, b) => b[1].views - a[1].views)
+    .map(([word, {views}]) => ({word, views}))
 </script>
 
 <!-- {#if $user?.email === 'jacob@polylingual.dev'}
@@ -54,6 +59,11 @@
       {#each known_words.slice(0, 100) as word}
         <div>{word.word} - {word.views}</div>
       {/each}
+      <hr>
+      <div>Word lists</div>
+      {#each word_list_words.slice(0, 100) as word}
+        <div>{word.word}</div>
+      {/each}
     </div>
     <div class="w-1/2">
       Unknown: {unknown_words.length}
@@ -62,9 +72,4 @@
       {/each}
     </div>
   </div>
-
-
-
-  <!-- <pre>{JSON.stringify($user_vocabulary, null, 2)}</pre> -->
-
 </div>

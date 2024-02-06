@@ -43,6 +43,7 @@ interface AnalyzedWord extends VocabularyWordStats {
 }
 
 export interface AnalyzedEnglishWord extends AnalyzedWord {
+  inflected?: string
   phonetic?: string
 }
 

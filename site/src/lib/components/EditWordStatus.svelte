@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { browser } from '$app/environment'
   import { WordStatus, type AnalyzedChineseWord, type UserVocabulary } from '$lib/types'
   import { find_tone, tone_marker } from '$lib/utils/find-tone'
   import { sort_definitions } from '$lib/utils/sort-definitions'
   import { get_status_pronunciation } from './get-status-pronunciation'
 
-  export let word: AnalyzedChineseWord
+  export let word: AnalyzedChineseWord // | AnalyzedEnglishWord
   export let high_view_count = false
   export let common_in_this_context = false
   export let improve_pronunciation_or_tone = false
@@ -22,7 +23,7 @@
   }
 </script>
 
-<div class="flex mb-3 items-start">
+<div class="flex mb-3 items-center">
   <div class="flex flex-col mr-2" class:text-center={status === WordStatus.tone}>
     {#if pinyin}
       <div class="text-xs h-4 -mb-.5"
@@ -47,11 +48,11 @@
       {#if common_in_this_context && context_sentence_indexes}
         {context_sentence_indexes.length}
       {:else}
-        {views}
+        {views || 0}
       {/if}
     </span>
 
-    {#if /Mobi|Android|iPad|iPhone|iPod/i.test(navigator.userAgent)}
+    {#if pinyin && browser && /Mobi|Android|iPad|iPhone|iPod/i.test(navigator.userAgent)}
       <a class="text-blue" href={`plecoapi://x-callback-url/s?q=${text}`}>
         PLECO
       </a>
