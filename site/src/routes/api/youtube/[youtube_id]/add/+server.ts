@@ -57,12 +57,13 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
       return await translate_sentences({ sentences, mother, learning, _fetch: fetch })
     }
 
-    const [title, description, chapters] = await Promise.all([
+    const [title, chapters] = await Promise.all([
       split_and_translate({ text: youtube_title, mother, learning}),
-      split_and_translate({text: youtube_description, mother, learning}),
       get_chapters({youtube_id, duration_seconds}),
       channel_in_db(),
     ])
+
+    const description = split_into_sentences(youtube_description).map(sentence => ({ text: sentence }))
 
     const { data: youtube, error: save_youtube_error } = await admin_supabase.from('youtubes').insert({
       id: youtube_id,
