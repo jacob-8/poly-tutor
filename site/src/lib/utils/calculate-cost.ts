@@ -42,10 +42,13 @@ export function calculate_tokens_cost({ sentences, language }: { sentences: Sent
   if (tokens > GPT3_5_MAX_TOKENS)
     return `Too many tokens: ${tokens} > ${GPT3_5_MAX_TOKENS}`
 
-  const cost = (tokens * GPT3_5_INPUT_COST_PER_TOKEN).toFixed(4)
-  const cost_without_trailing_zero = cost.replace(/\.?0+$/, '')
+  const currency = language === 'en' ? ' USD' : ''
 
-  return `$${cost_without_trailing_zero}`
+  const cost = (tokens * GPT3_5_INPUT_COST_PER_TOKEN).toFixed(2)
+  if (cost === '0.00')
+    return `< $0.01` + currency
+
+  return `$${cost}` + currency
 }
 
 if (import.meta.vitest) {
@@ -55,7 +58,7 @@ if (import.meta.vitest) {
         { text: '这是一个句子。' },
         { text: '这是另一个句子。' },
       ]
-      expect(calculate_tokens_cost({sentences, language: 'zh'})).toMatchInlineSnapshot(`"$0"`)
+      expect(calculate_tokens_cost({sentences, language: 'zh'})).toMatchInlineSnapshot(`"< $0.01"`)
     })
 
     test('English', () => {
@@ -63,7 +66,7 @@ if (import.meta.vitest) {
         { text: 'This is a sentence.' },
         { text: 'This is another sentence.' },
       ]
-      expect(calculate_tokens_cost({sentences, language: 'en'})).toMatchInlineSnapshot(`"$0"`)
+      expect(calculate_tokens_cost({sentences, language: 'en'})).toMatchInlineSnapshot(`"< $0.01 USD"`)
     })
   })
 }
