@@ -3,22 +3,24 @@ import { get_english_to_chinese_dictionary } from './get-english-to-chinese-dict
 import { analyze_english_sentence } from './analyze-english-sentence'
 import { analyze_english_sentences } from './analyze-english-sentences'
 import type { ECDictEntry, EmphasisLimits, Sentence, UserVocabulary } from '$lib/types'
+import type { LocaleCode } from '$lib/i18n/locales'
 
-const english_to_chinese_dictionary = get_english_to_chinese_dictionary()
-english_to_chinese_dictionary.then(() => {
-  console.info('english-to-chinese dictionary loaded')
-})
-
+let dictionary: Record<string, ECDictEntry>
 let user_vocabulary: UserVocabulary
+
+async function set_worker_dictionary(mother: LocaleCode) {
+  dictionary = await get_english_to_chinese_dictionary(mother)
+  console.info('english-to-chinese dictionary loaded')
+}
 
 function set_user_vocabulary(vocabulary: UserVocabulary) {
   user_vocabulary = vocabulary
 }
 
-function vocabulary_ready(): Promise<boolean> {
+function resolve_when_ready(): Promise<boolean> {
   return new Promise(resolve => {
     const interval = setInterval(() => {
-      if (user_vocabulary) {
+      if (user_vocabulary && dictionary) {
         clearInterval(interval)
         resolve(true)
       }
@@ -26,21 +28,15 @@ function vocabulary_ready(): Promise<boolean> {
   })
 }
 
-async function worker_ready(): Promise<Record<string, ECDictEntry>> {
-  const [dictionary] = await Promise.all([
-    english_to_chinese_dictionary,
-    vocabulary_ready(),
-  ])
-  return dictionary
-}
+const ready = resolve_when_ready()
 
 async function split_english_string(text: string) {
-  const dictionary = await worker_ready()
+  await ready
   return analyze_english_sentence({text, user_vocabulary, dictionary})
 }
 
 async function split_english_sentences({sentences}: { sentences: Sentence[] }): Promise<Sentence[]> {
-  const dictionary = await worker_ready()
+  await ready
   return sentences.map(sentence => ({
     ...sentence,
     words: analyze_english_sentence({text: sentence.text, user_vocabulary, dictionary})
@@ -48,12 +44,13 @@ async function split_english_sentences({sentences}: { sentences: Sentence[] }): 
 }
 
 async function _analyze_english_sentences({sentences, emphasis_limits}: { sentences: Sentence[], emphasis_limits: EmphasisLimits}) {
-  const dictionary = await worker_ready()
+  await ready
   return analyze_english_sentences({sentences, user_vocabulary, dictionary, emphasis_limits})
 }
 
 export const api = {
   set_user_vocabulary,
+  set_worker_dictionary,
   split_english_string,
   split_english_sentences,
   analyze_english_sentences: _analyze_english_sentences,

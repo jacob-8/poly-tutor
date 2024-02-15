@@ -3,7 +3,7 @@ import type { LocaleCode } from '$lib/i18n/locales'
 import type { ChineseEmphasisLimits, Sentence, UserVocabulary } from '$lib/types'
 import { get, type Readable } from 'svelte/store'
 
-export async function get_analysis_functions({learning, user_vocabulary, emphasis_limits}: { learning: LocaleCode, user_vocabulary: Readable<UserVocabulary>, emphasis_limits: Readable<ChineseEmphasisLimits>}) {
+export async function get_analysis_functions({learning, mother, user_vocabulary, emphasis_limits}: { learning: LocaleCode, mother: LocaleCode, user_vocabulary: Readable<UserVocabulary>, emphasis_limits: Readable<ChineseEmphasisLimits>}) {
   if (!browser) {
     return {
       split_string: (text: string) => text,
@@ -14,6 +14,7 @@ export async function get_analysis_functions({learning, user_vocabulary, emphasi
 
   if (learning === 'en') {
     const { api } = await import('$lib/analysis/expose-english-analysis-worker')
+    api.set_worker_dictionary(mother)
     user_vocabulary.subscribe(api.set_user_vocabulary)
 
     return {

@@ -1,7 +1,8 @@
+import type { LocaleCode } from '$lib/i18n/locales'
 import { WordStatus, type Sentence } from '$lib/types'
 
-export function combine_short_sentences(sentences: Sentence[], minimum_ms: number): Sentence[] {
-  if (!sentences[0]?.translation?.en) return sentences
+export function combine_short_sentences({ sentences, minimum_ms, mother}: { sentences: Sentence[], minimum_ms: number, mother: LocaleCode }): Sentence[] {
+  if (!sentences[0]?.translation?.[mother]) return sentences
 
   const combined_sentences: Sentence[] = []
   let sentence_needing_buddy: Sentence
@@ -15,8 +16,8 @@ export function combine_short_sentences(sentences: Sentence[], minimum_ms: numbe
         translation: {},
         words: [...sentence_needing_buddy.words, {text: ' | '}, ...sentence.words], // TODO: error that sentence_needing_buddy.words is not iterable
       }
-      if (sentence_needing_buddy.translation?.en && sentence.translation?.en)
-        combined_sentence.translation.en = sentence_needing_buddy.translation.en + ' | ' + sentence.translation.en
+      if (sentence_needing_buddy.translation?.[mother] && sentence.translation?.[mother])
+        combined_sentence.translation[mother] = sentence_needing_buddy.translation[mother] + ' | ' + sentence.translation[mother]
 
       combined_sentences.push(combined_sentence)
       sentence_needing_buddy = null
@@ -120,7 +121,7 @@ if (import.meta.vitest) {
 
   describe(combine_short_sentences, () => {
     test('combines sentences shorter than 2000ms', () => {
-      const combined = combine_short_sentences([sentence1, sentence2], 2000)
+      const combined = combine_short_sentences({ sentences: [sentence1, sentence2], minimum_ms: 2000, mother: 'en'})
 
       expect(combined).toHaveLength(1)
       expect(combined[0].text).toBe('我听见你说话了。 | 你在做什么？')
@@ -132,7 +133,7 @@ if (import.meta.vitest) {
 
     test('does not combine if no translation in first sentence', () => {
       const sentence1_without_translation = {...sentence1, translation: {}}
-      const combined = combine_short_sentences([sentence1_without_translation, sentence2], 2000)
+      const combined = combine_short_sentences({ sentences: [sentence1_without_translation, sentence2], minimum_ms: 2000, mother: 'en'})
 
       expect(combined).toHaveLength(2)
       expect(combined[0].text).toBe('我听见你说话了。')
