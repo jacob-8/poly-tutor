@@ -15,7 +15,7 @@
 
   {#if key}
     <div class="flex flex-col sm:flex-row gap-1">
-      <span class="text-green-700 bg-gray-100 p-2 rounded font-mono">sk-...{key.slice(-4)}</span>
+      <span on:click={() => navigator.clipboard.writeText(key)} class="text-green-700 bg-gray-100 p-2 rounded font-mono">sk-...{key.slice(-4)}</span>
       <Button
         class="text-left!"
         color="red"

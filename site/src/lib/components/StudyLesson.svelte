@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import type { StudyWords, UserVocabulary, WordStatus } from '$lib/types'
   import EditWordStatus from './EditWordStatus.svelte'
 
@@ -9,7 +10,7 @@
 
 {#if study_words?.high_view_count.length}
   <div class="text-xs text-gray mb-2">
-    Most Viewed Unknown Words:
+    {$page.data.t.shows.most_viewed_unknown_words}:
   </div>
   {#each study_words.high_view_count as word}
     <EditWordStatus {changed_words} {change_word_status} high_view_count {word} />
@@ -19,7 +20,7 @@
 
 {#if study_words?.common_in_this_context.length}
   <div class="text-xs text-gray mb-2">
-    Common in this context:
+    {$page.data.t.shows.common_in_this_context}:
   </div>
   {#each study_words.common_in_this_context as word}
     <EditWordStatus {changed_words} {change_word_status} common_in_this_context {word} />

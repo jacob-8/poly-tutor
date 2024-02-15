@@ -28,7 +28,7 @@
 {#if unknown_words.length}
   <hr>
   <div class="text-xs text-gray mb-2">
-    Unknown:
+    {$page.data.t.shows.unknown}:
   </div>
 {/if}
 {#each unknown_words as word}

@@ -16,7 +16,7 @@
           {#if chapter.title}
             {chapter.title}
           {:else}
-            Chapter {index + 1}
+            {$page.data.t.shows.chapter} {index + 1}
           {/if}
 
           ({format_time(chapter.start_ms / 1000)}-{format_time(chapter.end_ms / 1000)})

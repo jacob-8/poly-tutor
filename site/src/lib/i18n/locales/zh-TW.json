@@ -6,7 +6,7 @@
     "send_code": "發送驗證碼",
     "sent_code": "傳送驗證碼",
     "error": "錯誤",
-    "enter_6_digit_code_sent_to": "輸入發送至的 6 位數代碼",
+    "enter_6_digit_code_sent_to": "輸入發送至的 6 位數驗證碼",
     "enter_email_address": "輸入電子郵件",
     "loading": "載入中"
   },
@@ -24,7 +24,13 @@
     "title": "標題",
     "remove_video": "刪除影片",
     "voice": "中文语音",
-    "duration": "期間"
+    "duration": "期間",
+    "my_videos": "我的影片",
+    "others_are_watching": "其他人在看",
+    "chapter": "章節",
+    "most_viewed_unknown_words": "觀看次數最多的未知單字",
+    "common_in_this_context": "在這種情況下常見",
+    "unknown": "未知"
   },
   "home": {
     "chat": "聊天",
@@ -34,9 +40,9 @@
     "read_websites": "閱讀網站",
     "word_lists": "單字表",
     "realtime_transcription": "即時轉錄",
-    "my_words": "我的話",
+    "my_words": "詞彙",
     "dictionary": "字典",
-    "tagline": "在人工智慧導師的幫助下，使用真實內容學習英文，確保您理解所聽到和讀到的內容。",
-    "youtube_description": "你可以選擇 YouTube 上的任何節目，導師將提供成績單。"
+    "tagline": "在導師的幫助下，使用日常生活內容學習英文，確保你理解所聽到和讀到的內容。",
+    "youtube_description": "你可以選擇 YouTube 上的任何節目。導師將提供字幕。"
   }
 }
