@@ -122,10 +122,10 @@ export interface Database {
           description: string | null
           end_ms: number
           id: string
-          translations: Translation
           source: string
           start_ms: number
           title: string | null
+          translations: Translation
           updated_at: string
           youtube_id: string
         }
@@ -135,10 +135,10 @@ export interface Database {
           description?: string | null
           end_ms: number
           id?: string
-          translations: Translation
           source: string
           start_ms: number
           title?: string | null
+          translations: Translation
           updated_at?: string
           youtube_id: string
         }
@@ -148,10 +148,10 @@ export interface Database {
           description?: string | null
           end_ms?: number
           id?: string
-          translations?: Translation
           source?: string
           start_ms?: number
           title?: string | null
+          translations?: Translation
           updated_at?: string
           youtube_id?: string
         }
@@ -265,6 +265,13 @@ export interface Database {
             foreignKeyName: 'youtubes_channel_id_fkey'
             columns: ['channel_id']
             isOneToOne: false
+            referencedRelation: 'user_youtube_channels'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'youtubes_channel_id_fkey'
+            columns: ['channel_id']
+            isOneToOne: false
             referencedRelation: 'youtube_channels'
             referencedColumns: ['id']
           }
@@ -276,6 +283,20 @@ export interface Database {
         Row: {
           language: Database['public']['Enums']['language'] | null
           vocabulary: Json | null
+        }
+        Relationships: []
+      }
+      user_youtube_channels: {
+        Row: {
+          description: string | null
+          id: string | null
+          language: Database['public']['Enums']['language'] | null
+          subscriber_count: number | null
+          thumbnail_url: string | null
+          title: string | null
+          updated_at: string | null
+          video_count: number | null
+          view_count: number | null
         }
         Relationships: []
       }

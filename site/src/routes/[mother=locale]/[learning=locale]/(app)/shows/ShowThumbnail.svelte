@@ -15,7 +15,7 @@
   // https://i.ytimg.com/vi... // shortened alt url
 
   const channel_thumbnail_url = `${channel.thumbnail_url}=s64-c-k-c0x00ffffff-no-rj`
-  // sometimes images exist only under https://yt3.googleusercontent.com or https://yt3.googleusercontent.com
+  // sometimes images exist only under https://yt3.googleusercontent.com or ? so url saved in db
 
   let image_url = `https://i.ytimg.com/vi/${youtube.id}/sddefault.jpg`
 

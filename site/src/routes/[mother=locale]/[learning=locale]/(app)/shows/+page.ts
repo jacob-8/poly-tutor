@@ -1,9 +1,10 @@
+import type { LanguageCode } from '$lib/i18n/locales'
 import type { YouTubeWithAllData } from '$lib/mocks/seed/youtubes'
 import type { PageLoad } from './$types'
 
 export const load = (async ({parent, params: { learning }}) => {
   const { supabase } = await parent()
-  const language = learning.replace(/-.*/, '')
+  const language = learning.replace(/-.*/, '') as LanguageCode
 
   // TODO: should be a view
   const { data: user_youtubes_data, error } = await supabase

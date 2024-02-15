@@ -1,11 +1,13 @@
 export const YOUTUBE_VIDEO_ID_PATTERN = /^[a-zA-Z0-9_-]{11}$/
 
 export function get_youtube_video_id(url_or_id: string): string | null {
-  if (url_or_id?.match(YOUTUBE_VIDEO_ID_PATTERN))
+  if (!url_or_id) return null
+
+  if (url_or_id.match(YOUTUBE_VIDEO_ID_PATTERN))
     return url_or_id
 
   const pattern = /(?:youtu.be\/|v\/|\/u\/\w\/|embed\/|watch\?v=|watch\?.*&v=)(?<video_id>[^#&?]*).*/
-  const match = url_or_id?.match(pattern)
+  const match = url_or_id.match(pattern)
 
   if (match?.groups?.video_id?.match(YOUTUBE_VIDEO_ID_PATTERN))
     return match.groups.video_id
