@@ -30,11 +30,11 @@ describe(POST, () => {
     `)
   })
 
-  test('throws error if no OPENAI_API_KEY', async () => {
+  test('throws error if no openai_api_key', async () => {
     await expect(() => request(POST, { locals: authenticatedLocal, body: {} })).rejects.toThrowErrorMatchingInlineSnapshot(`
       HttpError {
         "body": {
-          "message": "No OPENAI_API_KEY found",
+          "message": "No openai_api_key found",
         },
         "status": 400,
       }

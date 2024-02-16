@@ -72,7 +72,7 @@ if (import.meta.vitest) {
       {
       }
     ]
-    expect(sql_file_string('everything' as 'word_updates', everything_mock)).toMatchFileSnapshot('./write-seed.test.sql')
+    expect(sql_file_string('everything' as 'word_updates', everything_mock)).toMatchFileSnapshot('./to-sql-string.test.sql')
   })
 }
 
