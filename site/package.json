@@ -15,7 +15,7 @@
 		"test:components": "playwright test --config playwright.components.config.ts",
 		"test:service-worker-build": "vitest --config ./vitest.service-worker.config.ts",
 		"test:e2e-service-worker": "playwright test --config playwright.sw.config.ts",
-    "reset-db": "pnpx tsx ./src/lib/mocks/seed/write-seed-and-reset-db-script.ts",
+		"reset-db": "pnpx tsx ./src/lib/mocks/seed/write-seed-and-reset-db-script.ts",
 		"local-kitbook": "link:../../kitbook/packages/kitbook"
 	},
 	"devDependencies": {
@@ -32,7 +32,7 @@
 		"@types/node": "^20.11.5",
 		"@types/pg": "^8.10.9",
 		"@types/youtube": "^0.0.50",
-		"@unocss/svelte-scoped": "^0.58.3",
+		"@unocss/svelte-scoped": "^0.58.5",
 		"comlink": "^4.4.1",
 		"d3-dsv": "^3.0.1",
 		"idb": "^8.0.0",
@@ -47,7 +47,7 @@
 		"tslib": "^2.6.2",
 		"type-fest": "^4.10.0",
 		"typescript": "^5.3.3",
-		"unocss": "^0.58.3",
+		"unocss": "^0.58.5",
 		"vite": "^5.0.12",
 		"vitest": "^1.2.1"
 	},
