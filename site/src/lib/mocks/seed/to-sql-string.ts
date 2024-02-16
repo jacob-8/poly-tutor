@@ -1,3 +1,4 @@
+import type { Database } from '$lib/supabase/generated.types'
 import { youtube_channels, youtubes, youtube_transcripts, youtube_summaries, word_updates, users } from './tables'
 
 function convert_to_sql_string(value: string | number | object) {
@@ -24,7 +25,7 @@ function convert_to_sql_string(value: string | number | object) {
   throw new Error(`${value} has an unexpected value type: ${typeof value}`)
 }
 
-function write_sql_file_string(table_name: string, rows: object[]) {
+function sql_file_string(table_name: keyof Database['public']['Tables'] | 'auth.users', rows: object[]) {
   const column_names = Object.keys(rows[0]).sort()
   const column_names_string = `"${column_names.join('", "')}"`
 
@@ -37,7 +38,7 @@ function write_sql_file_string(table_name: string, rows: object[]) {
 }
 
 if (import.meta.vitest) {
-  test(write_sql_file_string, () => {
+  test(sql_file_string, () => {
     const everything_mock = [
       {
         text: 'hello',
@@ -71,22 +72,21 @@ if (import.meta.vitest) {
       {
       }
     ]
-    expect(write_sql_file_string('everything', everything_mock)).toMatchFileSnapshot('./write-seed.test.sql')
+    expect(sql_file_string('everything' as 'word_updates', everything_mock)).toMatchFileSnapshot('./write-seed.test.sql')
   })
 }
 
-export function exportToSql() {
-  const sql = `${write_sql_file_string('auth.users', users)}
+export function sql_string_for_all_seeded_tables() {
+  return `${sql_file_string('auth.users', users)}
 
-${write_sql_file_string('youtube_channels', youtube_channels)}
+${sql_file_string('youtube_channels', youtube_channels)}
 
-${write_sql_file_string('youtubes', youtubes)}
+${sql_file_string('youtubes', youtubes)}
 
-${write_sql_file_string('youtube_transcripts', youtube_transcripts)}
+${sql_file_string('youtube_transcripts', youtube_transcripts)}
 
-${write_sql_file_string('youtube_summaries', youtube_summaries)}
+${sql_file_string('youtube_summaries', youtube_summaries)}
 
-${write_sql_file_string('word_updates', word_updates)}
+${sql_file_string('word_updates', word_updates)}
 `
-  return sql
 }

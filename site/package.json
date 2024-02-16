@@ -15,6 +15,7 @@
 		"test:components": "playwright test --config playwright.components.config.ts",
 		"test:service-worker-build": "vitest --config ./vitest.service-worker.config.ts",
 		"test:e2e-service-worker": "playwright test --config playwright.sw.config.ts",
+    "reset-db": "pnpx tsx ./src/lib/mocks/seed/write-seed-and-reset-db-script.ts",
 		"local-kitbook": "link:../../kitbook/packages/kitbook"
 	},
 	"devDependencies": {
