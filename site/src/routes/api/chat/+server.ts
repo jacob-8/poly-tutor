@@ -1,6 +1,5 @@
 import type { RequestHandler } from './$types'
 import type { CreateChatCompletionRequest, ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai-edge'
-import { OPENAI_API_KEY } from '$env/static/private'
 import { error } from '@sveltejs/kit'
 import type { Config } from '@sveltejs/adapter-vercel'
 import { ResponseCodes } from '$lib/responseCodes'
@@ -34,13 +33,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
 
   const { messages, model, max_tokens, openai_api_key, stream } = await request.json() as ChatRequestBody
 
-  let api_key = openai_api_key
-
-  if (!api_key && session_data.user.email === 'jacob@polylingual.dev')
-    api_key = OPENAI_API_KEY
-
-  if (!api_key) error(ResponseCodes.BAD_REQUEST, 'No OPENAI_API_KEY found')
-
+  if (!openai_api_key) error(ResponseCodes.BAD_REQUEST, 'No openai_api_key found')
   if (!messages?.length) error(ResponseCodes.BAD_REQUEST, 'No messages found')
 
   try {
@@ -56,7 +49,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${api_key}`,
+        Authorization: `Bearer ${openai_api_key}`,
       },
       body: JSON.stringify(completionRequest),
     })

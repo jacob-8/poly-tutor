@@ -8,12 +8,17 @@ CREATE TABLE playlists (
 
 ALTER TABLE playlists ENABLE ROW LEVEL SECURITY;
 
+CREATE POLICY "users can create, edit, and delete playlists" 
+ON playlists
+AS PERMISSIVE FOR ALL
+TO authenticated
+USING (auth.uid() = created_by)
+WITH CHECK (auth.uid() = created_by)
+
 CREATE POLICY "users can create playlists"
 ON playlists FOR INSERT
 TO authenticated
 WITH CHECK ( auth.uid() = created_by );
-
--- TODO: use FOR ALL and remove lower delete policy to allow users to update their playlist public value
 
 CREATE POLICY "users can only see their playlists or public playlists"
 ON playlists FOR SELECT 

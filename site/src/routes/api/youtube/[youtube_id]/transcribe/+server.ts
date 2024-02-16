@@ -2,7 +2,7 @@ import { error, json, type Config } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { ResponseCodes } from '$lib/responseCodes'
 import type { ExternalYoutubeTranscribeRequestBody, Sentence, ExtenralYoutubeTranscribeRequestResponse } from '$lib/types'
-import { OPENAI_API_KEY, POLY_WHISPER_KEY } from '$env/static/private'
+import { POLY_WHISPER_KEY } from '$env/static/private'
 import { calculate_chunk_seconds } from './calculate-chunk-seconds'
 import { post_request } from '$lib/utils/post-request'
 import type { LanguageCode, LocaleCode } from '$lib/i18n/locales'
@@ -28,15 +28,8 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
 
   const { openai_api_key, mother, learning, language_code, duration_seconds, prompt } = await request.json() as YoutubeTranscribeRequestBody
 
-  let api_key = openai_api_key
-
-  if (!api_key && session_data.user.email === 'jacob@polylingual.dev')
-    api_key = OPENAI_API_KEY
-
-  if (!api_key) error(ResponseCodes.BAD_REQUEST, 'No OPENAI_API_KEY found')
-
-  if (!youtube_id)
-    error(ResponseCodes.BAD_REQUEST, 'No youtube_id found in request body')
+  if (!openai_api_key) error(ResponseCodes.BAD_REQUEST, 'No openai_api_key found')
+  if (!youtube_id) error(ResponseCodes.BAD_REQUEST, 'No youtube_id found in request body')
 
   console.info(`transcribing: ${youtube_id} in ${language_code}`)
 
