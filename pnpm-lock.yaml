@@ -99,8 +99,8 @@ importers:
         specifier: ^0.0.2
         version: 0.0.2
       kitbook:
-        specifier: 1.0.0-beta.12
-        version: 1.0.0-beta.12(@sveltejs/kit@2.4.3)(svelte@4.2.9)(typescript@5.3.3)
+        specifier: 1.0.0-beta.17
+        version: 1.0.0-beta.17(@sveltejs/kit@2.4.3)(svelte@4.2.9)(typescript@5.3.3)
       msw:
         specifier: 2.1.4
         version: 2.1.4(typescript@5.3.3)
@@ -374,14 +374,6 @@ packages:
       js-tokens: 4.0.0
     dev: true
 
-  /@babel/parser@7.23.6:
-    resolution: {integrity: sha512-Z2uID7YJ7oNvAI20O9X0bblw7Qqs8Q2hFy0R9tAfnfLkp5MW0UH9eUvnDSnFwKZ0AvgS1ucqR4KzvVHgnke1VQ==}
-    engines: {node: '>=6.0.0'}
-    hasBin: true
-    dependencies:
-      '@babel/types': 7.23.6
-    dev: true
-
   /@babel/parser@7.23.9:
     resolution: {integrity: sha512-9tcKgqKbs3xGJ+NtKF2ndOBBLVwPjl1SHxPQkd36r3Dlirw3xWUeGaTbqr7uGZcTaxkVNwc+03SVP7aCdWrTlA==}
     engines: {node: '>=6.0.0'}
@@ -474,15 +466,6 @@ packages:
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /@babel/types@7.23.6:
-    resolution: {integrity: sha512-+uarb83brBzPKN38NX1MkB6vb6+mwvR6amUulqAE7ccQw1pEl+bCia9TbdG1lsnFP7lZySvUn37CHyXQdfTwzg==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/helper-string-parser': 7.23.4
-      '@babel/helper-validator-identifier': 7.22.20
-      to-fast-properties: 2.0.0
     dev: true
 
   /@babel/types@7.23.9:
@@ -912,8 +895,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@kitbook/mdsvex-shiki-twoslash@1.0.0-beta.12(svelte@4.2.9)(typescript@5.3.3):
-    resolution: {integrity: sha512-dpmriHy2L/Y2SMNG6mhc38+raknnOdcEx/CgsS6vu+vC4WepckSVXD5YXKZuerFZDSZmRSWFQHqmuJ2CmkFplg==}
+  /@kitbook/mdsvex-shiki-twoslash@1.0.0-beta.17(svelte@4.2.9)(typescript@5.3.3):
+    resolution: {integrity: sha512-zpZR+tNT6XVv20aSbrwboXXKZGJC9ZKR/mJGDa+vL+1zK2t8e4C2wSAIFeQFCgqhnBqW7T3HqrmD7+LZiuhI1g==}
     dependencies:
       fenceparser: 2.2.0
       mdsvex: 0.11.0(svelte@4.2.9)
@@ -925,8 +908,8 @@ packages:
       - typescript
     dev: true
 
-  /@kitbook/rehype-display-link-titles@1.0.0-beta.12:
-    resolution: {integrity: sha512-iWVfaPtuxN5+sC13dFpykCex47VkNi/qreDJlKBc0x45nPQxV0wOlupuyk/vcLih5PcM+eL3i+iRtVO0ZF7wkg==}
+  /@kitbook/rehype-display-link-titles@1.0.0-beta.17:
+    resolution: {integrity: sha512-BYleGJdxhyXXOloO4PjDYvsz0JwnWwGtUfT2CvLfrL7bseqa66ybGL+txglly45ngirS02fekdqHO4sy3fBmlw==}
     dependencies:
       github-slugger: 2.0.0
       unist-util-visit: 4.1.2
@@ -2479,8 +2462,8 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dev: true
 
-  /diff@5.1.0:
-    resolution: {integrity: sha512-D+mk+qE8VC/PAUrlAU34N+VfXev0ghe5ywmpqrawphmVZc1bEfn56uo9qpyGp1p4xpzOHkSW4ztBd6L7Xx4ACw==}
+  /diff@5.2.0:
+    resolution: {integrity: sha512-uIFDxqpRZGZ6ThOk84hEfqWoHx2devRFvpTZcTHur85vImfaxUbTW9Ryh4CpCuDnToOP1CEtXKIgytHBPVff5A==}
     engines: {node: '>=0.3.1'}
     dev: true
 
@@ -3588,14 +3571,14 @@ packages:
       json-buffer: 3.0.1
     dev: true
 
-  /kitbook@1.0.0-beta.12(@sveltejs/kit@2.4.3)(svelte@4.2.9)(typescript@5.3.3):
-    resolution: {integrity: sha512-rGA6zKNAvbOqOie97zTe3v5GbvIWmCzxSyE06+f2BNZQQ5uXuGYb9l7F+XTNejG5fOSMEYKRRvV4ButFpmqqkQ==}
+  /kitbook@1.0.0-beta.17(@sveltejs/kit@2.4.3)(svelte@4.2.9)(typescript@5.3.3):
+    resolution: {integrity: sha512-/Zi1CRGJewpwVaQNujgsj7Gukcr4kQJK+ndfrdxZtStZpDLiAn5W05K7dIaf17Q2vw3IIfyzcInYcT/L4DB3gg==}
     peerDependencies:
-      '@sveltejs/kit': ^1.13.0
+      '@sveltejs/kit': ^1.13.0 || ^2.0.0
       svelte: ^3.55.0 || ^4.0.0
     dependencies:
-      '@kitbook/mdsvex-shiki-twoslash': 1.0.0-beta.12(svelte@4.2.9)(typescript@5.3.3)
-      '@kitbook/rehype-display-link-titles': 1.0.0-beta.12
+      '@kitbook/mdsvex-shiki-twoslash': 1.0.0-beta.17(svelte@4.2.9)(typescript@5.3.3)
+      '@kitbook/rehype-display-link-titles': 1.0.0-beta.17
       '@sveltejs/kit': 2.4.3(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.9)(vite@5.0.12)
       magicast: 0.3.3
       mdsvex: 0.11.0(svelte@4.2.9)
@@ -3738,8 +3721,8 @@ packages:
   /magicast@0.3.3:
     resolution: {integrity: sha512-ZbrP1Qxnpoes8sz47AM0z08U+jW6TyRgZzcWy3Ma3vDhJttwMwAFDMMQFobwdBxByBD46JYmxRzeF7w2+wJEuw==}
     dependencies:
-      '@babel/parser': 7.23.6
-      '@babel/types': 7.23.6
+      '@babel/parser': 7.23.9
+      '@babel/types': 7.23.9
       source-map-js: 1.0.2
     dev: true
 
@@ -5802,7 +5785,7 @@ packages:
     hasBin: true
     dependencies:
       dequal: 2.0.3
-      diff: 5.1.0
+      diff: 5.2.0
       kleur: 4.1.5
       sade: 1.8.1
     dev: true
