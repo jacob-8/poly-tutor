@@ -104,50 +104,58 @@
 </script>
 
 <ShowLayout>
-  <div slot="header" class="h-full p-1 flex items-center" let:scroll_to_main let:scroll_to_study let:active_view>
-    <div class:hidden={active_view !== 'main'} class="contents">
-      <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 text-lg" /></a>
-      <span class="hidden md:block text-nowrap shrink-1">
-        {youtube?.title.map(sentence => sentence.text).join(' ').substring(0, 30) || ''}
-      </span>
-      <div class="mr-auto" />
-      {#if study_words}
-        <button type="button" class="header-btn" on:click={() => {
-          youtubeComponent.pause()
-          scroll_to_study()
-          currentStudySentence = null
-        }}>
-          <span class="i-ic-baseline-manage-search text-xl" />
-        </button>
-      {/if}
-      <div id="playback-controls" class="contents" />
-
-      {#if browser}
-        <User user={data.user} sign_out={async () => {
-          await data.supabase?.auth.signOut()
-          invalidateAll()
-        }} />
-      {/if}
-    </div>
-
-    {#if active_view !== 'main'}
-      {#if !currentStudySentence}
-        <div class="font-semibold px-1">
-          Study List
-        </div>
-      {/if}
-      <div class="ml-auto"></div>
-      {#if currentStudySentence}
-        <button type="button" class="header-btn" on:click={() => {
-          currentStudySentence = null
-        }}>
-          <span class="i-ic-baseline-manage-search text-xl" />
-        </button>
-      {/if}
-      <button type="button" class="header-btn" on:click={scroll_to_main}>
-        <span class="i-fa-solid-times" />
+  <div slot="header" class="h-full p-1 flex items-center" let:scroll_to_study>
+    <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 text-lg" /></a>
+    <span class="hidden md:block text-nowrap shrink-1">
+      {youtube?.title.map(sentence => sentence.text).join(' ').substring(0, 30) || ''}
+    </span>
+    <div class="mr-auto" />
+    {#if study_words}
+      <button type="button" class="header-btn" on:click={() => {
+        youtubeComponent.pause()
+        scroll_to_study()
+        currentStudySentence = null
+      }}>
+        <span class="i-ic-baseline-manage-search text-xl" />
       </button>
     {/if}
+    <div id="playback-controls" class="contents" />
+
+    {#if browser}
+      <User user={data.user} sign_out={async () => {
+        await data.supabase?.auth.signOut()
+        invalidateAll()
+      }} />
+    {/if}
+  </div>
+
+  <div slot="chat-header" class="h-full p-1 flex items-center" let:scroll_to_main>
+    <div class="font-semibold px-1">
+      Chat
+    </div>
+    <div class="ml-auto"></div>
+    <button type="button" class="header-btn" on:click={scroll_to_main}>
+      <span class="i-fa-solid-times" />
+    </button>
+  </div>
+
+  <div slot="study-header" class="h-full p-1 flex items-center" let:scroll_to_main>
+    {#if !currentStudySentence}
+      <div class="font-semibold px-1">
+        Study List
+      </div>
+    {/if}
+    <div class="ml-auto"></div>
+    {#if currentStudySentence}
+      <button type="button" class="header-btn" on:click={() => {
+        currentStudySentence = null
+      }}>
+        <span class="i-ic-baseline-manage-search text-xl" />
+      </button>
+    {/if}
+    <button type="button" class="header-btn" on:click={scroll_to_main}>
+      <span class="i-fa-solid-times" />
+    </button>
   </div>
 
   <div slot="player">
@@ -169,6 +177,10 @@
     {:else}
       <StudyLesson changed_words={$changed_words} change_word_status={user_vocabulary.change_word_status} {study_words} />
     {/if}
+  </div>
+
+  <div slot="chat" class="p-2">
+    <Chat />
   </div>
 
   <div slot="sentences" let:in_view let:scroll_to_study>
