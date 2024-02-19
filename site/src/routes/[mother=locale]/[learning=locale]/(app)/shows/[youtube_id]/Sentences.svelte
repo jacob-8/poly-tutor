@@ -28,7 +28,9 @@
   const volume_change_duration_ms = 500
 
   const COMBINE_IF_LESS_THAN_MS = 2000
-  $: captions = combine_short_sentences(sentences, COMBINE_IF_LESS_THAN_MS)
+  $: captions = combine_short_sentences({sentences, minimum_ms: COMBINE_IF_LESS_THAN_MS, mother})
+
+  $: translation_volume = mother === 'en' ? 0.6 : 0.8
 
   let mode: 'normal' | 'repeat' | 'bilingual' = 'normal'
   let bilingual_loop_back = false
@@ -75,7 +77,7 @@
       if (isPlaying && !next_caption && !is_last_chapter) {
         pause_and_reset_bilingual()
         const text = mother === 'en' ? 'End of chapter. Review unknown words.' : '本章结束。复习生词。'
-        const { speak } = speech({ text, rate: 1.2, locale: mother, volume: .6})
+        const { speak } = speech({ text, rate: 1.2, locale: mother, volume: translation_volume})
         speak()
         return
       }
@@ -112,7 +114,7 @@
 
     is_reading_translation = true
     ease_volume({from: 100, to: 0, duration_ms: volume_change_duration_ms})
-    const { speak, stop } = speech({ text: caption.translation?.[mother], rate: 1.2, locale: mother, volume: .6})
+    const { speak, stop } = speech({ text: caption.translation?.[mother], rate: 1.2, locale: mother, volume: translation_volume})
     stop_reading_translation = stop
     speak().then(async () => {
       stop_reading_translation = null

@@ -10,6 +10,7 @@ import youtube_api_video_id_9OkddyYQBec from '../data/youtube_api_video_id_9Okdd
 import youtube_api_channel_id_UCkceO_uT0eWlMhX from '../data/youtube_api_channel_id_UCkceO_uT0eWlMhX-04rxAMQ.json'
 import youtube_api_video_id_lpyKfNjTZi8 from '../data/youtube_api_video_id_lpyKfNjTZi8.json'
 import youtube_api_channel_id_UCs53vwIrtmBTr from '../data/youtube_api_channel_id_UCs53vwIrtmBTr-NAfqYYt6w.json'
+import youtube_api_playlistItems_bike_rider from '../data/youtube_api_playlistItems_jian-xiao-bai-bike-rider.json'
 import type { CreateChatCompletionRequest } from 'openai-edge'
 
 export const handlers = [
@@ -64,6 +65,15 @@ export const handlers = [
       return HttpResponse.json(youtube_api_channel_id_UCkceO_uT0eWlMhX)
     if (part === 'snippet,statistics' && channel_id === unseeded_youtubes.zh_captions_on_youtube__llama.channel_id)
       return HttpResponse.json(youtube_api_channel_id_UCs53vwIrtmBTr)
+    return passthrough()
+  }),
+
+  http.get('https://www.googleapis.com/youtube/v3/playlistItems', ({request}) => {
+    const url = new URL(request.url)
+    const playlistId = url.searchParams.get('playlistId')
+    const bike_rider_playlist_id = 'PLz_e7apcBzpuVEVC-_pvHDKLq7T_0MbcZ'
+    if (playlistId === bike_rider_playlist_id)
+      return HttpResponse.json(youtube_api_playlistItems_bike_rider)
     return passthrough()
   }),
 

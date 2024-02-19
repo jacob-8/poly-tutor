@@ -27,7 +27,7 @@ const user_vocabulary = {
   changed_words: readable<UserVocabulary>({})
 }
 
-const analysis_functions = get_analysis_functions({learning: 'zh-TW', user_vocabulary, emphasis_limits: readable({high_view_count_max: 10, common_in_this_context_max: 10, improve_pronunciation_or_tone_max: 2})})
+const analysis_functions = get_analysis_functions({learning: 'zh-TW', mother: 'en', user_vocabulary, emphasis_limits: readable({high_view_count_max: 10, common_in_this_context_max: 10, improve_pronunciation_or_tone_max: 2})})
 analysis_functions.then(() => console.info('analysis functions ready'))
 
 function delay<T>(value: T, delay_ms = 1000): Promise<T> {

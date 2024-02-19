@@ -1,6 +1,6 @@
 import type { EnglishWordList } from './word-lists.interface'
 
-const basic = 'one,two,would,has,hidden,'
+const basic = 'one,two,would,has,hidden,could,should,going,seeing,uh,um'
 
 const toefl = ''
 const toeic = ''
@@ -13,5 +13,5 @@ export const english_word_lists: Record<EnglishWordList, string[]> = {
   toefl: toefl.split(','),
   ielts: ielts.split(','),
   toeic: toeic.split(','),
-  tw_7000: (basic + tw_7000).split(','),
+  tw_7000: (basic + ',' + tw_7000).split(','),
 }

@@ -17,7 +17,7 @@ export function format_time(seconds: number): string {
 }
 
 if (import.meta.vitest) {
-  describe('format_time', () => {
+  describe(format_time, () => {
     test('converts seconds to readable format without hours', () => {
       expect(format_time(345)).toBe('5:45')
     })

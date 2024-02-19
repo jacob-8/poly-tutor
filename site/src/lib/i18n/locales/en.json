@@ -24,7 +24,13 @@
     "title": "Title",
     "remove_video": "Remove Video",
     "voice": "English voice",
-    "duration": "Duration"
+    "duration": "Duration",
+    "my_videos": "My Videos",
+    "others_are_watching": "Others are watching",
+    "chapter": "Chapter",
+    "most_viewed_unknown_words": "Most Viewed Unknown Words",
+    "common_in_this_context": "Common in this context",
+    "unknown": "Unknown"
   },
   "home": {
     "chat": "Chat",
@@ -36,7 +42,7 @@
     "realtime_transcription": "Realtime Transcription",
     "my_words": "My Words",
     "dictionary": "Dictionary",
-    "youtube_description": "You can choose any show on YouTube, Tutor will provide the transcripts.",
-    "tagline": "Learn Chinese using real content with help from an AI tutor that makes sure you understand what you hearing and reading."
+    "youtube_description": "You can choose any show on YouTube. Tutor will provide the captions.",
+    "tagline": "Learn Chinese using real-life content with help from a tutor that makes sure you understand what you hearing and reading."
   }
 }

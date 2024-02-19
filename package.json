@@ -14,6 +14,7 @@
     "e2e": "pnpm -F site test:e2e:ui",
     "lint": "eslint --cache --quiet",
     "lint:fix": "eslint --cache --fix",
+    "reset-db": "pnpm -F site reset-db",
     "check-packages": "pnpm update --interactive --recursive --latest"
   },
   "devDependencies": {

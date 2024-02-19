@@ -7,4 +7,4 @@
 
 # Dictionaries
 
-Is there a English to Chinese Traditional dictionary?
+Convert the ECDict simplified to traditional using https://www.chineseconverter.com/en/convert/chinese-text-files-txt-simplified-to-traditional-convert

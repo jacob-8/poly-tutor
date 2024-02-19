@@ -15,7 +15,8 @@
 		"test:components": "playwright test --config playwright.components.config.ts",
 		"test:service-worker-build": "vitest --config ./vitest.service-worker.config.ts",
 		"test:e2e-service-worker": "playwright test --config playwright.sw.config.ts",
-		"kitbook": "link:../../kitbook/packages/kitbook"
+		"reset-db": "pnpx tsx ./src/lib/mocks/seed/write-seed-and-reset-db-script.ts",
+		"local-kitbook": "link:../../kitbook/packages/kitbook"
 	},
 	"devDependencies": {
 		"@google-cloud/language": "^6.1.1",
@@ -31,12 +32,12 @@
 		"@types/node": "^20.11.5",
 		"@types/pg": "^8.10.9",
 		"@types/youtube": "^0.0.50",
-		"@unocss/svelte-scoped": "^0.58.3",
+		"@unocss/svelte-scoped": "^0.58.5",
 		"comlink": "^4.4.1",
 		"d3-dsv": "^3.0.1",
 		"idb": "^8.0.0",
 		"jieba-wasm": "^0.0.2",
-		"kitbook": "1.0.0-beta.12",
+		"kitbook": "1.0.0-beta.17",
 		"msw": "2.1.4",
 		"openai-edge": "^1.1.1",
 		"pg": "^8.11.3",
@@ -46,7 +47,7 @@
 		"tslib": "^2.6.2",
 		"type-fest": "^4.10.0",
 		"typescript": "^5.3.3",
-		"unocss": "^0.58.3",
+		"unocss": "^0.58.5",
 		"vite": "^5.0.12",
 		"vitest": "^1.2.1"
 	},

@@ -6,8 +6,8 @@
     "send_code": "发送验证码",
     "sent_code": "发送验证码",
     "error": "错误",
-    "enter_6_digit_code_sent_to": "输入发送至的 6 位数代码",
-    "enter_email_address": "输入电邮邮件",
+    "enter_6_digit_code_sent_to": "输入发送至的 6 位数验证码",
+    "enter_email_address": "输入电子邮件",
     "loading": "加载中"
   },
   "shows": {
@@ -24,7 +24,13 @@
     "title": "标题",
     "remove_video": "删除视频",
     "voice": "中文语音",
-    "duration": "期间"
+    "duration": "期间",
+    "my_videos": "我的视频",
+    "others_are_watching": "其他人在看",
+    "chapter": "章节",
+    "most_viewed_unknown_words": "观看次数最多的未知单词",
+    "common_in_this_context": "在这种情况下常见",
+    "unknown": "未知"
   },
   "home": {
     "chat": "闲聊",
@@ -34,9 +40,9 @@
     "read_websites": "阅读网站",
     "word_lists": "单词表",
     "realtime_transcription": "实时转录",
-    "my_words": "我的话",
+    "my_words": "我的单词",
     "dictionary": "字典",
-    "tagline": "在人工智能导师的帮助下，使用真实内容学习英文，确保您理解所听到和读到的内容。",
-    "youtube_description": "你可以选择 YouTube 上的任何节目，导师将提供成绩单。"
+    "tagline": "在导师的帮助下，使用日常生活内容学习英文，确保你理解所听到和读到的内容。",
+    "youtube_description": "你可以选择 YouTube 上的任何节目。导师将提供字幕。"
   }
 }
