@@ -1,7 +1,7 @@
 // import { request } from '$lib/mocks/sveltekit-endpoint-helper'
 // import { POST } from './+server'
 // import { authenticatedLocal, unAuthenticatedLocal } from '$lib/mocks/locals'
-// import { ResponseCodes } from '$lib/responseCodes'
+// import { ResponseCodes } from '$lib/response-codes'
 // import { unseeded_youtubes } from '$lib/mocks/seed/youtubes'
 
 // // vi.mock('$env/static/private', () => import.meta.env);

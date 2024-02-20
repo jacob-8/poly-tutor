@@ -1,6 +1,6 @@
 import { error, json, type Config } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 import type { Supabase, YouTube } from '$lib/supabase/database.types'
 import { getAdminSupabaseClient } from '$lib/supabase/admin'
 import { YOUTUBE_API_3_KEY } from '$env/static/private'

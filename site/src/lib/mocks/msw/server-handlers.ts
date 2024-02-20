@@ -1,6 +1,6 @@
 import type { ExtenralYoutubeTranscribeRequestResponse, ExternalYoutubeTranscribeRequestBody } from '$lib/types'
 import { http, HttpResponse, passthrough } from 'msw'
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 import { create_chat_completion_data } from '../data/create_chat_completion'
 import { fake_ch__penguin_summary, unseeded_youtubes } from '../seed/youtubes'
 

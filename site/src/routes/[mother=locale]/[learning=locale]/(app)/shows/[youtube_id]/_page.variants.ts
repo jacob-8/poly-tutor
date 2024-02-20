@@ -7,7 +7,7 @@ import {  readable } from 'svelte/store'
 import { WordStatus, type UserVocabulary } from '$lib/types'
 import { zh_transcribed_summarized } from '$lib/mocks/seed/youtubes'
 import { get_analysis_functions } from '$lib/analysis'
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 import { chinese_word_lists } from '$lib/vocab/chinese-word-lists'
 
 const youtube: YouTube = {

@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types'
 import { error, json } from '@sveltejs/kit'
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 import { YOUTUBE_API_3_KEY } from '$env/static/private'
 import { get_request } from '$lib/utils/post-request'
 

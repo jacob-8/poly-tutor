@@ -1,4 +1,4 @@
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 import type { Supabase } from '$lib/supabase/database.types'
 import { AuthError, type User } from '@supabase/supabase-js'
 

@@ -1,6 +1,6 @@
 import { error, json, type Config } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 import type { ExternalYoutubeTranscribeRequestBody, Sentence, ExtenralYoutubeTranscribeRequestResponse } from '$lib/types'
 import { POLY_WHISPER_KEY } from '$env/static/private'
 import { calculate_chunk_seconds } from './calculate-chunk-seconds'

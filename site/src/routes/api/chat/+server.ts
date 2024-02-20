@@ -2,7 +2,7 @@ import type { RequestHandler } from './$types'
 import type { CreateChatCompletionRequest, ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai-edge'
 import { error } from '@sveltejs/kit'
 import type { Config } from '@sveltejs/adapter-vercel'
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 import type { ChatModels } from '$lib/types/models'
 // import { createChunkDecoder } from '$lib/client/chunkDecoder'
 

@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import { DEFAULT_LOCALE, findSupportedLocaleFromAcceptedLanguages, getSupportedLocale } from '$lib/i18n/locales'
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 
 export const load = (({ cookies, request }) => {
   const chosenMotherLocale = cookies.get('mother-locale')
