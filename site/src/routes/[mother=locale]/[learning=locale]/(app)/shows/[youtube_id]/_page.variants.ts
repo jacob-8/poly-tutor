@@ -7,6 +7,7 @@ import {  readable } from 'svelte/store'
 import { zh_transcribed_summarized } from '$lib/mocks/seed/youtubes'
 import { get_analysis_functions } from '$lib/analysis'
 import { ResponseCodes } from '$lib/response-codes'
+import { chat } from '$lib/mocks/data/streaming-chat'
 
 const youtube: YouTube = {
   ...zh_transcribed_summarized.youtube,
@@ -37,7 +38,7 @@ const noop_page_functions = {
   },
   check_is_in_my_videos: () => delay(null),
   remove_from_my_videos: () => delay(null),
-  chat: null,
+  chat,
 }
 
 export const variants: Variant<Component>[] = [

@@ -44,11 +44,11 @@
       else
         active_view = 'main'
     }}>
-      <div class="h-50px order-last sm:order-first">
-        <slot name="chat-header" {scroll_to_main} />
-      </div>
       <div class="h-[calc(100vh-50px)] h-[calc(100dvh-50px)]! overflow-y-auto">
         <slot name="chat" />
+      </div>
+      <div class="h-50px border-t">
+        <slot name="chat-header" {scroll_to_main} />
       </div>
     </div>
   {/if}
@@ -95,11 +95,11 @@
       else
         active_view = 'main'
     }}>
-      <div class="h-50px order-last sm:order-first">
-        <slot name="study-header" {scroll_to_main} />
-      </div>
       <div class="h-[calc(100vh-50px)] h-[calc(100dvh-50px)]! overflow-y-auto">
         <slot name="study" />
+      </div>
+      <div class="h-50px border-t">
+        <slot name="study-header" {scroll_to_main} />
       </div>
     </div>
   {/if}

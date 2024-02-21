@@ -13,6 +13,14 @@
   $: ({is_receiving, send_query, thread, error } = chat)
 
   let query = ''
+  let interacted = false
+
+  function submit() {
+    interacted = true
+    send_query(query)
+    query = ''
+    scroll_to_bottom()
+  }
 
   let threadElement: HTMLDivElement
   function scroll_to_bottom() {
@@ -23,7 +31,7 @@
 
   $: last_message = $thread?.[$thread.length - 1]
   $: last_message_is_assistant = last_message?.role === 'assistant'
-  $: if (last_message_is_assistant)
+  $: if (interacted && last_message_is_assistant)
     start_speaking()
 
   let current_speaking_sentence_index = -1
@@ -53,7 +61,13 @@
 <div bind:this={threadElement} class="overflow-y-auto grow-1 sm:border-t">
   {#each $thread as { role, sentences }, message_index}
     {@const last_message = message_index === $thread.length - 1}
-    {#if role === 'user'}
+    {#if role === 'system'}
+      <div class="text-xs">
+        {#each sentences as {text}}
+          {text}
+        {/each}
+      </div>
+    {:else if role === 'user'}
       <div class="text-right py-3">
         {#each sentences as {text}}
           {text}
@@ -75,10 +89,7 @@
   {/if}
 </div>
 
-<form class="flex w-full mt-2" on:submit|preventDefault={() => {
-  send_query(query)
-  scroll_to_bottom()
-}}>
+<form class="flex w-full mt-2" on:submit|preventDefault={submit}>
   {#if $thread}
     <JSON obj={$thread} />
   {/if}
