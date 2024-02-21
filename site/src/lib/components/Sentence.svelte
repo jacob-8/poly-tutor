@@ -5,15 +5,15 @@
   import ImSeen from './ImSeen.svelte'
   import type { LanguageCode } from '$lib/i18n/locales'
   import EnglishWord from './EnglishWord.svelte'
+  import { scrollIntoView } from '$lib/utils/scroll-into-view'
 
   export let language: LanguageCode
   export let onclick: () => void = undefined
   export let ontouch: () => void = undefined
-  export let id: string = undefined
   export let active = false
   export let sentence: Sentence
   export let settings: Settings
-  export let study_words_object: StudyWordsObject
+  export let study_words_object: StudyWordsObject = { high_view_count: {}, common_in_this_context: {}, improve_pronunciation_or_tone: {}}
   export let add_seen_sentence: (words: string[]) => void = undefined
   export let mark_seen_based_on_visibility = false
   export let changed_words: UserVocabulary = {}
@@ -35,7 +35,7 @@
 
 <IntersectionObserverShared bottom={1000} top={1000} once let:intersecting>
   <div
-    {id}
+    use:scrollIntoView={{active, options: { block: 'center', behavior: 'smooth' }}}
     class="px-1 pb-3 flex flex-wrap relative hover:bg-gray-100 rounded relative group"
     class:bg-gray-200={active}
     on:click={onclick}

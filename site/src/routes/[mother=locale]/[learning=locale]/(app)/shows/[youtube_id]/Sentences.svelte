@@ -160,12 +160,6 @@
     })
   }
 
-  $: scroll_to_caption(current_caption_index)
-
-  function scroll_to_caption(index: number) {
-    document.querySelector(`#caption_${index}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' })
-  }
-
   function user_wants_to_play_new_location({ start_ms, index }: { start_ms: number; index: number }) {
     pause_and_reset_bilingual()
     start_player_at(start_ms)
@@ -236,7 +230,7 @@
 </script>
 
 {#each captions as sentence, index}
-  <SentenceComponent {language} {changed_words} {add_seen_sentence} {study_words_object} id="caption_{index}" {settings} {sentence} active={index === current_caption_index} show={index < current_caption_index}
+  <SentenceComponent {language} {changed_words} {add_seen_sentence} {study_words_object} {settings} {sentence} active={index === current_caption_index} show={index < current_caption_index}
     ontouch={() => studySentence(captions[index])}
     onclick={() => user_wants_to_play_new_location({ start_ms: sentence.start_ms, index })} />
 {/each}

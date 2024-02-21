@@ -53,7 +53,7 @@
     </div>
   {/if}
 
-  <div bind:this={main} class="shrink-0 w-100vw h-100vh snap-start snap-always flex flex-col" use:visible={{threshold: 0.2}} on:observed={({detail: isIntersecting}) => {
+  <div bind:this={main} class="shrink-0 w-100vw sm:w-full h-100vh snap-start snap-always flex flex-col" use:visible={{threshold: 0.2}} on:observed={({detail: isIntersecting}) => {
     if (isIntersecting)
       active_view = 'main'
   }}>
