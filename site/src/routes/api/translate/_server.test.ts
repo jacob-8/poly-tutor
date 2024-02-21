@@ -1,7 +1,7 @@
 import { request } from '$lib/mocks/sveltekit-endpoint-helper'
 import { POST, type TranslateRequestBody } from './+server'
 import { authenticatedLocal, unAuthenticatedLocal } from '$lib/mocks/locals'
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 
 vi.mock('$app/environment', () => {
   return {

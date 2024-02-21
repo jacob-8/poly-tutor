@@ -4,10 +4,13 @@ import { check_is_in_my_videos, remove_from_my_videos, youtube_in_db } from './c
 import type { Summary, YouTube } from '$lib/supabase/database.types'
 import { post_request } from '$lib/utils/post-request'
 import { get_openai_api_key } from '$lib/client/UserInfo.svelte'
-import type { LanguageCode } from '$lib/i18n/locales'
+import type { LanguageCode, LocaleCode } from '$lib/i18n/locales'
 import type { YoutubeAddRequestBody, YoutubeAddResponseBody } from '$api/youtube/[youtube_id]/add/+server'
 import type { YoutubeTranscribeRequestBody, YoutubeTranscribeResponseBody } from '$api/youtube/[youtube_id]/transcribe/+server'
 import type { YoutubeSummarizeRequestBody, YoutubeSummarizeResponseBody } from '$api/youtube/[youtube_id]/summarize/+server'
+import { create_chat_store } from '$lib/components/chat/create-chat-store'
+import { create_openai_streaming_store } from '$lib/components/chat/create-streaming-store'
+import type { TranslateRequestBody, TranslateResponseBody } from '$api/translate/+server'
 
 export const load = (async ({ params: { youtube_id, mother, learning }, fetch, parent }) => {
   const { supabase, split_sentences, analyze_sentences } = await parent()
@@ -83,6 +86,21 @@ export const load = (async ({ params: { youtube_id, mother, learning }, fetch, p
     return translations
   }
 
+  async function translate(text: string, from: LocaleCode, to: LocaleCode): Promise<string> {
+    const { data, error: translate_error } = await post_request<TranslateRequestBody, TranslateResponseBody>('/api/translate', { text, sourceLanguageCode: from, targetLanguageCode: to }, fetch)
+    if (translate_error)
+      throw Error(translate_error.message)
+    return data.line_separated_translations
+  }
+
+  const chat = create_chat_store({
+    split_sentences,
+    mother,
+    learning,
+    create_streaming_store: create_openai_streaming_store,
+    translate,
+  })
+
   return {
     youtube_id,
     language,
@@ -95,5 +113,6 @@ export const load = (async ({ params: { youtube_id, mother, learning }, fetch, p
     split_sentences, // for metadata
     check_is_in_my_videos,
     remove_from_my_videos,
+    chat,
   }
 }) satisfies PageLoad

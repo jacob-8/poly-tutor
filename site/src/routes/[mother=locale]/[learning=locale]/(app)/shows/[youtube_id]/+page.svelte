@@ -19,6 +19,7 @@
   import { calculate_tokens_cost, calculate_transcription_cost } from '$lib/utils/calculate-cost'
   import ShowMeta from './ShowMeta.svelte'
   import SummaryComponent from './Summary.svelte'
+  import Conversation from '$lib/components/chat/Conversation.svelte'
 
   export let data
   $: ({ youtube_id, youtube_promise, user, supabase, settings, user_vocabulary, language, mother } = data)
@@ -100,54 +101,84 @@
   let currentStudySentence: Sentence
   function studySentence(sentence: Sentence) {
     currentStudySentence = sentence
+    prepare_chat(sentence)
   }
+
+  $: title = youtube?.title.map(s => s.text).join(' ') || ''
+
+  function prepare_chat(sentence: Sentence) {
+    const sentence_index = entire_transcript.findIndex(s => s.start_ms === sentence.start_ms)
+
+    const sentences = entire_transcript.slice(Math.max(sentence_index - 15, 0), sentence_index + 1)
+
+    data.chat.add_chat_history([
+      { role: 'system', sentences: [{ text: `You are Poly 導師, a lively Chinese language tutor. I'm learning Chinese so please keep your answers intersting but also short and simple. Right now I am in the middle of watching a YouTube video titled "${title}" and want your help answering my questions. I will give you the transcript from the portion I just watched. Pay special attention to the last sentence as that is the context from which I am starting this conversation:
+
+Transcript:
+
+---
+${sentences.map(s => s.text).join('\n')}
+---`}]},
+    // { role: 'assistant', sentences: [{text: '好的。'}]} // Needed for Gemini as it can't handle two user messages in a row
+    ])
+  }
+
+  const double_to_include_translate_cost = 2
 </script>
 
 <ShowLayout>
-  <div slot="header" class="h-full p-1 flex items-center" let:scroll_to_main let:scroll_to_study let:active_view>
-    <div class:hidden={active_view !== 'main'} class="contents">
-      <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 text-lg" /></a>
-      <span class="hidden md:block text-nowrap shrink-1">
-        {youtube?.title.map(sentence => sentence.text).join(' ').substring(0, 30) || ''}
-      </span>
-      <div class="mr-auto" />
-      {#if study_words}
-        <button type="button" class="header-btn" on:click={() => {
-          youtubeComponent.pause()
-          scroll_to_study()
-          currentStudySentence = null
-        }}>
-          <span class="i-ic-baseline-manage-search text-xl" />
-        </button>
-      {/if}
-      <div id="playback-controls" class="contents" />
-
-      {#if browser}
-        <User user={data.user} sign_out={async () => {
-          await data.supabase?.auth.signOut()
-          invalidateAll()
-        }} />
-      {/if}
-    </div>
-
-    {#if active_view !== 'main'}
-      {#if !currentStudySentence}
-        <div class="font-semibold px-1">
-          Study List
-        </div>
-      {/if}
-      <div class="ml-auto"></div>
-      {#if currentStudySentence}
-        <button type="button" class="header-btn" on:click={() => {
-          currentStudySentence = null
-        }}>
-          <span class="i-ic-baseline-manage-search text-xl" />
-        </button>
-      {/if}
-      <button type="button" class="header-btn" on:click={scroll_to_main}>
-        <span class="i-fa-solid-times" />
+  <div slot="header" class="h-full p-1 flex items-center" let:scroll_to_study>
+    <a aria-label="Back Button" href="../shows"><span class="i-iconamoon-arrow-left-1 text-lg" /></a>
+    <span class="hidden md:block text-nowrap shrink-1">
+      {title.substring(0, 30)}
+    </span>
+    <div class="mr-auto" />
+    {#if study_words}
+      <button type="button" class="header-btn" on:click={() => {
+        youtubeComponent.pause()
+        scroll_to_study()
+        currentStudySentence = null
+      }}>
+        <span class="i-ic-baseline-manage-search text-xl" />
       </button>
     {/if}
+    <div id="playback-controls" class="contents" />
+
+    {#if browser}
+      <User user={data.user} sign_out={async () => {
+        await data.supabase?.auth.signOut()
+        invalidateAll()
+      }} />
+    {/if}
+  </div>
+
+  <div slot="chat-header" class="h-full p-1 flex items-center" let:scroll_to_main>
+    <div class="font-semibold px-1">
+      Chat
+    </div>
+    <div class="ml-auto"></div>
+    <button type="button" class="header-btn" on:click={scroll_to_main}>
+      <span class="i-fa-solid-times" />
+    </button>
+  </div>
+
+  <div slot="study-header" class="h-full p-1 flex items-center" let:scroll_to_main>
+    {#if !currentStudySentence}
+      <div class="font-semibold px-1">
+        Study List
+      </div>
+    {/if}
+    <div class="ml-auto"></div>
+    {#if currentStudySentence}
+      <button type="button" class="header-btn" on:click={() => {
+        currentStudySentence = null
+      }}>
+        <span class="i-ic-baseline-manage-search text-xl" />
+      </button>
+    {/if}
+    <button type="button" class="header-btn" on:click={scroll_to_main}>
+      <span class="i-fa-solid-times" />
+    </button>
   </div>
 
   <div slot="player">
@@ -169,6 +200,10 @@
     {:else}
       <StudyLesson changed_words={$changed_words} change_word_status={user_vocabulary.change_word_status} {study_words} />
     {/if}
+  </div>
+
+  <div slot="chat" class="p-2 h-full flex flex-col">
+    <Conversation {language} settings={$settings} chat={data.chat}  />
   </div>
 
   <div slot="sentences" let:in_view let:scroll_to_study>
@@ -195,8 +230,7 @@
             entire_transcript = result
             transcript_status = 'exists'
           }
-        }}>{$page.data.t.shows.get_captions} ({calculate_transcription_cost({duration_seconds: youtube.duration_seconds * 2})})</Button>
-        <!-- doubled the duration because the Google Translate costs are roughly equivalent to the speech-to-text costs -->
+        }}>{$page.data.t.shows.get_captions} ({calculate_transcription_cost({duration_seconds: youtube.duration_seconds * double_to_include_translate_cost})})</Button>
       {:else if sentences}
         <SelectChapter handle_chapter_select={event => {
           // @ts-ignore
@@ -204,7 +238,7 @@
 
         <SummaryComponent {summary} {mother}>
           <Button class="mb-2" form="menu" onclick={async () => {
-            summary = await data.summarize_chapter({sentences, start_ms: chapter.start_ms, end_ms: chapter.end_ms, title: youtube.title.map(s => s.text).join(' ')})
+            summary = await data.summarize_chapter({sentences, start_ms: chapter.start_ms, end_ms: chapter.end_ms, title})
             summaries.push({
               translations: summary,
               start_ms: chapter.start_ms,

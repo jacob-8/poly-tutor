@@ -1,4 +1,4 @@
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 import { type Config, error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { Translation } from '$lib/types'

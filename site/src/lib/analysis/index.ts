@@ -3,12 +3,16 @@ import type { LocaleCode } from '$lib/i18n/locales'
 import type { ChineseEmphasisLimits, Sentence, UserVocabulary } from '$lib/types'
 import { get, type Readable } from 'svelte/store'
 
+function promisify_value<T>(value: T) {
+  return new Promise<T>(resolve => resolve(value))
+}
+
 export async function get_analysis_functions({learning, mother, user_vocabulary, emphasis_limits}: { learning: LocaleCode, mother: LocaleCode, user_vocabulary: Readable<UserVocabulary>, emphasis_limits: Readable<ChineseEmphasisLimits>}) {
   if (!browser) {
     return {
       split_string: (text: string) => text,
-      split_sentences: (sentences: Sentence[]) => sentences,
-      analyze_sentences: (sentences: Sentence[]) => ({ sentences, study_words: null }),
+      split_sentences: (sentences: Sentence[]) => promisify_value(sentences),
+      analyze_sentences: (sentences: Sentence[]) => promisify_value({ sentences, study_words: null }),
     }
   }
 

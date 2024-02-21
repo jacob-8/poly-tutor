@@ -21,6 +21,7 @@
 	"devDependencies": {
 		"@google-cloud/language": "^6.1.1",
 		"@google-cloud/translate": "^8.0.3",
+		"@google/generative-ai": "^0.2.1",
 		"@iconify/json": "^2.2.172",
 		"@playwright/test": "1.41.1",
 		"@supabase/supabase-js": "^2.39.3",
@@ -37,7 +38,7 @@
 		"d3-dsv": "^3.0.1",
 		"idb": "^8.0.0",
 		"jieba-wasm": "^0.0.2",
-		"kitbook": "1.0.0-beta.17",
+		"kitbook": "1.0.0-beta.18",
 		"msw": "2.1.4",
 		"openai-edge": "^1.1.1",
 		"pg": "^8.11.3",

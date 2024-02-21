@@ -3,7 +3,7 @@ import type { google } from '@google-cloud/language/build/protos/protos'
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { GOOGLE_TRANSLATE_NLP_CREDENTIALS } from '$env/static/private'
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 import { dev } from '$app/environment'
 
 const CREDENTIALS = JSON.parse(GOOGLE_TRANSLATE_NLP_CREDENTIALS)

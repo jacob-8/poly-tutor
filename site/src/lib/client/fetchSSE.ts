@@ -1,4 +1,4 @@
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 import { createChunkDecoder } from './chunkDecoder'
 
 interface FetchSSE {

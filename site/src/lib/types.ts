@@ -1,5 +1,6 @@
 import type { google } from '@google-cloud/language/build/protos/protos'
 import type { LocaleCode } from './i18n/locales'
+import type { ChatCompletionRequestMessage } from 'openai-edge'
 
 // Books, Shows, Volumes, Pages, Paragraphs are all sections, this let's us nest as many layers as we need
 // export interface Section {
@@ -119,6 +120,16 @@ export interface YoutubeChapter {
       width: number;
       height: number;
   }[];
+}
+
+// Chat
+
+export interface ChatMessageWithTranslation extends Pick<ChatCompletionRequestMessage, 'role'> {
+  sentences: Pick<Sentence, 'text' | 'translation'>[]
+}
+
+export interface ChatMessageAnalyzedWithTranslation extends Pick<ChatCompletionRequestMessage, 'role'> {
+  sentences: Pick<Sentence, 'text' | 'words' | 'translation'>[]
 }
 
 // External APIs

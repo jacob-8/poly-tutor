@@ -43,6 +43,9 @@
   "eslint.experimental.useFlatConfig": true,
 
   // Kitbook
+  "files.associations": {
+    "*.composition": "svelte"
+  },
   "foam.edit.linkReferenceDefinitions": "withExtensions",
   "foam.files.ignore": [
     "**/node_modules/**/*",

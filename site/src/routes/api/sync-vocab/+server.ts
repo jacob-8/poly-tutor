@@ -1,6 +1,6 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { ResponseCodes } from '$lib/responseCodes'
+import { ResponseCodes } from '$lib/response-codes'
 import type { TablesInsert } from '$lib/supabase/generated.types'
 import { WordStatus } from '$lib/types'
 import { getAdminSupabaseClient } from '$lib/supabase/admin'
