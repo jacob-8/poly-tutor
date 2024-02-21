@@ -57,7 +57,7 @@
     if (isIntersecting)
       active_view = 'main'
   }}>
-    <div class="h-50px order-last sm:order-first">
+    <div class="h-50px order-last sm:order-first border-t sm:border-none">
       <slot name="header" {scroll_to_study} {scroll_to_chat} />
     </div>
     <div class="h-[calc(100vh-50px)] h-[calc(100dvh-50px)]!">
