@@ -11,6 +11,7 @@ import type { YoutubeSummarizeRequestBody, YoutubeSummarizeResponseBody } from '
 import { create_chat_store } from '$lib/components/chat/create-chat-store'
 import { create_openai_streaming_store } from '$lib/components/chat/create-streaming-store'
 import type { TranslateRequestBody, TranslateResponseBody } from '$api/translate/+server'
+import { ResponseCodes } from '$lib/response-codes'
 
 export const load = (async ({ params: { youtube_id, mother, learning }, fetch, parent }) => {
   const { supabase, split_sentences, analyze_sentences } = await parent()
@@ -101,6 +102,37 @@ export const load = (async ({ params: { youtube_id, mother, learning }, fetch, p
     translate,
   })
 
+  async function transcribe_audio(audio: File): Promise<string> {
+    const openai_api_key = get_openai_api_key()
+    if (!openai_api_key) return
+
+    const prompt = learning === 'zh-TW' ? '請使用繁體字' : ''
+    const formData = new FormData()
+    formData.append('file', audio)
+    formData.append('model', 'whisper-1')
+    formData.append('language', language)
+    formData.append('prompt', prompt)
+
+    const response = await fetch('https://api.openai.com/v1/audio/transcriptions',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${openai_api_key}`,
+        },
+        body: formData,
+      }
+    )
+
+    if (response.status !== ResponseCodes.OK) {
+      const error = await response.json()
+      console.error(error)
+      throw new Error(error)
+    }
+
+    const { text } = await response.json() as { text: string }
+    return text
+  }
+
   return {
     youtube_id,
     language,
@@ -114,5 +146,6 @@ export const load = (async ({ params: { youtube_id, mother, learning }, fetch, p
     check_is_in_my_videos,
     remove_from_my_videos,
     chat,
+    transcribe_audio,
   }
 }) satisfies PageLoad

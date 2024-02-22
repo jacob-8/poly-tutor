@@ -203,7 +203,7 @@ ${sentences.map(s => s.text).join('\n')}
   </div>
 
   <div slot="chat" class="p-2 h-full flex flex-col">
-    <Conversation {language} settings={$settings} chat={data.chat}  />
+    <Conversation {language} settings={$settings} chat={data.chat} transcribe_audio={data.transcribe_audio}  />
   </div>
 
   <div slot="sentences" let:in_view let:scroll_to_study>
