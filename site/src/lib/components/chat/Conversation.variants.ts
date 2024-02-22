@@ -8,12 +8,17 @@ export const viewports: Viewport[] = [
   { width: 600, height: 800 },
 ]
 
+function promisify_value<T>(value: T) {
+  return new Promise<T>(resolve => resolve(value))
+}
+
 export const variants: Variant<Component>[] = [
   {
     props: {
       language: 'zh',
       settings: get(mockLayoutData.settings),
       chat,
+      transcribe_audio: (audio) => promisify_value('hello ' + audio.name)
     },
   },
 ]

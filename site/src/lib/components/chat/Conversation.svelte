@@ -5,10 +5,12 @@
   import type { ChatMessageWithTranslation, Settings } from '$lib/types'
   import { scrollIntoView } from '$lib/utils/scroll-into-view'
   import { speech } from '$lib/utils/speak'
+  import RecordAudio from './RecordAudio.svelte'
 
   export let language: LanguageCode
   export let settings: Settings
   export let chat: ReturnType<typeof import('./create-chat-store').create_chat_store>
+  export let transcribe_audio: (audio: File) => Promise<string>
 
   $: ({is_receiving, send_query, thread, error } = chat)
 
@@ -56,6 +58,11 @@
     // await speakTranslation()
     return true
   }
+
+  async function transcribe_audio_and_add_to_query(audio: File) {
+    const transcription = await transcribe_audio(audio)
+    query += ' ' + transcription
+  }
 </script>
 
 <div bind:this={threadElement} class="overflow-y-auto grow-1 sm:border-t">
@@ -89,10 +96,28 @@
   {/if}
 </div>
 
-<form class="flex w-full mt-2" on:submit|preventDefault={submit}>
+<form class="flex w-full mt-2 space-x-1" on:submit|preventDefault={submit}>
   {#if $thread}
     <JSON obj={$thread} />
   {/if}
-  <input type="text" required class="grow-1 border border-gray-300 p-2 rounded mr-1" on:keydown|stopPropagation bind:value={query} />
-  <Button loading={$is_receiving} type="submit">Send</Button>
+  <input type="text" required class="grow-1 border border-gray-300 p-2 rounded" on:keydown|stopPropagation bind:value={query} />
+  <RecordAudio let:start let:stop let:cancel let:listening handle_audio={transcribe_audio_and_add_to_query}>
+    {#if listening}
+      <Button
+        onclick={stop}
+        color="red">
+        <span class="i-svg-spinners-3-dots-fade align--2px" />
+      </Button>
+      <Button
+        onclick={cancel}
+        color="black">
+        <span class="i-fa-solid-times align--3px -mx-1" />
+      </Button>
+    {:else}
+      <Button onclick={start} color="green">
+        <span class="i-mdi-microphone text-xl -mb-1.5 -mx-1" />
+      </Button>
+      <Button loading={$is_receiving} type="submit"><span class="i-material-symbols-send text-2xl align--5px -mx-2" /></Button>
+    {/if}
+  </RecordAudio>
 </form>
