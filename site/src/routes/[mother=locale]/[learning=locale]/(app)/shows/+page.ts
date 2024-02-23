@@ -28,6 +28,7 @@ export const load = (async ({parent, params: { learning }}) => {
     `)
     .eq('youtubes.language', language)
     .order('added_at', { ascending: false })
+    .limit(30)
   if (error)
     console.error(error)
 
