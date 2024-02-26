@@ -56,7 +56,7 @@ ON user_youtubes FOR SELECT
 TO authenticated
 USING ( auth.uid() = user_id );
 
-CREATE POLICY "Users can remove youtubes from their account"
+CREATE POLICY "users can remove youtubes from their account"
 ON user_youtubes FOR DELETE
 TO authenticated
 USING ( auth.uid() = user_id );

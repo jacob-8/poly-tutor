@@ -31,6 +31,7 @@ export type Database = DatabaseGenerated
 export type Supabase = SupabaseClient<Database>
 
 export type Channel = Tables<'youtube_channels'>
+export type Playlist = Tables<'youtube_playlists'>
 export type YouTube = Merge<Tables<'youtubes'>, { title: Sentence[], description: Sentence[], chapters: YoutubeChapter[] }>
 export type Transcript = Merge<Tables<'youtube_transcripts'>, { sentences: Sentence[] }>
 export type Summary = Merge<Tables<'youtube_summaries'>, { translations: Translation }>
