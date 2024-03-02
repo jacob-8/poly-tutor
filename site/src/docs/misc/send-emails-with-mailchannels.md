@@ -204,22 +204,23 @@ export const POST: RequestHandler = async ({request, fetch}) => {
 
 Sources: https://mailchannels.zendesk.com/hc/en-us/articles/7122849237389-Adding-a-DKIM-Signature and https://support.mailchannels.com/hc/en-us/articles/16918954360845-Secure-your-domain-name-against-spoofing-with-Domain-Lockdown
 
-- Under your website in Cloudflare, go to `Email > Email Routing > Settings` and ensure that your domain is setup for email. If you already have this setup you'll have three `MX` records and one `TXT` record related to email sending.
+- Under `Cloudflare > Website > yours.com > Email > Email Routing > Settings` ensure that your domain is setup for email. If you already have this setup you'll have three `MX` records and one `TXT` record related to email sending.
 - In the DNS Records page, edit the `TXT` record at `polylingual.dev` from `v=spf1 include:_spf.mx.cloudflare.net ~all` to `v=spf1 a mx include:relay.mailchannels.net include:_spf.mx.cloudflare.net ~all`
 
-- Add a TXT record to let mailchannels know the worker domain that emails are coming from `_mailchannels`, `TXT`, `v=mc1 cfid=yourworkersubdomain.workers.dev`
+- Add a `_mailchannels` `TXT` record to let mailchannels know the worker domain that emails are coming from: `v=mc1 cfid=yourworkersubdomain.workers.dev`
 
 - Create a private key by running in bash: `openssl genrsa 2048 | tee priv_key.pem | openssl rsa -outform der | openssl base64 -A > priv_key.txt`
-- Take the value from `priv_key.txt` and add it to your website env variables that will be used server-side only in the `personalizations[0].dkim_private_key` field
+- Take the value from `priv_key.txt` and add it to your website environment variables that will be used server-side only in the `personalizations > dkim_private_key` field
 
-- Create a public key by running `echo -n "v=DKIM1;p=" > pub_key_record.txt && openssl rsa -in priv_key.pem -pubout -outform der | openssl base64 -A >> pub_key_record.txt`
-- Take the output of `pub_key_record.txt` and add it to your DNS records: `notification._domainkey`, `TXT`. It will look like this: `v=DKIM1; p=<your DKIM public key>`
+- Create a public key from your private key by running `echo -n "v=DKIM1;p=" > pub_key_record.txt && openssl rsa -in priv_key.pem -pubout -outform der | openssl base64 -A >> pub_key_record.txt`
+- Take the output of `pub_key_record.txt` and add it to your DNS records as a `TXT` entry under `notification._domainkey`. It will look like this: `v=DKIM1; p=<your DKIM public key>`. The use of `notification` is arbitrary here but it must match the `dkim_selector` field in the `send_email` function.
 
-- Then go to Email > DMARC Management and `Enable DMARC Management` to automatically add a `_dmarc` TXT record to keep other people from being able to spoof your domain in emails. It will look something like this: `v=DMARC1;  p=none; rua=mailto:1212-long-string@dmarc-reports.cloudflare.net`. That's a good place to start. Read https://dmarc.org/overview/ to learn more about making your policy more restrictive. Right now I update the `p=none;` to `p=quarantine; sp=reject; adkim=r; aspf=r;`. Here's a short overview of what this means:
+- Then go to `Cloudflare > Website > yours.com > Email > DMARC Management` and click `Enable DMARC Management` to automatically add a `_dmarc` TXT record to keep other people from being able to spoof your domain in emails. It will look something like this: `v=DMARC1;  p=none; rua=mailto:1212-long-string@dmarc-reports.cloudflare.net`. That's a good place to start. Read https://dmarc.org/overview/ to learn more about making your policy more restrictive. Right now I update the `p=none;` to `p=quarantine; sp=reject; adkim=r; aspf=r;`. Here's a short overview of what this means:
+  - `p=quarantine;` - `p` is the policy for the domain. This tells email servers to quarantine emails that fail the DMARC check. This means that the email may be sent with a warning or be put in the spam folder.
+  - `sp=reject;` - `sp` is the policy for subdomains. This tells email servers to reject emails that fail the DMARC check which come from subdomains of my main domain.
+  - `adkim=r;` - This tells email servers to use relaxed alignment for DKIM, meaning the DKIM signature can be in the header or the body of the email.
+  - `aspf=r;` - This tells email servers to use relaxed alignment for SPF, meaning the SPF signature can be in the header or the body of the email.
 
-- `p=quarantine;` - `p` is the polyicy for the domain. This tells email servers to quarantine emails that fail the DMARC check. This means that the email may be sent with a warning or be put in the spam folder.
-- `sp=reject;` - `sp` is the policy for subdomains. This tells email servers to reject emails that fail the DMARC check which come from subdomains of my main domain.
-- `adkim=r;` - This tells email servers to use relaxed alignment for DKIM, meaning the DKIM signature can be in the header or the body of the email.
-- `aspf=r;` - This tells email servers to use relaxed alignment for SPF, meaning the SPF signature can be in the header or the body of the email.
+As mentioned in https://dmarc.org/overview/, I will work towards marking `p` as `reject`.
 
-As mentioned in https://dmarc.org/overview/, I should work towards marking `p` as `reject`.
+Now go try out sending an email!
