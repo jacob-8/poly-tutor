@@ -33,6 +33,14 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request, fe
       type: 'text/html',
     }, fetch)
 
+    await send_email({
+      from: { email: 'no-reply@polylingual.dev' },
+      to: [{email: 'jacob@polylingual.dev'}],
+      subject: `New Poly Tutor user: ${session_data.user.email}`,
+      body: `${session_data.user.email} has just created an account using ${language} as their mother tongue, and we sent them an automatic welcome.`,
+      type: 'text/plain',
+    }, fetch)
+
     const { error: updating_welcome_email_error } = await supabase.from('profiles').update({ welcome_email_sent: new Date().toISOString() }).eq('id', session_data.user.id)
     if (updating_welcome_email_error)
       console.error({updating_welcome_email_error})
