@@ -15,6 +15,7 @@
     "lint": "eslint --cache --quiet",
     "lint:fix": "eslint --cache --fix",
     "reset-db": "pnpm -F site reset-db",
+		"generate-types": "supabase gen types typescript --local --schema public > site/src/lib/supabase/generated.types.ts",
     "check-packages": "pnpm update --interactive --recursive --latest"
   },
   "devDependencies": {

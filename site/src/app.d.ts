@@ -34,6 +34,10 @@ declare global {
 	interface Document {
 		startViewTransition(updateCallback: () => Promise<void>): ViewTransition;
 	}
+
+	interface Window {
+		handleSignInWithGoogle: (response) => Promise<void>;
+	}
 }
 
 export {}

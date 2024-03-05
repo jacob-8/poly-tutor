@@ -40,4 +40,5 @@ export default defineConfig({
   kitbookRoute: '/[mother=locale]/[learning=locale]/kitbook',
   githubURL: 'https://github.com/jacob-8/poly-tutor',
   expandTree: true,
+  // darkMode: true,
 })

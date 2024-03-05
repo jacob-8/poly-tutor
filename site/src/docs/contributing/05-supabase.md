@@ -23,3 +23,4 @@ Only site admin does this:
 - `pnpm reset-db` generates fresh seed SQL from the JavaScript data in `site/src/lib/mocks/seed`, erases DB data, applies fresh seed and also writes the seed to `supabase/seed.sql` so that it will be used in future `supabase db reset` commands.
 - `supabase status` check status and get local urls
 - `supabase gen types typescript --project-id=tjsnduoporqqlrbbpola --schema public > packages/site/src/lib/supabase/generated.types.ts` to generate types from online project - we never need this because we always develop locally and then push changes up.
+- `supabase functions new hello-world` to create a new edge function and run `supabase functions serve` to view logs in terminal

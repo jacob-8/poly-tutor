@@ -11,6 +11,38 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          id: string
+          updated_at: string
+          username: string | null
+          welcome_email_sent: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          id: string
+          updated_at?: string
+          username?: string | null
+          welcome_email_sent?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          id?: string
+          updated_at?: string
+          username?: string | null
+          welcome_email_sent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'profiles_id_fkey'
+            columns: ['id']
+            isOneToOne: true
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       youtube_playlists: {
         Row: {
           created_at: string
@@ -42,29 +74,24 @@ export interface Database {
           updated_at?: string
           youtubes?: PlaylistYoutubeMetadata[]
         }
-        Relationships: [
-          {
-            foreignKeyName: 'youtube_playlists_public_fkey'
-            columns: ['public']
-            isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          }
-        ]
-      },
+        Relationships: []
+      }
       user_youtube_playlists: {
         Row: {
           added_at: string
+          last_visit: string
           user_id: string
           youtube_playlist_id: string
         }
         Insert: {
           added_at?: string
+          last_visit?: string
           user_id?: string
           youtube_playlist_id: string
         }
         Update: {
           added_at?: string
+          last_visit?: string
           user_id?: string
           youtube_playlist_id?: string
         }
@@ -88,16 +115,19 @@ export interface Database {
       user_youtubes: {
         Row: {
           added_at: string
+          last_visit: string
           user_id: string
           youtube_id: string
         }
         Insert: {
           added_at?: string
+          last_visit?: string
           user_id?: string
           youtube_id: string
         }
         Update: {
           added_at?: string
+          last_visit?: string
           user_id?: string
           youtube_id?: string
         }
