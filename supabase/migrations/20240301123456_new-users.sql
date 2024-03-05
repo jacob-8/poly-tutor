@@ -5,6 +5,7 @@ create table profiles (
   avatar_url text,
 
   welcome_email_sent timestamp with time zone,
+  unsubscribed_from_emails timestamp with time zone,
 
   constraint username_length check (char_length(username) >= 3)
 );

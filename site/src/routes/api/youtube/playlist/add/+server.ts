@@ -57,7 +57,8 @@ export const POST: RequestHandler = async ({ locals: { getSession }, request }) 
 async function get_all_videos_from_playlist(playlist_id: string, nextPageToken = ''): Promise<PlaylistYoutubeMetadata[]> {
   const videos: PlaylistYoutubeMetadata[] = []
 
-  const playlistItems_url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=${playlist_id}&maxResults=50&key=${YOUTUBE_API_3_KEY}&pageToken=${nextPageToken}`
+  const playlistItems_url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails,snippet&playlistId=${playlist_id}&maxResults=50&key=${YOUTUBE_API_3_KEY}&pageToken=${nextPageToken}`
+
   const { data, error: playlist_items_fetch_error } = await get_request<PlaylistItemListResponse>(playlistItems_url)
   if (playlist_items_fetch_error)
     throw new Error(playlist_items_fetch_error.message)

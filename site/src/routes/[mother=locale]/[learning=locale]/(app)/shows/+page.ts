@@ -6,7 +6,30 @@ export const load = (async ({parent, params: { learning }}) => {
   const { supabase } = await parent()
   const language = learning.replace(/-.*/, '') as LanguageCode
 
-  // TODO: should be a view
+
+  const { data: user_playlists, error: user_playlists_error } = await supabase.from('user_youtube_playlists')
+    .select(`
+      last_visit,
+      playlist:youtube_playlists(
+        id,
+        title,
+        description,
+        language,
+        youtubes
+      )
+    `)
+    .eq('youtube_playlists.language', language)
+    .order('last_visit', { ascending: false })
+    .limit(10)
+  if (user_playlists_error)
+    console.info({user_playlists_error})
+
+  // TODO: Upon opening a playlist, set date last visited on user_youtube_playlist
+
+  // TODO: shows home show user_youtubes (below function) most recent by date visited via a view
+  // TODO: Upon opening a user_youtube, set date last visited for youtube
+  // TODO: update user_youtube_channels view to sort by date last_visit from the youtubes
+
   const { data: user_youtubes_data, error } = await supabase
     .from('user_youtubes')
     .select(`
@@ -76,6 +99,7 @@ export const load = (async ({parent, params: { learning }}) => {
   }))
 
   return {
+    user_playlists,
     user_youtubes,
     other_youtubes,
   }

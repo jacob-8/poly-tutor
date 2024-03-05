@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { YoutubePlaylistAddResponseBody } from '$api/youtube/playlist/add/+server.js'
   import { onMount } from 'svelte'
-  import ShowThumbnail from './PlaylistShowThumbnail.svelte'
+  import PlaylistShowThumbnail from './PlaylistShowThumbnail.svelte'
   import { browser } from '$app/environment'
   import { page } from '$app/stores'
 
@@ -25,11 +25,11 @@
 </script>
 
 {#if playlist?.youtubes}
-  <h1 class="text-lg font-semibold mb-3 px-2">{playlist.title.map(sent => sent.text)}</h1>
+  <h1 class="text-lg font-semibold mb-3 px-2">{playlist.title.map(sent => sent.text)} ({playlist.youtubes.length} shows)</h1>
 
   <div class="grid sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
     {#each playlist.youtubes as youtube}
-      <ShowThumbnail youtube_id={youtube.id} youtube_title={youtube.title} channel_id={youtube.channel_id} channel_title={youtube.channel_title} />
+      <PlaylistShowThumbnail youtube_id={youtube.id} youtube_title={youtube.title} channel_id={youtube.channel_id} channel_title={youtube.channel_title} />
     {/each}
   </div>
 {:else if error}
