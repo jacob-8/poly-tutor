@@ -84,14 +84,14 @@
       {$page.data.t.shows.my_channels}
     </h2>
     {#each data.user_channels as channel}
-      <a href="shows/channels/{channel.id}" class="flex my-2 p-2 bg-gray-100 rounded hover:bg-gray-200">
-        <img class="mr-2" src="{channel.thumbnail_url}=s100-c-k-c0x00ffffff-no-rj" />
-        <div>
+      <a href="shows/channels/{channel.id}" class="flex my-2 bg-gray-100 rounded hover:bg-gray-200 h-100px">
+        <img class="w-100px h-100px" src="{channel.thumbnail_url}=s200-c-k-c0x00ffffff-no-rj" />
+        <div class="p-2">
           <div class="font-semibold text-xl">
             {channel.title}
           </div>
           {#if channel.description}
-            <div>
+            <div class="line-clamp-2">
               {channel.description}
             </div>
           {/if}

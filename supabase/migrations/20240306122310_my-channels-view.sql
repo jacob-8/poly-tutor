@@ -1,13 +1,4 @@
-ALTER TABLE user_youtubes
-ADD last_visit timestamp with time zone NOT NULL DEFAULT now();
-
-CREATE POLICY "users can update their added youtubes"
-ON user_youtubes FOR UPDATE
-TO authenticated
-USING ( auth.uid() = user_id );
-
--- This view shows all channels for all users (useful in some views, but also create my_youtube_channels view for user-specific channels)
-CREATE VIEW user_youtube_channels AS
+CREATE VIEW my_youtube_channels WITH (security_invoker) AS
 SELECT DISTINCT ON (youtube_channels.id)
   youtube_channels.id,
   youtube_channels.title,

@@ -24,7 +24,7 @@ export const load = (async ({parent, params: { learning }}) => {
     console.info({user_playlists_error})
 
   const { data: user_channels, error: user_channels_error } = await supabase
-    .from('user_youtube_channels')
+    .from('my_youtube_channels')
     .select()
     .eq('language', language)
     .limit(10)
