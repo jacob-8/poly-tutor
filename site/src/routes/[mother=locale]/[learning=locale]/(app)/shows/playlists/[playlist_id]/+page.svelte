@@ -25,7 +25,9 @@
 </script>
 
 {#if playlist?.youtubes}
-  <h1 class="text-lg font-semibold mb-3 px-2">{playlist.title.map(sent => sent.text)} ({playlist.youtubes.length} shows)</h1>
+  <h1 class="text-lg font-semibold mb-3 px-2">
+    <a target="_blank" href="https://www.youtube.com/playlist?list={playlist.id}">{playlist.title.map(sent => sent.text)}</a>
+    ({playlist.youtubes.length} shows)</h1>
 
   <div class="grid sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
     {#each playlist.youtubes as youtube}

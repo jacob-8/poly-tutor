@@ -13,7 +13,7 @@
 {#if !$page.data.youtube_id}
   <div class="flex items-center space-x-1 py-1 pl-1" data-sveltekit-preload-data="tap">
     <div class="text-lg font-semibold flex items-center truncate py-1">
-      {#if $page.url.pathname.includes('playlists')}
+      {#if $page.url.pathname.includes('shows/')}
         <a href="../../shows" class="mr-1">
           <span class="i-iconamoon-arrow-left-1 my-1" /></a>
         <span class="i-logos-youtube-icon text-125% mr-1 view-transition-yt-icon" />

@@ -78,6 +78,29 @@
   </div>
 </div>
 
+{#if data.user_channels.length}
+  <div class="sm:px-3 pb-3 mb-3 border-b">
+    <h2 class="my-3 font-semibold text-xl">
+      {$page.data.t.shows.my_channels}
+    </h2>
+    {#each data.user_channels as channel}
+      <a href="shows/channels/{channel.id}" class="flex my-2 p-2 bg-gray-100 rounded hover:bg-gray-200">
+        <img class="mr-2" src="{channel.thumbnail_url}=s100-c-k-c0x00ffffff-no-rj" />
+        <div>
+          <div class="font-semibold text-xl">
+            {channel.title}
+          </div>
+          {#if channel.description}
+            <div>
+              {channel.description}
+            </div>
+          {/if}
+        </div>
+      </a>
+    {/each}
+  </div>
+{/if}
+
 {#if dev}
   <div data-testid="other-videos" class="sm:px-3">
     <h2 class=" my-3 font-semibold text-xl">{$page.data.t.shows.others_are_watching}...</h2>

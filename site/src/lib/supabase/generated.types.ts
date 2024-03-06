@@ -15,6 +15,7 @@ export interface Database {
         Row: {
           avatar_url: string | null
           id: string
+          unsubscribed_from_emails: string | null
           updated_at: string
           username: string | null
           welcome_email_sent: string | null
@@ -22,6 +23,7 @@ export interface Database {
         Insert: {
           avatar_url?: string | null
           id: string
+          unsubscribed_from_emails?: string | null
           updated_at?: string
           username?: string | null
           welcome_email_sent?: string | null
@@ -29,6 +31,7 @@ export interface Database {
         Update: {
           avatar_url?: string | null
           id?: string
+          unsubscribed_from_emails?: string | null
           updated_at?: string
           username?: string | null
           welcome_email_sent?: string | null
@@ -42,39 +45,6 @@ export interface Database {
             referencedColumns: ['id']
           }
         ]
-      }
-      youtube_playlists: {
-        Row: {
-          created_at: string
-          description: Sentence[] | null
-          id: string
-          language: Database['public']['Enums']['language']
-          public: string | null
-          title: Sentence[]
-          updated_at: string
-          youtubes: PlaylistYoutubeMetadata[]
-        }
-        Insert: {
-          created_at?: string
-          description?: Sentence[] | null
-          id: string
-          language: Database['public']['Enums']['language']
-          public?: string | null
-          title: Sentence[]
-          updated_at?: string
-          youtubes: PlaylistYoutubeMetadata[]
-        }
-        Update: {
-          created_at?: string
-          description?: Sentence[] | null
-          id?: string
-          language?: Database['public']['Enums']['language']
-          public?: string | null
-          title?: Sentence[]
-          updated_at?: string
-          youtubes?: PlaylistYoutubeMetadata[]
-        }
-        Relationships: []
       }
       user_youtube_playlists: {
         Row: {
@@ -216,6 +186,39 @@ export interface Database {
           updated_at?: string
           video_count?: number | null
           view_count?: number | null
+        }
+        Relationships: []
+      }
+      youtube_playlists: {
+        Row: {
+          created_at: string
+          description: Sentence[] | null
+          id: string
+          language: Database['public']['Enums']['language']
+          public: string | null
+          title: Sentence[]
+          updated_at: string
+          youtubes: PlaylistYoutubeMetadata[]
+        }
+        Insert: {
+          created_at?: string
+          description?: Sentence[] | null
+          id: string
+          language: Database['public']['Enums']['language']
+          public?: string | null
+          title: Sentence[]
+          updated_at?: string
+          youtubes: PlaylistYoutubeMetadata[]
+        }
+        Update: {
+          created_at?: string
+          description?: Sentence[] | null
+          id?: string
+          language?: Database['public']['Enums']['language']
+          public?: string | null
+          title?: Sentence[]
+          updated_at?: string
+          youtubes?: PlaylistYoutubeMetadata[]
         }
         Relationships: []
       }
@@ -395,6 +398,7 @@ export interface Database {
           description: string | null
           id: string | null
           language: Database['public']['Enums']['language'] | null
+          last_visit: string | null
           subscriber_count: number | null
           thumbnail_url: string | null
           title: string | null

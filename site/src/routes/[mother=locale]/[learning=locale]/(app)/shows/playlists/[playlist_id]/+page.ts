@@ -31,7 +31,15 @@ export const load = (async ({ params: { playlist_id, learning }, fetch, parent }
     if (checking_error)
       throw new Error(checking_error.message)
 
-    if (is_added_data.length) return
+    if (is_added_data.length) {
+      const { error: update_last_visit_error } = await supabase.from('user_youtube_playlists')
+        .update({ last_visit: new Date().toISOString() })
+        .eq('youtube_playlist_id', playlist_id)
+        .select()
+      if (update_last_visit_error)
+        console.error({update_last_visit_error})
+      return
+    }
 
     const { data, error } = await supabase.from('user_youtube_playlists')
       .insert({ youtube_playlist_id: playlist_id })

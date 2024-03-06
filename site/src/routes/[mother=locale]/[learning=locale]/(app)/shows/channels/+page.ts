@@ -9,7 +9,7 @@ export const load = (async ({parent, params: { learning }}) => {
     .from('user_youtube_channels')
     .select()
     .eq('language', language)
-    .order('updated_at', { ascending: false })
+    .order('last_visit', { ascending: false })
 
   if (error)
     throw new Error(error.message)

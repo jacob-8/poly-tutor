@@ -32,13 +32,3 @@ AS PERMISSIVE FOR ALL
 TO authenticated
 USING (auth.uid() = user_id)
 WITH CHECK (auth.uid() = user_id);
-
--- As we just added the last_visit field to the playlists, we can also update the user_youtubes with the same field
-
-ALTER TABLE user_youtubes
-ADD last_visit timestamp with time zone NOT NULL DEFAULT now();
-
-CREATE POLICY "users can update their added youtubes"
-ON user_youtubes FOR UPDATE
-TO authenticated
-USING ( auth.uid() = user_id );

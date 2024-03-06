@@ -6,7 +6,6 @@ export const load = (async ({parent, params: { learning }}) => {
   const { supabase } = await parent()
   const language = learning.replace(/-.*/, '') as LanguageCode
 
-
   const { data: user_playlists, error: user_playlists_error } = await supabase.from('user_youtube_playlists')
     .select(`
       last_visit,
@@ -24,16 +23,20 @@ export const load = (async ({parent, params: { learning }}) => {
   if (user_playlists_error)
     console.info({user_playlists_error})
 
-  // TODO: Upon opening a playlist, set date last visited on user_youtube_playlist
+  const { data: user_channels, error: user_channels_error } = await supabase
+    .from('user_youtube_channels')
+    .select()
+    .eq('language', language)
+    .limit(10)
+    .order('last_visit', { ascending: false })
+  if (user_channels_error)
+    console.info({user_channels_error})
 
-  // TODO: shows home show user_youtubes (below function) most recent by date visited via a view
-  // TODO: Upon opening a user_youtube, set date last visited for youtube
-  // TODO: update user_youtube_channels view to sort by date last_visit from the youtubes
-
-  const { data: user_youtubes_data, error } = await supabase
+  // TODO: make this a view
+  const { data: user_youtubes_data, error: user_youtubes_error } = await supabase
     .from('user_youtubes')
     .select(`
-      added_at,
+      last_visit,
       youtube:youtubes!inner(
         id,
         language,
@@ -50,10 +53,10 @@ export const load = (async ({parent, params: { learning }}) => {
       )
     `)
     .eq('youtubes.language', language)
-    .order('added_at', { ascending: false })
+    .order('last_visit', { ascending: false })
     .limit(30)
-  if (error)
-    console.error(error)
+  if (user_youtubes_error)
+    console.error({user_youtubes_error})
 
   const user_youtubes: YouTubeWithAllData[] = user_youtubes_data.map(({youtube}) => ({
     youtube: {
@@ -100,6 +103,7 @@ export const load = (async ({parent, params: { learning }}) => {
 
   return {
     user_playlists,
+    user_channels,
     user_youtubes,
     other_youtubes,
   }
