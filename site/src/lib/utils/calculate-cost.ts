@@ -3,11 +3,12 @@ import type { Sentence } from '$lib/types'
 
 const WHISPER_COST_PER_SECOND = 0.006 / 60
 
-export function calculate_transcription_cost({ duration_seconds }: { duration_seconds: number }): string {
-  const cost = (duration_seconds * WHISPER_COST_PER_SECOND).toFixed(3)
-  const cost_without_trailing_zero = cost.replace(/\.?0+$/, '')
+export function calculate_transcription_cost({ duration_seconds, language }: { duration_seconds: number, language: LanguageCode }): string {
+  const cost = (duration_seconds * WHISPER_COST_PER_SECOND).toFixed(2)
 
-  return `$${cost_without_trailing_zero}`
+  const currency = language === 'en' ? ' USD' : ''
+
+  return `$${cost}` + currency
 }
 
 const GPT3_5_INPUT_COST_PER_TOKEN = 0.0005 / 1000

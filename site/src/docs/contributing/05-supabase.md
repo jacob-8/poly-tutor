@@ -4,7 +4,7 @@
 
 - `supabase start` to start a local instance of supabase, including POSTGres, Storage, Email, Functions, etc...
 - `supabase migration new <feature-name>` to write a new sql migration that will edit the database. Changes are saved in version control under supabase/migrations.
-- `supabase gen types typescript --local --schema public > packages/site/src/lib/supabase/generated.types.ts` to update type definitions if you updated the Schema.
+- `supabase gen types typescript --local --schema public > site/src/lib/supabase/generated.types.ts` to update type definitions if you updated the Schema.
 - `supabase db reset` to return to a new PostGRES database w/o tables or data, run each migration sequentially and then run finally the `supabase/seed.sql` file.
 - `supabase stop` to close down the Docker containers. State will be saved and restored the next time you run `supabase start`
 
@@ -23,3 +23,4 @@ Only site admin does this:
 - `pnpm reset-db` generates fresh seed SQL from the JavaScript data in `site/src/lib/mocks/seed`, erases DB data, applies fresh seed and also writes the seed to `supabase/seed.sql` so that it will be used in future `supabase db reset` commands.
 - `supabase status` check status and get local urls
 - `supabase gen types typescript --project-id=tjsnduoporqqlrbbpola --schema public > packages/site/src/lib/supabase/generated.types.ts` to generate types from online project - we never need this because we always develop locally and then push changes up.
+- `supabase functions new hello-world` to create a new edge function and run `supabase functions serve` to view logs in terminal

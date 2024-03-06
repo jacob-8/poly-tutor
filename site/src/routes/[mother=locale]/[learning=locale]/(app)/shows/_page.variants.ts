@@ -4,8 +4,7 @@ import { mockLayoutData } from '$lib/mocks/data/page'
 import { seeded_youtubes } from '$lib/mocks/seed/youtubes'
 
 // export const viewports: Viewport[] = [
-//   { name: 'Desktop', width: 800, height: 600 },
-//   { name: 'Mobile', width: 320, height: 480}
+//   { width: 800, height: 600 },
 // ]
 
 export const variants: Variant<Component>[] = [
@@ -14,6 +13,8 @@ export const variants: Variant<Component>[] = [
     props: {
       data: {
         ...mockLayoutData,
+        user_channels: [],
+        user_playlists: [],
         user_youtubes: [],
         other_youtubes: [
           seeded_youtubes.zh_transcribed,
@@ -25,6 +26,8 @@ export const variants: Variant<Component>[] = [
     props: {
       data: {
         ...mockLayoutData,
+        user_channels: [],
+        user_playlists: [],
         user_youtubes: [
           seeded_youtubes.zh_transcribed_summarized,
           seeded_youtubes.zh_transcribed_summarized,
@@ -42,6 +45,8 @@ export const variants: Variant<Component>[] = [
     props: {
       data: {
         ...mockLayoutData,
+        user_channels: [],
+        user_playlists: [],
         user_youtubes: [
           seeded_youtubes.zh_transcribed_summarized,
         ],

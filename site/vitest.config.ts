@@ -1,6 +1,8 @@
 import { defaultExclude, defineProject } from 'vitest/config'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 
 export default defineProject({
+  plugins: [svelte()], // for email component rendering
   test: {
     alias: {
       $lib: new URL('./src/lib', import.meta.url).pathname,

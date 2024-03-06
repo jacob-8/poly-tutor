@@ -23,6 +23,7 @@ function delay<T>(value: T, delay_ms = 1000): Promise<T> {
 
 const noop_page_functions = {
   load_transcript: () => delay(null, 2000),
+  transcribe_audio: () => delay(null),
   load_summaries: () => delay(null),
   analyze_sentences: (args) => analysis_functions.then(({analyze_sentences}) => analyze_sentences(args)),
   split_sentences: (args) => analysis_functions.then(({split_sentences}) => split_sentences(args)),

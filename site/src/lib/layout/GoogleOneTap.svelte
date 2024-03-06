@@ -1,14 +1,14 @@
 <script lang="ts">
   // https://developers.google.com/identity/gsi/web/guides/overview
   import { page } from '$app/stores'
+  import { handle_sign_in_response } from './sign_in'
 
-  // @ts-ignore
   window.handleSignInWithGoogle = async function handleSignInWithGoogle(response) {
     const { data, error } = await $page.data.supabase.auth.signInWithIdToken({
       provider: 'google',
       token: response.credential,
     })
-    console.info({data,error})
+    handle_sign_in_response({ user: data?.user, error, supabase: $page.data.supabase })
   }
 </script>
 

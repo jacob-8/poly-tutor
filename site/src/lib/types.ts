@@ -122,6 +122,15 @@ export interface YoutubeChapter {
   }[];
 }
 
+export interface PlaylistYoutubeMetadata {
+  id: string;
+  title: string;
+  description: string;
+  channel_id: string;
+  channel_title: string;
+  published_at: string;
+}
+
 // Chat
 
 export interface ChatMessageWithTranslation extends Pick<ChatCompletionRequestMessage, 'role'> {

@@ -5,7 +5,8 @@
 
   export let youtube: Partial<YouTube>
   export let channel: Partial<Channel>
-  $: href= `shows/${youtube.id}`
+  export let href_prefix = 'shows'
+  $: href= `${href_prefix}/${youtube.id}`
   $: title = youtube.title.map(sentence => sentence.text).join(' ')
 
   // https://img.youtube.com/vi/b5JaHbjKb2I/0.jpg // 1,2,3 - thumbnail variations

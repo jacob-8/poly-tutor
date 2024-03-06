@@ -21,8 +21,8 @@
   })
 </script>
 
-<div class="sm:max-w-470px">
-  <a class="block mb-1 relative overflow-hidden h-0 pb-56.25% sm:rounded" style="view-transition-name: yt-thumbnail-{youtube_id}" {href}>
+<div class="sm:max-w-470px" data-sveltekit-preload-data="tap" data-sveltekit-preload-code="viewport">
+  <a class="block mb-1 relative overflow-hidden h-0 pb-56.25% sm:rounded" style="view-transition-name: yt-playlist-thumbnail-{youtube_id}" {href}>
     <img class="w-full absolute centered" src={image_url} alt={youtube_title} title={youtube_title} />
   </a>
 

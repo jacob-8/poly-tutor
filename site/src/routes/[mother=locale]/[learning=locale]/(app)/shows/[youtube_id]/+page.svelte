@@ -230,7 +230,7 @@ ${sentences.map(s => s.text).join('\n')}
             entire_transcript = result
             transcript_status = 'exists'
           }
-        }}>{$page.data.t.shows.get_captions} ({calculate_transcription_cost({duration_seconds: youtube.duration_seconds * double_to_include_translate_cost})})</Button>
+        }}>{$page.data.t.shows.get_captions} ({calculate_transcription_cost({duration_seconds: youtube.duration_seconds * double_to_include_translate_cost, language})})</Button>
       {:else if sentences}
         <SelectChapter handle_chapter_select={event => {
           // @ts-ignore

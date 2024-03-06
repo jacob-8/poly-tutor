@@ -1,10 +1,10 @@
 <script lang="ts">
   import { browser, dev } from '$app/environment'
-  import { invalidateAll } from '$app/navigation'
   import { page } from '$app/stores'
   import { PUBLIC_INBUCKET_URL } from '$env/static/public'
   import { Button, Form, Modal } from 'svelte-pieces'
   import { toast } from '$lib/client/Toasts.svelte'
+  import { handle_sign_in_response } from './sign_in'
 
   export let close: () => void
   let email: string
@@ -29,13 +29,11 @@
       token: sixDigitCode.toString(),
       type: 'email',
     })
-    console.info({ data, error })
     // eslint-disable-next-line require-atomic-updates
     sixDigitCode = null
     submitting_code = false
-    if (error)
-      return toast(error.message, TEN_SECONDS)
-    sign_in_success(email)
+    handle_sign_in_response({ user: data?.user, error, supabase: $page.data.supabase})
+    if (!error) close()
   }
 
   $: code_is_6_digits = /^[0-9]{6}$/.test(sixDigitCode)
@@ -54,23 +52,13 @@
   }
 
   if (typeof window !== 'undefined') {
-    // @ts-ignore
     window.handleSignInWithGoogle = async function handleSignInWithGoogle(response) {
       const { data, error } = await $page.data.supabase.auth.signInWithIdToken({
         provider: 'google',
         token: response.credential,
       })
-      console.info({data,error})
-      if (!error)
-        sign_in_success(data?.user?.email)
-
+      handle_sign_in_response({ user: data?.user, error, supabase: $page.data.supabase })
     }
-  }
-
-  function sign_in_success(_email: string) {
-    toast(`Signed in with ${_email}`, FOUR_SECONDS)
-    invalidateAll()
-    close()
   }
 
   $: can_google_authenticate = browser && !location.origin.includes('vercel.app')
@@ -111,7 +99,7 @@
           data-size="large"
           data-logo_alignment="left">
         </div>
-        <!-- signin_with or signin -->
+        <!-- data-text can be "signin_with" or "signin" -->
       </div>
 
       <div class="mb-3 text-gray-500/80 text-sm font-semibold">

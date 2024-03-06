@@ -1,0 +1,26 @@
+<script context="module" lang="ts">
+  import type { Viewport } from "kitbook";
+
+  export const csr = false;
+
+  export const viewports: Viewport[] = [
+    { width: 800, height: 600 },
+    { width: 400, height: 800 },
+  ];
+</script>
+
+<script lang="ts">
+  import { render_component_to_html } from "../render-component-to-html";
+  import NewUserWelcome from "./NewUserWelcome.svelte";
+
+  const html = render_component_to_html({
+    component: NewUserWelcome,
+    props: {
+      dark: true,
+      language: "en",
+    },
+  });
+</script>
+
+<iframe srcdoc={html} class="w-full h-full" />
+

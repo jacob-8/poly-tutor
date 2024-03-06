@@ -30,7 +30,9 @@
     "chapter": "章节",
     "most_viewed_unknown_words": "观看次数最多的未知单词",
     "common_in_this_context": "在这种情况下常见",
-    "unknown": "未知"
+    "unknown": "未知",
+    "my_playlists": "我的播放列表",
+    "my_channels": "我的频道"
   },
   "home": {
     "chat": "闲聊",

@@ -1,4 +1,4 @@
-import type { Sentence, Translation, YoutubeChapter } from '$lib/types'
+import type { Sentence, Translation, YoutubeChapter, PlaylistYoutubeMetadata } from '$lib/types'
 
 export type Json =
   | string
@@ -11,19 +11,93 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          id: string
+          unsubscribed_from_emails: string | null
+          updated_at: string
+          username: string | null
+          welcome_email_sent: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          id: string
+          unsubscribed_from_emails?: string | null
+          updated_at?: string
+          username?: string | null
+          welcome_email_sent?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          id?: string
+          unsubscribed_from_emails?: string | null
+          updated_at?: string
+          username?: string | null
+          welcome_email_sent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'profiles_id_fkey'
+            columns: ['id']
+            isOneToOne: true
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      user_youtube_playlists: {
+        Row: {
+          added_at: string
+          last_visit: string
+          user_id: string
+          youtube_playlist_id: string
+        }
+        Insert: {
+          added_at?: string
+          last_visit?: string
+          user_id?: string
+          youtube_playlist_id: string
+        }
+        Update: {
+          added_at?: string
+          last_visit?: string
+          user_id?: string
+          youtube_playlist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'user_youtube_playlists_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'user_youtube_playlists_youtube_playlist_id_fkey'
+            columns: ['youtube_playlist_id']
+            isOneToOne: false
+            referencedRelation: 'youtube_playlists'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       user_youtubes: {
         Row: {
           added_at: string
+          last_visit: string
           user_id: string
           youtube_id: string
         }
         Insert: {
           added_at?: string
+          last_visit?: string
           user_id?: string
           youtube_id: string
         }
         Update: {
           added_at?: string
+          last_visit?: string
           user_id?: string
           youtube_id?: string
         }
@@ -112,6 +186,39 @@ export interface Database {
           updated_at?: string
           video_count?: number | null
           view_count?: number | null
+        }
+        Relationships: []
+      }
+      youtube_playlists: {
+        Row: {
+          created_at: string
+          description: Sentence[] | null
+          id: string
+          language: Database['public']['Enums']['language']
+          public: string | null
+          title: Sentence[]
+          updated_at: string
+          youtubes: PlaylistYoutubeMetadata[]
+        }
+        Insert: {
+          created_at?: string
+          description?: Sentence[] | null
+          id: string
+          language: Database['public']['Enums']['language']
+          public?: string | null
+          title: Sentence[]
+          updated_at?: string
+          youtubes: PlaylistYoutubeMetadata[]
+        }
+        Update: {
+          created_at?: string
+          description?: Sentence[] | null
+          id?: string
+          language?: Database['public']['Enums']['language']
+          public?: string | null
+          title?: Sentence[]
+          updated_at?: string
+          youtubes?: PlaylistYoutubeMetadata[]
         }
         Relationships: []
       }
@@ -291,6 +398,7 @@ export interface Database {
           description: string | null
           id: string | null
           language: Database['public']['Enums']['language'] | null
+          last_visit: string | null
           subscriber_count: number | null
           thumbnail_url: string | null
           title: string | null
