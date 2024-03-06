@@ -1,4 +1,4 @@
-create table profiles (
+CREATE TABLE profiles (
   id uuid references auth.users not null primary key,
   updated_at timestamp with time zone not null default now(),
   username text unique,
@@ -7,32 +7,38 @@ create table profiles (
   welcome_email_sent timestamp with time zone,
   unsubscribed_from_emails timestamp with time zone,
 
-  constraint username_length check (char_length(username) >= 3)
+  CONSTRAINT username_length CHECK (CHAR_LENGTH(username) >= 3)
 );
 
-alter table profiles enable row level security;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
-create policy "Public profiles are viewable by everyone." on profiles
-  for select using (true);
+CREATE POLICY "Public profiles are viewable by everyone." 
+ON profiles FOR SELECT 
+TO authenticated
+USING (true);
 
-create policy "Users can insert their own profile." on profiles
-  for insert with check (auth.uid() = id);
+CREATE POLICY "Users can insert their own profile." 
+ON profiles FOR INSERT 
+TO authenticated
+WITH CHECK (auth.uid() = id);
 
-create policy "Users can update own profile." on profiles
-  for update using (auth.uid() = id);
+CREATE POLICY "Users can update own profile." 
+ON profiles FOR UPDATE 
+TO authenticated
+USING (auth.uid() = id);
 
-create function handle_new_user()
-returns trigger as $$
-declare
-  result int;
-begin
-  insert into public.profiles (id, avatar_url)
-  values (new.id, new.raw_user_meta_data->>'avatar_url');
+CREATE FUNCTION handle_new_user()
+RETURNS TRIGGER AS $$
+DECLARE
+  result INT;
+BEGIN
+  INSERT INTO public.profiles (id, avatar_url)
+  VALUES (NEW.id, NEW.raw_user_meta_data->>'avatar_url');
 
-  return new;
-end;
-$$ language plpgsql security definer;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-create trigger on_auth_user_created
-after insert on auth.users
-for each row execute procedure handle_new_user();
+CREATE TRIGGER on_auth_user_created
+AFTER INSERT ON auth.users
+FOR EACH ROW EXECUTE PROCEDURE handle_new_user();
