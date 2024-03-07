@@ -67,6 +67,7 @@
           interval = window.setInterval(() => {
             readCurrentTime(player.getCurrentTime() * 1000)
           }, MILLISECONDS_BETWEEN_TIME_CHECKS)
+          player.setVolume(100) // since we move the volume up and down for bilingual mode, sometimes the player can start defaulting to a dim volume
         },
         onError: (e) => {
           error = e.data
