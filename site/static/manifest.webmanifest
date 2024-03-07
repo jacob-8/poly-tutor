@@ -1,5 +1,5 @@
 {
-  "name": "Polylingual Tutor",
+  "name": "Poly Tutor",
   "short_name": "Tutor",
   "icons": [
     {
@@ -19,5 +19,14 @@
   "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",
-	"start_url": "/?utm_source=a2hs"
+	"start_url": "/?utm_source=a2hs",
+  "share_target": {
+    "action": "/share-target",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
 }
