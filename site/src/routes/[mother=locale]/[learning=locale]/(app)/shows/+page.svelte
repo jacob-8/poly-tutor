@@ -91,7 +91,7 @@
             {channel.title}
           </div>
           {#if channel.description}
-            <div class="line-clamp-2">
+            <div class="line-clamp-2 break-all">
               {channel.description}
             </div>
           {/if}
