@@ -27,7 +27,7 @@ export const load = (async ({parent, params: { learning }}) => {
     .from('my_youtube_channels')
     .select()
     .eq('language', language)
-    .limit(10)
+    .limit(15)
     .order('last_visit', { ascending: false })
   if (user_channels_error)
     console.info({user_channels_error})

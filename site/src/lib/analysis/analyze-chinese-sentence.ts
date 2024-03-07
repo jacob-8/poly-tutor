@@ -11,7 +11,7 @@ export function analyze_chinese_sentence({text, locale, user_vocabulary, diction
   }): AnalyzedChineseWord[] {
   if (!text) return []
 
-  const words = jieba_cut(text, true)
+  const words = jieba_cut(text.replaceAll('@',''), true)
 
   const analyzed_words: AnalyzedChineseWord[] = []
   for (const word of words) {
