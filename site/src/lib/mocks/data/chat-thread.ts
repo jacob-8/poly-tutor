@@ -1,5 +1,5 @@
+import { languageTutor } from '$lib/components/chat/personalities'
 import type { ChatCompletionRequestMessage } from 'openai-edge'
-import { languageTutor } from '../../../routes/[mother=locale]/[learning=locale]/(app)/chat/personalities'
 
 export const messages: ChatCompletionRequestMessage[] = [
   {role: 'system', content: languageTutor},
