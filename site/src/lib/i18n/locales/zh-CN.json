@@ -33,7 +33,8 @@
     "unknown": "未知",
     "my_playlists": "我的播放列表",
     "my_channels": "我的频道",
-    "public_playlists": "公共播放列表"
+    "public_playlists": "公共播放列表",
+    "watch_history": "观看历史"
   },
   "home": {
     "chat": "闲聊",

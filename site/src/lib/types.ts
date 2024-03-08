@@ -89,6 +89,7 @@ export interface ECDictEntry {
 }
 
 export interface Settings {
+  show_translation?: boolean
   font_size_em?: number
   quizzing?: boolean
   show_definition?: boolean

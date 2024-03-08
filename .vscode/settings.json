@@ -86,5 +86,5 @@
    "deno.enablePaths": [
      "supabase"
    ],
-   "deno.importMap": "./supabase/functions/import_map.json"
+   "deno.importMap": "./supabase/functions/import-map.json"
 }

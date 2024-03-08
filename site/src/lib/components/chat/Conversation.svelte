@@ -6,6 +6,7 @@
   import { scrollIntoView } from '$lib/utils/scroll-into-view'
   import { speech } from '$lib/utils/speak'
   import RecordAudio from './RecordAudio.svelte'
+  import { dev } from '$app/environment'
 
   export let language: LanguageCode
   export let settings: Settings
@@ -62,17 +63,16 @@
   async function transcribe_audio_and_add_to_query(audio: File) {
     const transcription = await transcribe_audio(audio)
     query += ' ' + transcription
+    submit()
   }
 </script>
 
-<div bind:this={threadElement} class="overflow-y-auto grow-1 sm:border-t">
+<div bind:this={threadElement} class="overflow-y-auto grow-1 sm:border-t pt-2">
   {#each $thread as { role, sentences }, message_index}
     {@const last_message = message_index === $thread.length - 1}
     {#if role === 'system'}
-      <div class="text-xs">
-        {#each sentences as {text}}
-          {text}
-        {/each}
+      <div class="text-sm">
+        Chat with Poly Tutor
       </div>
     {:else if role === 'user'}
       <div class="text-right py-3">
@@ -97,7 +97,7 @@
 </div>
 
 <form class="flex w-full mt-2 space-x-1" on:submit|preventDefault={submit}>
-  {#if $thread}
+  {#if $thread && dev}
     <JSON obj={$thread} />
   {/if}
   <input type="text" required class="grow-1 border border-gray-300 p-2 rounded" on:keydown|stopPropagation bind:value={query} />

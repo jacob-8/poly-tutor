@@ -22,7 +22,7 @@
   import Conversation from '$lib/components/chat/Conversation.svelte'
 
   export let data
-  $: ({ youtube_id, youtube_promise, user, supabase, settings, user_vocabulary, language, mother } = data)
+  $: ({ youtube_id, youtube_promise, user, supabase, settings, user_vocabulary, language, mother, learning } = data)
   $: ({ changed_words } = user_vocabulary)
 
   let chapter_index = $page.url.searchParams.get('chapter') ? parseInt($page.url.searchParams.get('chapter')) : 0
@@ -106,13 +106,18 @@
 
   $: title = youtube?.title.map(s => s.text).join(' ') || ''
 
+  const chinese_identity = 'You are Poly 導師, a lively Chinese language tutor. I\'m learning Chinese so please keep your answers intersting but also short and simple.'
+  const english_identity = 'You are Poly Tutor, a lively English language tutor. I\'m learning English so please keep your answers intersting but also short and simple.'
+
+  const identity = (learning === 'zh-TW' || learning === 'zh-CN') ? chinese_identity : english_identity
+
   function prepare_chat(sentence: Sentence) {
-    const sentence_index = entire_transcript.findIndex(s => s.start_ms === sentence.start_ms)
+    const sentence_index = entire_transcript.findIndex(s => s.end_ms === sentence.end_ms)
 
     const sentences = entire_transcript.slice(Math.max(sentence_index - 15, 0), sentence_index + 1)
 
     data.chat.add_chat_history([
-      { role: 'system', sentences: [{ text: `You are Poly 導師, a lively Chinese language tutor. I'm learning Chinese so please keep your answers intersting but also short and simple. Right now I am in the middle of watching a YouTube video titled "${title}" and want your help answering my questions. I will give you the transcript from the portion I just watched. Pay special attention to the last sentence as that is the context from which I am starting this conversation:
+      { role: 'system', sentences: [{ text: `${identity} Right now I am in the middle of watching a YouTube video titled "${title}" and want your help answering my questions. I will give you the transcript from the portion I just watched. Pay special attention to the last sentence as that is the context from which I am starting this conversation:
 
 Transcript:
 
@@ -133,6 +138,9 @@ ${sentences.map(s => s.text).join('\n')}
       {title.substring(0, 30)}
     </span>
     <div class="mr-auto" />
+    <button type="button" class="header-btn" class:font-bold={$settings.show_translation} on:click={() => {
+      $settings.show_translation = !$settings.show_translation
+    }}>T</button>
     {#if study_words}
       <button type="button" class="header-btn" on:click={() => {
         youtubeComponent.pause()
@@ -208,7 +216,7 @@ ${sentences.map(s => s.text).join('\n')}
 
   <div slot="sentences" let:in_view let:scroll_to_study>
     {#if adding_youtube_error}
-      <div class="px-2 text-red">
+      <div class="p-2 text-red">
         {$page.data.t.layout.error}: {adding_youtube_error}
         {#if !$user}
           - {$page.data.t.layout.sign_in}

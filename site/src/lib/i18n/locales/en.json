@@ -25,7 +25,7 @@
     "remove_video": "Remove Video",
     "voice": "English voice",
     "duration": "Duration",
-    "my_videos": "My Videos",
+    "watch_history": "Watch History",
     "my_channels": "My Channels",
     "my_playlists": "My Playlists",
     "public_playlists": "Public Playlists",
@@ -45,7 +45,7 @@
     "realtime_transcription": "Realtime Transcription",
     "my_words": "My Words",
     "dictionary": "Dictionary",
-    "youtube_description": "You can choose any show on YouTube. Tutor will provide the captions.",
+    "youtube_description": "You can choose any show or playlist on YouTube. Tutor will provide the captions.",
     "tagline": "Learn Chinese using real-life content with help from a tutor that makes sure you understand what you hearing and reading."
   }
 }

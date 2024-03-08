@@ -8,7 +8,12 @@ import { createVocabStore } from '$lib/vocab/vocabulary'
 import { createPersistedStore } from 'svelte-pieces'
 
 export const load = async ({data: { access_token, refresh_token }, params: { learning, mother }}) => {
-  const settings = createPersistedStore<Settings>('settings_01.03.24', {font_size_em: 1.5, show_definition: true, show_pronunciation: true}, true)
+  const settings = createPersistedStore<Settings>('settings_03.08.24', {
+    show_translation: false,
+    font_size_em: 1.5,
+    show_definition: true,
+    show_pronunciation: true
+  }, true)
   const emphasis_limits = createPersistedStore<ChineseEmphasisLimits>('emphasis_limits_01.03.24', {high_view_count_max: 10, common_in_this_context_max: 10, improve_pronunciation_or_tone_max: 2}, true)
 
   const supabase = getSupabase()

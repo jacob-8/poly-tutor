@@ -23,15 +23,6 @@ export const load = (async ({parent, params: { learning }}) => {
   if (user_playlists_error)
     console.info({user_playlists_error})
 
-  const { data: user_channels, error: user_channels_error } = await supabase
-    .from('my_youtube_channels')
-    .select()
-    .eq('language', language)
-    .limit(15)
-    .order('last_visit', { ascending: false })
-  if (user_channels_error)
-    console.info({user_channels_error})
-
   // TODO: make this a view
   const { data: user_youtubes_data, error: user_youtubes_error } = await supabase
     .from('user_youtubes')
@@ -66,46 +57,36 @@ export const load = (async ({parent, params: { learning }}) => {
     channel: youtube.channel,
   }))
 
-  // const user_youtube_ids = user_youtubes.map(({youtube}) => youtube.id)
+  const { data: user_channels, error: user_channels_error } = await supabase
+    .from('my_youtube_channels')
+    .select()
+    .eq('language', language)
+    .limit(10)
+    .order('last_visit', { ascending: false })
+  if (user_channels_error)
+    console.info({user_channels_error})
 
-  // const { data: other_youtubes_data, error: error2 } = await supabase
-  //   .from('youtubes')
-  //   .select(`
-  //     id,
-  //     language,
-  //     title,
-  //     description,
-  //     duration_seconds,
-  //     chapters,
-  //     created_at,
-  //     channel:youtube_channels(
-  //       id,
-  //       title,
-  //       description,
-  //       thumbnail_url
-  //     )
-  //   `)
-  //   .eq('language', language)
-  //   .not('id', 'in', `(${user_youtube_ids.join(',')})`)
-  //   .order('created_at', { ascending: false })
-  //   .limit(10)
-
-  // if (error2)
-  //   console.error(error2)
-
-  // const other_youtubes: YouTubeWithAllData[] = other_youtubes_data.map(youtube => ({
-  //   youtube: {
-  //     ...youtube,
-  //     channel_id: youtube.channel.id,
-  //   },
-  //   channel: youtube.channel,
-  // }))
+  const { data: public_playlists, error: public_playlists_error } = await supabase.from('youtube_playlists')
+    .select(`
+        id,
+        title,
+        description,
+        language,
+        youtubes,
+        public,
+        updated_at
+    `)
+    .eq('language', language)
+    .not('public', 'is', null)
+    .order('updated_at', { ascending: false })
+    .limit(10)
+  if (public_playlists_error)
+    console.info({public_playlists_error})
 
   return {
     user_playlists,
     user_youtubes,
     user_channels,
-    public_playlists: [],
-    // other_youtubes,
+    public_playlists,
   }
 }) satisfies PageLoad

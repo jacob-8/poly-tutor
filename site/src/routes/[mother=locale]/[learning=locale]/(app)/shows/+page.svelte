@@ -34,8 +34,10 @@
 </script>
 
 <div class="mx-3">
+  {#if !(data.user_playlists.length || data.user_youtubes.length)}
+    <div class="text-sm my-1">{$page.data.t.home.youtube_description}</div>
+  {/if}
   <button type="button" on:click={check_clipboard} class="px-4 py-2 border rounded bg-gray-100 mr-2 text-lg">{$page.data.t.shows.paste_youtube_url}</button>
-  <span class="text-sm my-1">{$page.data.t.home.youtube_description}</span>
 </div>
 
 <div class="p-3">
@@ -56,7 +58,7 @@
   {#if data.user_youtubes.length}
     <div data-testid="my-videos">
       <h2 class="mb-3 font-semibold text-xl">
-        {$page.data.t.shows.my_videos}
+        {$page.data.t.shows.watch_history}
       </h2>
       <div class="flex overflow-x-auto snap-mandatory snap-x mb-3">
         {#each data.user_youtubes as youtube}
@@ -72,7 +74,7 @@
     </h2>
     <div class="mb-3 flex overflow-x-auto snap-mandatory snap-x">
       {#each data.user_channels as channel}
-        <a href="shows/channels/{channel.id}" class="flex my-2 bg-gray-100 rounded overflow-hidden hover:bg-gray-200 h-100px w-85vw sm:w-400px shrink-0 mr-4 snap-start snap-always">
+        <a href="shows/channels/{channel.id}" class="flex my-2 bg-gray-100 rounded overflow-hidden hover:bg-gray-200 h-100px w-85vw sm:w-350px shrink-0 mr-4 snap-start">
           <img class="w-100px h-100px mr-1" src="{channel.thumbnail_url}=s200-c-k-c0x00ffffff-no-rj" />
           <div class="p-1">
             <div class="font-semibold text-xl">
@@ -89,17 +91,19 @@
     </div>
   {/if}
 
-  <!-- <h2 class="mb-3 font-semibold text-xl">
-    {$page.data.t.shows.public_playlists}
-  </h2>
-  <div class="flex overflow-x-auto snap-mandatory snap-x mb-3">
-    {#each data.public_playlists as { playlist }}
-      {@const [youtube] = playlist.youtubes}
-      {#if youtube}
-        <PlaylistThumbnail youtube_id={youtube.id} playlist_title={playlist.title[0].text} playlist_id={playlist.id} playlist_length={playlist.youtubes.length} />
-      {/if}
-    {/each}
-  </div> -->
+  {#if data.public_playlists.length}
+    <h2 class="mb-3 font-semibold text-xl">
+      {$page.data.t.shows.public_playlists}
+    </h2>
+    <div class="flex overflow-x-auto snap-mandatory snap-x mb-3">
+      {#each data.public_playlists as playlist}
+        {@const [youtube] = playlist.youtubes}
+        {#if youtube}
+          <PlaylistThumbnail youtube_id={youtube.id} playlist_title={playlist.title[0].text} playlist_id={playlist.id} playlist_length={playlist.youtubes.length} />
+        {/if}
+      {/each}
+    </div>
+  {/if}
 </div>
 
 <!-- {#if dev}

@@ -25,17 +25,20 @@
 </script>
 
 {#if playlist?.youtubes}
-  <h1 class="text-lg font-semibold mb-3 px-2">
+  <h1 class="text-lg font-semibold mb-3 px-3">
     <a target="_blank" href="https://www.youtube.com/playlist?list={playlist.id}">{playlist.title.map(sent => sent.text)}</a>
     ({playlist.youtubes.length} shows)</h1>
 
-  <div class="grid sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
+  <div class="sm:px-3 grid sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
     {#each playlist.youtubes as youtube}
       <PlaylistShowThumbnail youtube_id={youtube.id} youtube_title={youtube.title} channel_id={youtube.channel_id} channel_title={youtube.channel_title} />
     {/each}
   </div>
 {:else if error}
-  <div class="text-red px-2">{error}</div>
+  <div class="text-red px-3">{$page.data.t.layout.error}: {error}
+    {#if !$user}
+      - {$page.data.t.layout.sign_in}
+    {/if}</div>
 {:else}
-  <div class="px-2">{$page.data.t.layout.loading}<span class="i-svg-spinners-3-dots-fade align--4px ml-1" /></div>
+  <div class="px-3">{$page.data.t.layout.loading}<span class="i-svg-spinners-3-dots-fade align--4px ml-1" /></div>
 {/if}

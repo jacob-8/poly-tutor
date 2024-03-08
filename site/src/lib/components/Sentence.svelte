@@ -57,4 +57,13 @@
       {/if}
     {/if}
   </div>
+  {#if settings.show_translation}
+    <div class="text-sm opacity-50">
+      {#if language === 'zh'}
+        {sentence.translation.en}
+      {:else}
+        {sentence.translation['zh-TW'] || sentence.translation['zh-CN']}
+      {/if}
+    </div>
+  {/if}
 </IntersectionObserverShared>
