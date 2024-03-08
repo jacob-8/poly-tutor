@@ -33,6 +33,7 @@ export const POST: RequestHandler = async ({ locals: { getSession }, params: { y
 
   console.info(`transcribing: ${youtube_id} in ${language_code}`)
 
+  // https://jacob-8--whisper-transcriber-fastapi-app-dev.modal.run/transcribe/youtube
   const { data, error: transcribe_error } = await post_request<ExternalYoutubeTranscribeRequestBody, ExtenralYoutubeTranscribeRequestResponse>('https://jacob-8--whisper-transcriber-fastapi-app.modal.run/transcribe/youtube', {
     youtube_id,
     openai_api_key,

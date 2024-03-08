@@ -39,6 +39,7 @@
   let current_caption: Sentence
 
   let intentionally_updated_at: number | null = null
+  let intentionally_updated_to_index: number
   let read_translation_for_caption: number
   let is_reading_translation = false
   let stop_reading_translation: () => void
@@ -59,17 +60,20 @@
       return
     }
 
-    if (intentionally_updated_at) {
-      const recently_updated_position = ( Date.now() - intentionally_updated_at ) < ( padding_ms + 1000 )
-      if (recently_updated_position) return
-    }
-
     update_current_index_when_needed(time_ms)
   }
 
   function update_current_index_when_needed(time_ms: number) {
     const time_based_caption_index = find_caption_index_by_time(time_ms)
     if (current_caption_index === time_based_caption_index) return
+
+    if (intentionally_updated_to_index === time_based_caption_index + 1) // don't jump back 1 when intentionally updating with a YouTube load delay - may allow for phasing out next line
+      return
+
+    if (intentionally_updated_at) {
+      const recently_updated_position = ( Date.now() - intentionally_updated_at ) < ( padding_ms + 1750 )
+      if (recently_updated_position) return
+    }
 
     if (mode === 'bilingual') {
       const next_caption = captions[current_caption_index + 1]
@@ -162,6 +166,7 @@
 
   function user_wants_to_play_new_location({ start_ms, index }: { start_ms: number; index: number }) {
     pause_and_reset_bilingual()
+    intentionally_updated_to_index = index
     start_player_at(start_ms)
     set_current_caption_index(index)
   }
