@@ -36,34 +36,36 @@
 <IntersectionObserverShared bottom={1000} top={1000} once let:intersecting>
   <div
     use:scrollIntoView={{active, options: { block: 'center', behavior: 'smooth' }}}
-    class="px-1 pb-3 flex flex-wrap relative hover:bg-gray-100 rounded relative group"
+    class="px-1 pb-3 hover:bg-gray-100 rounded relative group"
     class:bg-gray-200={active}
     on:click={onclick}
     on:touchstart={ontouch}>
     {#if show || intersecting}
       {#if sentence.words}
-        {#if mark_seen_based_on_visibility && add_seen_sentence && !has_been_seen}
-          <ImSeen {i_am_seen} milliseconds={6000} />
-        {/if}
-        {#each sentence.words as word}
-          {#if language === 'zh'}
-            <ChineseWord {changed_words} {study_words_object} {word} {settings} />
-          {:else}
-            <EnglishWord {changed_words} {study_words_object} {word} {settings} />
+        <div class="flex flex-wrap">
+          {#if mark_seen_based_on_visibility && add_seen_sentence && !has_been_seen}
+            <ImSeen {i_am_seen} milliseconds={6000} />
           {/if}
-        {/each}
+          {#each sentence.words as word}
+            {#if language === 'zh'}
+              <ChineseWord {changed_words} {study_words_object} {word} {settings} />
+            {:else}
+              <EnglishWord {changed_words} {study_words_object} {word} {settings} />
+            {/if}
+          {/each}
+        </div>
       {:else}
         <div>{sentence.text}</div>
       {/if}
+      {#if settings.show_translation}
+        <div class="text-sm opacity-50">
+          {#if language === 'zh'}
+            {sentence.translation.en}
+          {:else}
+            {sentence.translation['zh-TW'] || sentence.translation['zh-CN']}
+          {/if}
+        </div>
+      {/if}
     {/if}
   </div>
-  {#if settings.show_translation}
-    <div class="text-sm opacity-50">
-      {#if language === 'zh'}
-        {sentence.translation.en}
-      {:else}
-        {sentence.translation['zh-TW'] || sentence.translation['zh-CN']}
-      {/if}
-    </div>
-  {/if}
 </IntersectionObserverShared>
