@@ -9,7 +9,7 @@ export const load = (async ({parent, params: { learning }}) => {
   const { data: user_playlists, error: user_playlists_error } = await supabase.from('user_youtube_playlists')
     .select(`
       last_visit,
-      playlist:youtube_playlists(
+      playlist:youtube_playlists!inner(
         id,
         title,
         description,
@@ -54,7 +54,7 @@ export const load = (async ({parent, params: { learning }}) => {
     `)
     .eq('youtubes.language', language)
     .order('last_visit', { ascending: false })
-    .limit(30)
+    .limit(20)
   if (user_youtubes_error)
     console.error({user_youtubes_error})
 
@@ -66,45 +66,46 @@ export const load = (async ({parent, params: { learning }}) => {
     channel: youtube.channel,
   }))
 
-  const user_youtube_ids = user_youtubes.map(({youtube}) => youtube.id)
+  // const user_youtube_ids = user_youtubes.map(({youtube}) => youtube.id)
 
-  const { data: other_youtubes_data, error: error2 } = await supabase
-    .from('youtubes')
-    .select(`
-      id,
-      language,
-      title,
-      description,
-      duration_seconds,
-      chapters,
-      created_at,
-      channel:youtube_channels(
-        id,
-        title,
-        description,
-        thumbnail_url
-      )
-    `)
-    .eq('language', language)
-    .not('id', 'in', `(${user_youtube_ids.join(',')})`)
-    .order('created_at', { ascending: false })
-    .limit(10)
+  // const { data: other_youtubes_data, error: error2 } = await supabase
+  //   .from('youtubes')
+  //   .select(`
+  //     id,
+  //     language,
+  //     title,
+  //     description,
+  //     duration_seconds,
+  //     chapters,
+  //     created_at,
+  //     channel:youtube_channels(
+  //       id,
+  //       title,
+  //       description,
+  //       thumbnail_url
+  //     )
+  //   `)
+  //   .eq('language', language)
+  //   .not('id', 'in', `(${user_youtube_ids.join(',')})`)
+  //   .order('created_at', { ascending: false })
+  //   .limit(10)
 
-  if (error2)
-    console.error(error2)
+  // if (error2)
+  //   console.error(error2)
 
-  const other_youtubes: YouTubeWithAllData[] = other_youtubes_data.map(youtube => ({
-    youtube: {
-      ...youtube,
-      channel_id: youtube.channel.id,
-    },
-    channel: youtube.channel,
-  }))
+  // const other_youtubes: YouTubeWithAllData[] = other_youtubes_data.map(youtube => ({
+  //   youtube: {
+  //     ...youtube,
+  //     channel_id: youtube.channel.id,
+  //   },
+  //   channel: youtube.channel,
+  // }))
 
   return {
     user_playlists,
-    user_channels,
     user_youtubes,
-    other_youtubes,
+    user_channels,
+    public_playlists: [],
+    // other_youtubes,
   }
 }) satisfies PageLoad

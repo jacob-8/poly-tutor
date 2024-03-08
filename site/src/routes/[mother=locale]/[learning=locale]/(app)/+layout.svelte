@@ -1,6 +1,6 @@
 <script lang="ts">
   import './main.css'
-  import { page } from '$app/stores'
+  import { page, navigating } from '$app/stores'
   import User from '$lib/layout/User.svelte'
   import { ShowHide } from 'svelte-pieces'
   import SelectLanguage from '$lib/i18n/SelectLanguage.svelte'
@@ -49,6 +49,12 @@
 {/if}
 
 <slot />
+
+{#await import('./LoadingIndicator.svelte') then { default: LoadingIndicator}}
+  {#if $navigating}
+    <LoadingIndicator />
+  {/if}
+{/await}
 
 {#await import('./ViewTransition.svelte') then { default: ViewTransition}}
   <ViewTransition />

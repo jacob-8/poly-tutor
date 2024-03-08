@@ -32,7 +32,8 @@
     "common_in_this_context": "在這種情況下常見",
     "unknown": "未知",
     "my_playlists": "我的播放清單",
-    "my_channels": "我的頻道"
+    "my_channels": "我的頻道",
+    "public_playlists": "公共播放列表"
   },
   "home": {
     "chat": "聊天",

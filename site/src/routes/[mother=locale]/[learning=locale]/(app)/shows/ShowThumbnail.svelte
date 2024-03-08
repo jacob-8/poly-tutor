@@ -31,7 +31,7 @@
   })
 </script>
 
-<div class="sm:max-w-470px">
+<div class="w-85vw sm:w-400px shrink-0 mr-4 snap-start snap-always">
   <a class="block mb-1 relative overflow-hidden h-0 pb-56.25% sm:rounded" style="view-transition-name: yt-thumbnail-{youtube.id}" {href}>
     <img class="w-full absolute centered" src={image_url} alt={title} title={youtube.description.map(sentence => sentence.text).join(' ')} />
     {#if youtube.duration_seconds}

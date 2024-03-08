@@ -32,7 +32,8 @@
     "common_in_this_context": "在这种情况下常见",
     "unknown": "未知",
     "my_playlists": "我的播放列表",
-    "my_channels": "我的频道"
+    "my_channels": "我的频道",
+    "public_playlists": "公共播放列表"
   },
   "home": {
     "chat": "闲聊",
