@@ -27,7 +27,7 @@
   </a>
 
   <div class="flex">
-    <a href="https://www.youtube.com/channel/{channel_id}" title={channel_title} target="_blank" class="w-8 h-8 mr-2 mt-3px shrink-0 bg-gray-100 rounded-full flex items-center justify-center">
+    <a href="../channels/{channel_id}" title={channel_title} class="w-8 h-8 mr-2 mt-3px shrink-0 bg-gray-100 rounded-full flex items-center justify-center">
       <span class="font-bold text-lg">{channel_title.substring(0, 1)}</span>
     </a>
     <div class="block">

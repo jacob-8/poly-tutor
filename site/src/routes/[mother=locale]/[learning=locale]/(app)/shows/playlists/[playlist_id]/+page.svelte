@@ -8,12 +8,12 @@
   export let data
   $: ({ user } = data)
   let playlist: YoutubePlaylistAddResponseBody
-  let error: string
+  let adding_playlist_error: string
 
   onMount(async () => {
-    const { data: _playlist, error: playlist_error } = await data.playlist_promise
-    if (playlist_error)
-      return error = playlist_error
+    const { data: _playlist, error } = await data.playlist_promise
+    if (error)
+      return adding_playlist_error = error.message
     playlist = _playlist
   })
 
@@ -34,8 +34,8 @@
       <PlaylistShowThumbnail youtube_id={youtube.id} youtube_title={youtube.title} channel_id={youtube.channel_id} channel_title={youtube.channel_title} />
     {/each}
   </div>
-{:else if error}
-  <div class="text-red px-3">{$page.data.t.layout.error}: {error}
+{:else if adding_playlist_error}
+  <div class="text-red px-3">{$page.data.t.layout.error}: {adding_playlist_error}
     {#if !$user}
       - {$page.data.t.layout.sign_in}
     {/if}</div>

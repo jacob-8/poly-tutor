@@ -1,4 +1,5 @@
 import type { YoutubePlaylistAddRequestBody, YoutubePlaylistAddResponseBody } from '$api/youtube/playlist/add/+server'
+import { browser } from '$app/environment'
 import type { LanguageCode } from '$lib/i18n/locales'
 import { post_request } from '$lib/utils/post-request'
 import type { PageLoad } from './$types'
@@ -13,14 +14,13 @@ export const load = (async ({ params: { playlist_id, learning }, fetch, parent }
       .select()
       .eq('id', playlist_id)
     if (error)
-      return { error: error.message }
+      return { error }
 
     if (playlists[0]) return { data: playlists[0] }
 
-    const { data, error: adding_error } = await post_request<YoutubePlaylistAddRequestBody, YoutubePlaylistAddResponseBody>(`/api/youtube/playlist/add`, { playlist_id, language }, fetch)
-    if (adding_error)
-      return { error: adding_error.message }
-    return { data }
+    if (!browser) return { data: null } // don't trigger add request when server-side rendering as the add will also be triggered from the client once it hydrates and one add request will fail due to Postgres unique id constraint
+
+    return await post_request<YoutubePlaylistAddRequestBody, YoutubePlaylistAddResponseBody>(`/api/youtube/playlist/add`, { playlist_id, language }, fetch)
   }
 
   async function check_is_in_my_playlists() {

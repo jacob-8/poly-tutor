@@ -12,6 +12,7 @@ import { create_chat_store } from '$lib/components/chat/create-chat-store'
 import { create_openai_streaming_store } from '$lib/components/chat/create-streaming-store'
 import type { TranslateRequestBody, TranslateResponseBody } from '$api/translate/+server'
 import { ResponseCodes } from '$lib/response-codes'
+import { browser } from '$app/environment'
 
 export const load = (async ({ params: { youtube_id, mother, learning }, fetch, parent }) => {
   const { supabase, split_sentences, analyze_sentences } = await parent()
@@ -20,6 +21,8 @@ export const load = (async ({ params: { youtube_id, mother, learning }, fetch, p
   async function load_youtube(): Promise<{ data?: YouTube, error?: { status: number, message: string }}> {
     const youtube = await youtube_in_db(youtube_id, supabase)
     if (youtube) return { data: youtube }
+
+    if (!browser) return { data: null } // don't trigger add request when server-side rendering as the add will also be triggered from the client once it hydrates and one add request will fail due to Postgres unique id constraint
 
     return await post_request<YoutubeAddRequestBody, YoutubeAddResponseBody>(`/api/youtube/${youtube_id}/add`, { mother, learning }, fetch)
   }
