@@ -1,5 +1,5 @@
 import { createPersistedStore } from '$lib/utils/persisted-store'
-import { WordStatus, type UserVocabulary, type VocabularyWordStats } from '$lib/types.js'
+import { WordStatus, type UserVocabulary } from '$lib/types.js'
 import type { Supabase } from '../supabase/database.types'
 import type { AuthResponse } from '@supabase/supabase-js'
 import { derived, get, readable, type Readable } from 'svelte/store'
@@ -10,8 +10,6 @@ import { navigating } from '$app/stores'
 import type { LanguageCode } from '$lib/i18n/locales'
 import { open_auth } from '$lib/client/UserInfo.svelte'
 import { VOCAB_KEY_PATH, VOCAB_STORE_NAME, createIndexedDBStore } from '$lib/utils/indexed-db-store'
-
-type VocabItem = VocabularyWordStats & { updated_at?: string }
 
 const DEFAULT_ZH_LISTS: ChineseWordList[] = [] // ['時代華語1w', '時代華語2Aw', '時代華語2Bw', '時代華語3Aw', '時代華語3Bw', '時代華語4Aw']
 const DEFAULT_EN_LISTS: EnglishWordList[] = ['tw_7000']
@@ -36,7 +34,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
       .then(({ data, error }) => {
         if (error) return console.error(error)
         if (!data?.length) return
-        const [{vocabulary}] = data as unknown as { vocabulary: Record<string, VocabItem> }[]
+        const [{vocabulary}] = data as unknown as { vocabulary: UserVocabulary }[]
         if (log) console.info({db_user_vocabulary: vocabulary})
         user_vocabulary.set(vocabulary)
       })

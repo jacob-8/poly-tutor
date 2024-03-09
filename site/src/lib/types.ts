@@ -19,9 +19,10 @@ export interface Sentence {
 
 export type Translation = Partial<Record<LocaleCode, string>>
 
-export interface VocabularyWordStats {
+interface VocabularyWordStats {
   status?: WordStatus
   views?: number
+  updated_at?: string // might be better to include this just in UserVocabulary as it may never be in AnalyzedWord - need to check this
 }
 
 export type UserVocabulary = Record<string, VocabularyWordStats>
