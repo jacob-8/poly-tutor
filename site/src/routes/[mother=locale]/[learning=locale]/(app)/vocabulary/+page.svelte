@@ -21,15 +21,24 @@
       .map(([word, {views, updated_at}]) => ({word, views, updated_at}))
   }
 
-  const words_by_status_sorted_by_date = (vocab: UserVocabulary,status: WordStatus) => {
+  const words_by_status_sorted_by_date_and_views = (vocab: UserVocabulary,status: WordStatus) => {
     return Object.entries(vocab)
       .filter(([_word, details]) => details.status === status)
-      .sort((a, b) => new Date(b[1].updated_at).getTime() - new Date(a[1].updated_at).getTime())
+      .sort((a, b) => {
+        const dateA = new Date(a[1].updated_at)
+        const dateB = new Date(b[1].updated_at)
+        // Set both dates to midnight for comparison
+        const simplifiedDateA = new Date(dateA.getFullYear(), dateA.getMonth(), dateA.getDate()).getTime()
+        const simplifiedDateB = new Date(dateB.getFullYear(), dateB.getMonth(), dateB.getDate()).getTime()
+        const dateDifference = simplifiedDateB - simplifiedDateA
+        if (dateDifference !== 0) return dateDifference
+        return b[1].views - a[1].views
+      })
       .map(([word, {views, updated_at}]) => ({word, views, updated_at}))
   }
 
   $: unknown_words_by_views = words_by_status_sorted_by_views($user_vocabulary, WordStatus.unknown)
-  $: unknown_words_by_date = words_by_status_sorted_by_date($user_vocabulary, WordStatus.unknown)
+  $: unknown_words_by_date = words_by_status_sorted_by_date_and_views($user_vocabulary, WordStatus.unknown)
 
   $: pronunciation_words = words_by_status_sorted_by_views($user_vocabulary, WordStatus.pronunciation)
   $: tone_words = words_by_status_sorted_by_views($user_vocabulary, WordStatus.tone)
