@@ -89,7 +89,7 @@
     const seconds = ms/ 1000
     if (first_time_playing && player)
       ignore_youtube_autoresume_location(seconds)
-    player.seekTo(seconds, true)
+    player?.seekTo(seconds, true)
   }
 
   function ignore_youtube_autoresume_location(seconds: number) {
@@ -105,19 +105,21 @@
   }
 
   export function setPlaybackRate(rate: number) {
-    player.setPlaybackRate(rate)
+    player?.setPlaybackRate(rate)
   }
 
   export function play() {
+    if (!player) return alert('Player not ready. Wait a moment.')
     player.playVideo()
   }
 
   export function pause() {
+    if (!player) return alert('Player not ready. Wait a moment.')
     player.pauseVideo()
   }
 
   export function set_volume(volume: number) {
-    player.setVolume(volume)
+    player?.setVolume(volume)
   }
 </script>
 

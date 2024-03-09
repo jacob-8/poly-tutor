@@ -43,6 +43,7 @@
 <div class="p-3">
   {#if data.user_playlists.length}
     <h2 class="mb-3 font-semibold text-xl">
+      <span class="i-iconamoon-playlist-fill align--2px" />
       {$page.data.t.shows.my_playlists}
     </h2>
     <div class="flex overflow-x-auto snap-mandatory snap-x mb-3">
@@ -58,6 +59,7 @@
   {#if data.user_youtubes.length}
     <div data-testid="my-videos">
       <h2 class="mb-3 font-semibold text-xl">
+        <span class="i-clarity-history-line align--2px" />
         {$page.data.t.shows.watch_history}
       </h2>
       <div class="flex overflow-x-auto snap-mandatory snap-x mb-3">
@@ -70,6 +72,7 @@
 
   {#if data.user_channels.length}
     <h2 class="mb-3 font-semibold text-xl">
+      <span class="i-material-symbols-account-circle align--4px text-2xl" />
       {$page.data.t.shows.my_channels}
     </h2>
     <div class="mb-3 flex overflow-x-auto snap-mandatory snap-x">
@@ -93,6 +96,7 @@
 
   {#if data.public_playlists.length}
     <h2 class="mb-3 font-semibold text-xl">
+      <span class="i-iconamoon-playlist-fill align--2px" />
       {$page.data.t.shows.public_playlists}
     </h2>
     <div class="flex overflow-x-auto snap-mandatory snap-x mb-3">
