@@ -80,6 +80,14 @@
     window.history.replaceState({}, '', url.toString())
   }
 
+  function jump_to_chapter_by_time(current_time_ms: number) {
+    const chapter_index_of_current_time = youtube.chapters.findIndex(chapter => chapter.start_ms >= current_time_ms && current_time_ms <= chapter.end_ms)
+    if (chapter_index_of_current_time !== -1 && chapter_index_of_current_time !== chapter_index) {
+      change_chapter(chapter_index_of_current_time - 1) // oddly the index is off by one not for comparing, but for setting
+      return true
+    }
+  }
+
   let playbackRate = 1
   let current_time_ms = 0
   let playerState: YT.PlayerState
@@ -284,7 +292,7 @@ ${sentences.map(s => s.text).join('\n')}
             pause={youtubeComponent.pause}
             set_volume={youtubeComponent.set_volume}
             seekToMs={youtubeComponent.seekToMs}
-            next_chapter={() => change_chapter(+chapter_index + 1)}
+            {jump_to_chapter_by_time}
             is_last_chapter={chapter_index == youtube.chapters.length - 1}
             {isPlaying}
             {current_time_ms}

@@ -21,7 +21,7 @@
   export let set_volume: (volume: number) => void
   export let seekToMs: (ms: number) => void
   export let add_seen_sentence: (words: string[]) => void
-  export let next_chapter: () => void
+  export let jump_to_chapter_by_time: (current_time_ms: number) => boolean
   export let in_view: boolean
   export let is_last_chapter: boolean
   export let padding_ms = 250
@@ -93,18 +93,13 @@
     }
 
     if (time_based_caption_index === -1) {
+      const jumped = jump_to_chapter_by_time(time_ms)
+      if (jumped) return
+
       const playing_prior_to_first_caption = time_ms < captions[0]?.start_ms
       if (playing_prior_to_first_caption)
         set_current_caption_index(0)
 
-      const last_caption_index = captions.length - 1
-      const is_last_caption = captions.length > 0 && current_caption_index === last_caption_index
-      if (!is_last_chapter && is_last_caption && time_ms > current_caption?.end_ms) {
-        intentionally_updated_at = Date.now()
-        next_chapter()
-        set_current_caption_index(0)
-        current_caption = null
-      }
       return
     }
 

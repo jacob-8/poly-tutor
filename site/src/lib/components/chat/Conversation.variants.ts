@@ -16,6 +16,7 @@ export const variants: Variant<Component>[] = [
   {
     props: {
       language: 'zh',
+      learning: 'en',
       settings: get(mockLayoutData.settings),
       chat,
       transcribe_audio: (audio) => promisify_value('hello ' + audio.name)
