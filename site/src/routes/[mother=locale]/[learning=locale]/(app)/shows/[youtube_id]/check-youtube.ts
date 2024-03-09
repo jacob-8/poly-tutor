@@ -13,7 +13,6 @@ export async function youtube_in_db(youtube_id: string, supabase: Supabase): Pro
 export async function check_is_in_my_videos(youtube_id: string, supabase: Supabase) {
   if (!youtube_id) return
   const alreadyAdded = await youtube_is_already_mine(youtube_id, supabase)
-  console.info({alreadyAdded})
   if (alreadyAdded) {
     const { error: update_last_visit_error } = await supabase.from('user_youtubes')
       .update({ last_visit: new Date().toISOString() })
@@ -40,7 +39,6 @@ async function youtube_is_already_mine(youtube_id: string, supabase: Supabase): 
     .eq('youtube_id', youtube_id)
   if (error)
     throw new Error(error.message)
-  console.info({youtube_is_already_mine: data})
   return data.length
 }
 

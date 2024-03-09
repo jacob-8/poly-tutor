@@ -36,7 +36,8 @@ export function createVocabStore({ supabase, authResponse, language, log = false
         if (!data?.length) return
         const [{vocabulary}] = data as unknown as { vocabulary: UserVocabulary }[]
         if (log) console.info({db_user_vocabulary: vocabulary})
-        user_vocabulary.set(vocabulary)
+        if (Object.keys(vocabulary).length)
+          user_vocabulary.set(vocabulary)
       })
   }
 
@@ -67,7 +68,9 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     const current_sentences = get(seen_sentences_this_route)
     const key = words.join('_')
     current_sentences[key] = words
-    // seen_sentences_this_route.set(current_sentences)
+    seen_sentences_this_route.set(current_sentences)
+    if (Object.keys(current_sentences).length > 10)
+      process_seen_sentences()
   }
 
   let last_process_seen_sentences: Date

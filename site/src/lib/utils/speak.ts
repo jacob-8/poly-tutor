@@ -46,7 +46,6 @@ function load_preferred_voices() {
   window.speechSynthesis.onvoiceschanged = function() {
     available_voices = window.speechSynthesis.getVoices()
     if (!available_voices.length) return
-    console.info({voices: available_voices.map(({name}) => name)})
 
     set_language_voices('en', available_voices)
     set_language_voices('zh-CN', available_voices)

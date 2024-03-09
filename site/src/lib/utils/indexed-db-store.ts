@@ -49,7 +49,7 @@ export function createIndexedDBStore<T>({ store_name, key_path, key, initial_val
     const db = await get_db()
     if (log) console.info(`getting ${key} row from ${store_name} table in ${db_name}`)
     const row = await db.get(store_name, key)
-    if (log) console.info({row})
+    if (log) console.info({[`from cache: ${store_name}`]: row})
     if (row)
       set(row.data)
   }
