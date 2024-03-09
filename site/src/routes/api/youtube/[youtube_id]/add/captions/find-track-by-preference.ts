@@ -4,7 +4,6 @@ import type { YoutubeCaptionTrack } from './get-captions'
 const zh_TW_code_preferences = ['zh-TW', 'zh-Hant', 'zh', 'zh-CN', 'zh-Hans']
 const zh_CN_code_preferences = ['zh-CN', 'zh-Hans', 'zh', 'zh-TW', 'zh-Hant']
 
-// TODO: handle zh-Hant and zh-Hans better
 export function find_track_by_preference(tracks: YoutubeCaptionTrack[], locale: LocaleCode): YoutubeCaptionTrack {
   if (!tracks.length)  {
     console.info('no caption tracks found')
@@ -13,7 +12,7 @@ export function find_track_by_preference(tracks: YoutubeCaptionTrack[], locale: 
 
   if (locale === 'en') {
     const preferredTrack = tracks.find(({ language_code }) => language_code.startsWith('en'))
-    if (preferredTrack)
+    if (preferredTrack && !preferredTrack.language?.includes('auto-generated'))
       return preferredTrack
   }
 
@@ -41,7 +40,7 @@ export function find_track_by_preference(tracks: YoutubeCaptionTrack[], locale: 
       return preferredTrack
   }
 
-  console.info(`No track found for locale: ${locale}. Tracks that exist are: ${tracks.map(({ language_code }) => language_code).join(', ')}`)
+  console.info(`No track found for locale: ${locale}. Tracks that exist are: ${tracks.map(({ language_code, language }) => `${language_code} ${language}`).join(', ')}`)
 }
 
 if (import.meta.vitest) {
@@ -68,6 +67,13 @@ if (import.meta.vitest) {
         { language_code: 'en' },
       ] as YoutubeCaptionTrack[]
       expect(find_track_by_preference(tracks, 'en')).toEqual(tracks[1])
+    })
+
+    test('does not use English auto-generated tracks due to bad timings', () => {
+      const tracks = [
+        { language_code: 'en', language: 'English (auto-generated)' },
+      ] as YoutubeCaptionTrack[]
+      expect(find_track_by_preference(tracks, 'en')).toBeFalsy()
     })
 
     test('return undefined if no track found', () => {
