@@ -68,6 +68,10 @@
   <UserInfo />
 {/await}
 
+{#await import('./Analytics.svelte') then { default: Analytics }}
+  <Analytics />
+{/await}
+
 <style>
   a, button {
     --at-apply: px-2 py-2 hover:bg-gray/20 rounded flex items-center;

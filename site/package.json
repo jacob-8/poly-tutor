@@ -19,6 +19,7 @@
 		"local-kitbook": "link:../../kitbook/packages/kitbook"
 	},
 	"devDependencies": {
+		"@builder.io/partytown": "^0.10.0",
 		"@google-cloud/language": "^6.1.1",
 		"@google-cloud/translate": "^8.0.3",
 		"@google/generative-ai": "^0.2.1",
