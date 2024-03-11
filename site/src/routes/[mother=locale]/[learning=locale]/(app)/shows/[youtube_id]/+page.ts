@@ -54,7 +54,7 @@ export const load = (async ({ params: { youtube_id, mother, learning }, fetch, p
       return data
   }
 
-  async function transcribe(whisper_chunk_minutes = 5): Promise<Sentence[]> {
+  async function transcribe(duration_seconds: number): Promise<Sentence[]> {
     const openai_api_key = get_openai_api_key()
     if (!openai_api_key) return
     const prompt = learning === 'zh-TW'
@@ -70,7 +70,7 @@ export const load = (async ({ params: { youtube_id, mother, learning }, fetch, p
 
     // 目標是讓每個句子都在一個時間段內，以保持清晰。`
 
-    const { data: sentences, error } = await post_request<YoutubeTranscribeRequestBody, YoutubeTranscribeResponseBody>(`/api/youtube/${youtube_id}/transcribe`, { openai_api_key, prompt, mother, learning, language_code: language, duration_seconds: whisper_chunk_minutes * 60 }, fetch)
+    const { data: sentences, error } = await post_request<YoutubeTranscribeRequestBody, YoutubeTranscribeResponseBody>(`/api/youtube/${youtube_id}/transcribe`, { openai_api_key, prompt, mother, learning, language_code: language, duration_seconds }, fetch)
     if (error) {
       console.error(error.message)
       throw new Error(error.message)

@@ -241,7 +241,7 @@ ${sentences.map(s => s.text).join('\n')}
         <div class="px-2 sm:px-0">{$page.data.t.layout.loading}<span class="i-svg-spinners-3-dots-fade align--4px ml-1" /></div>
       {:else if transcript_status === 'none'}
         <Button size="lg" form="filled" class="mx-2 sm:mx-0 mt-2 mb-10" onclick={async () => {
-          const result = await data.transcribe()
+          const result = await data.transcribe(youtube.duration_seconds)
           if (result) {
             entire_transcript = result
             transcript_status = 'exists'
