@@ -14,7 +14,8 @@ async function set_worker_dictionary(mother: LocaleCode) {
 }
 
 function set_user_vocabulary(vocabulary: UserVocabulary) {
-  user_vocabulary = vocabulary
+  if (vocabulary)
+    user_vocabulary = vocabulary
 }
 
 function resolve_when_ready(): Promise<boolean> {

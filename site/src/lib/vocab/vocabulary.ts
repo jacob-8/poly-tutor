@@ -2,14 +2,14 @@ import { createPersistedStore } from '$lib/utils/persisted-store'
 import { WordStatus, type UserVocabulary } from '$lib/types.js'
 import type { Supabase } from '../supabase/database.types'
 import type { AuthResponse } from '@supabase/supabase-js'
-import { derived, get, readable, type Readable } from 'svelte/store'
+import { derived, get, readable, writable, type Readable } from 'svelte/store'
 import type { ChineseWordList, EnglishWordList } from './word-lists.interface'
 import { browser } from '$app/environment'
 import type { TablesInsert } from '$lib/supabase/generated.types'
 import { navigating } from '$app/stores'
 import type { LanguageCode } from '$lib/i18n/locales'
 import { open_auth } from '$lib/client/UserInfo.svelte'
-import { VOCAB_KEY_PATH, VOCAB_STORE_NAME, createIndexedDBStore } from '$lib/utils/indexed-db-store'
+// import { VOCAB_KEY_PATH, VOCAB_STORE_NAME, createIndexedDBStore } from '$lib/utils/indexed-db-store'
 
 const DEFAULT_ZH_LISTS: ChineseWordList[] = [] // ['時代華語1w', '時代華語2Aw', '時代華語2Bw', '時代華語3Aw', '時代華語3Bw', '時代華語4Aw']
 const DEFAULT_EN_LISTS: EnglishWordList[] = ['tw_7000']
@@ -22,8 +22,9 @@ export function createVocabStore({ supabase, authResponse, language, log = false
 
   const user_id = authResponse?.data?.user?.id
   const user_with_language_key = `${user_id || 'no_user'}_${language}`
-  const user_vocabulary = createIndexedDBStore<UserVocabulary>({store_name: VOCAB_STORE_NAME, key_path: VOCAB_KEY_PATH, key: user_with_language_key, initial_value: {}, log})
-  const seen_sentences_this_route = createPersistedStore<Record<string, string[]>>(`seen_sentences_this_route_${user_with_language_key}`, {}, { syncTabs: true })
+  // const user_vocabulary = createIndexedDBStore<UserVocabulary>({store_name: VOCAB_STORE_NAME, key_path: VOCAB_KEY_PATH, key: user_with_language_key, initial_value: {}, log})
+  const user_vocabulary = writable<UserVocabulary>()
+  let seen_sentences_this_route: Record<string, string[]> = {}
   const word_lists = createPersistedStore<(ChineseWordList | EnglishWordList)[]>(`word_lists_${user_with_language_key}`, language === 'en' ? DEFAULT_EN_LISTS : DEFAULT_ZH_LISTS, { syncTabs: true })
 
   if (user_id) {
@@ -36,9 +37,10 @@ export function createVocabStore({ supabase, authResponse, language, log = false
         if (!data?.length) return
         const [{vocabulary}] = data as unknown as { vocabulary: UserVocabulary }[]
         if (log) console.info({db_user_vocabulary: vocabulary})
-        if (Object.keys(vocabulary).length)
-          user_vocabulary.set(vocabulary)
+        user_vocabulary.set(vocabulary)
       })
+  } else {
+    user_vocabulary.set({})
   }
 
   function change_word_status(word: string, status: WordStatus) {
@@ -65,11 +67,9 @@ export function createVocabStore({ supabase, authResponse, language, log = false
 
   function add_seen_sentence(words: string[]) {
     if (log) console.info(`add_seen_sentence: ${words.join(' ')}`)
-    const current_sentences = get(seen_sentences_this_route)
     const key = words.join('_')
-    current_sentences[key] = words
-    seen_sentences_this_route.set(current_sentences)
-    if (Object.keys(current_sentences).length > 10)
+    seen_sentences_this_route[key] = words
+    if (Object.keys(seen_sentences_this_route).length > 10)
       process_seen_sentences()
   }
 
@@ -90,13 +90,12 @@ export function createVocabStore({ supabase, authResponse, language, log = false
     last_process_seen_sentences = new Date()
     if (log) console.info(`process_seen_sentences in ${language}`)
 
-    const current_sentences = get(seen_sentences_this_route)
-    if (!Object.keys(current_sentences).length) return
+    if (!Object.keys(seen_sentences_this_route).length) return
 
     const vocabulary = get(user_vocabulary)
     const word_counts: Record<string, number> = {}
 
-    for (const words of Object.values(current_sentences)) {
+    for (const words of Object.values(seen_sentences_this_route)) {
       for (const word of words) {
         if (vocabulary[word]?.status === WordStatus.known)
           continue
@@ -129,7 +128,8 @@ export function createVocabStore({ supabase, authResponse, language, log = false
       if (!updates.length) return
       if (log) console.info({updates_going_to_db: updates, length: updates.length})
       await add_word_updates_to_db(updates)
-      seen_sentences_this_route.set({})
+      // eslint-disable-next-line require-atomic-updates
+      seen_sentences_this_route = {}
     } catch (error) {
       console.error(error)
     }
@@ -160,7 +160,7 @@ export function createVocabStore({ supabase, authResponse, language, log = false
   }, {})
 
   const changed_words = derived<Readable<UserVocabulary>, UserVocabulary>(user_vocabulary, ($user_vocabulary, set) => {
-    set(filter_object($user_vocabulary, ({ language }) => !!language))
+    set(filter_object($user_vocabulary || {}, ({ language }) => !!language))
   }, {})
 
   return { subscribe: vocab_with_word_lists.subscribe, change_word_status, add_seen_sentence, changed_words, word_lists }

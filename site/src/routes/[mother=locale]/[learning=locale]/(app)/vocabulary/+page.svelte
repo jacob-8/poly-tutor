@@ -6,6 +6,7 @@
 
   export let data: PageData
   $: ({user_vocabulary} = data)
+  $: user_vocab = $user_vocabulary || {}
 
   // async function sync_vocab() {
   //   const url = prompt('Enter url')
@@ -37,13 +38,13 @@
       .map(([word, {views, updated_at}]) => ({word, views, updated_at}))
   }
 
-  $: unknown_words_by_views = words_by_status_sorted_by_views($user_vocabulary, WordStatus.unknown)
-  $: unknown_words_by_date = words_by_status_sorted_by_date_and_views($user_vocabulary, WordStatus.unknown)
+  $: unknown_words_by_views = words_by_status_sorted_by_views(user_vocab, WordStatus.unknown)
+  $: unknown_words_by_date = words_by_status_sorted_by_date_and_views(user_vocab, WordStatus.unknown)
 
-  $: pronunciation_words = words_by_status_sorted_by_views($user_vocabulary, WordStatus.pronunciation)
-  $: tone_words = words_by_status_sorted_by_views($user_vocabulary, WordStatus.tone)
-  $: known_words = words_by_status_sorted_by_views($user_vocabulary, WordStatus.known)
-  $: word_list_words = words_by_status_sorted_by_views($user_vocabulary, WordStatus.wordlist)
+  $: pronunciation_words = words_by_status_sorted_by_views(user_vocab, WordStatus.pronunciation)
+  $: tone_words = words_by_status_sorted_by_views(user_vocab, WordStatus.tone)
+  $: known_words = words_by_status_sorted_by_views(user_vocab, WordStatus.known)
+  $: word_list_words = words_by_status_sorted_by_views(user_vocab, WordStatus.wordlist)
 
   $: recognized_words_count = known_words.length + pronunciation_words.length + tone_words.length
 </script>
@@ -64,11 +65,11 @@
       Pronunciation: {pronunciation_words.length},
     {/if}
     Encountered, but not known: {unknown_words_by_views.length},
-    Total: {Object.keys($user_vocabulary).length}
+    Total: {Object.keys(user_vocab).length}
   </div>
 
   <div>
-    Unknown words seens today: {Object.values($user_vocabulary).filter(({updated_at}) => updated_at === new Date().toDateString()).length}
+    Unknown words seens today: {Object.values(user_vocab).filter(({updated_at}) => updated_at === new Date().toDateString()).length}
   </div>
 
   <div class="flex space-x-8 mt-5 overflow-x-auto">

@@ -25,7 +25,8 @@ chinese_to_english_dictionary.then(() => {
 let user_vocabulary: UserVocabulary
 
 function set_user_vocabulary(vocabulary: UserVocabulary) {
-  user_vocabulary = vocabulary
+  if (vocabulary)
+    user_vocabulary = vocabulary
 }
 
 function vocabulary_ready(): Promise<boolean> {

@@ -11,6 +11,7 @@
   export let onclick: () => void = undefined
   export let ontouch: () => void = undefined
   export let active = false
+  export let playing = false
   export let sentence: Sentence
   export let settings: Settings
   export let study_words_object: StudyWordsObject = { high_view_count: {}, common_in_this_context: {}, improve_pronunciation_or_tone: {}}
@@ -21,7 +22,7 @@
 
   let has_been_seen = false
 
-  $: if (add_seen_sentence && active)
+  $: if (add_seen_sentence && active && playing)
     i_am_seen()
 
   function i_am_seen() {
