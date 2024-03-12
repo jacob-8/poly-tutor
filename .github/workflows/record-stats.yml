@@ -1,0 +1,22 @@
+name: Record Stats daily into Google Sheet
+
+# on:
+#   schedule:
+#     - cron: "0 1 * * *" # 1AM
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record stats POST request
+        run: |
+          RESPONSE=$(curl --write-out "%{http_code}" --silent --output /dev/null -X POST -H "Content-Type: application/json" -d '{"key": "${{ secrets.RECORD_STATS_KEY }}"}' "https://poly.education/api/record-stats")
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "API request failed with response $RESPONSE"
+            exit 1
+          fi

@@ -11,6 +11,9 @@ export const server = setupServer(...handlers)
 // })
 
 server.events.on('response:bypass', ({ request, response }) => {
+  if (request.url === 'https://www.googleapis.com/oauth2/v4/token')
+    return
+
   const LOCAL_SUPABASE_URL = 'http://127.0.0.1:54321'
   const DEPLOYED_SUPABASE_URL = 'https://tjsnduoporqqlrbbpola.supabase.co'
   if (request.url.startsWith(LOCAL_SUPABASE_URL) || request.url.startsWith(DEPLOYED_SUPABASE_URL))
@@ -38,6 +41,8 @@ function saveJsonResponse(response: Response) {
   const clonedResponse = response.clone()
   clonedResponse.json().then((json) => {
     writeFileSync(`./src/lib/mocks/data/${Date.now()}.json`, JSON.stringify(json, null, 2))
+  }).catch((error) => {
+    console.error('Error saving json response', error)
   })
 }
 
