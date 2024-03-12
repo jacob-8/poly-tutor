@@ -26,33 +26,46 @@ export const POST: RequestHandler = async ( { request }) => {
   const POLY_TUTOR_STATS_SHEET_ID = '1PKg7UiccnCxI-10tSsVevinHzPR666UWvLS-cHmkie8'
   const doc = new GoogleSpreadsheet(POLY_TUTOR_STATS_SHEET_ID, serviceAccountAuth)
   await doc.loadInfo()
-  const sheet = doc.sheetsById['1831799422'] // doc.sheetsByIndex[0]
+  const sheet = doc.sheetsById['1831799422']
 
   const date = new Date()
   const formattedDate = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`
 
   const stats_for_today = {
     date: formattedDate,
-    new_channels: 2,
-    new_playlists: undefined,
-    new_videos: undefined,
-    videos_transcribed: undefined,
-    videos_translated: undefined,
     total_visitors: undefined,
     new_users: undefined,
-    total_users: undefined,
-    active_users_within_7_days: undefined,
-    active_users_today: undefined,
+    total_users: 10,
+    active_users_within_7_days: 8,
+    active_users_today: 2,
     inactive_users_within_7_days: undefined,
     inactive_users_today: undefined,
-    videos_added_to_user: undefined,
-    playlists_added_to_user: undefined,
-    videos_with_part_watched: undefined,
-    videos_completed: undefined,
-    hours_studied: undefined,
-    conversations: undefined,
-    avg_conversation_turns: undefined,
-    word_status_updates: undefined,
+    new_channels_zh: 2,
+    new_channels_en: 2,
+    new_playlists_zh: undefined,
+    new_playlists_en: undefined,
+    new_videos_zh: undefined,
+    new_videos_en: undefined,
+    videos_transcribed_zh: undefined,
+    videos_transcribed_en: undefined,
+    videos_translated_zh: undefined,
+    videos_translated_en: undefined,
+    videos_added_to_user_zh: undefined,
+    videos_added_to_user_en: undefined,
+    playlists_added_to_user_zh: undefined,
+    playlists_added_to_user_en: undefined,
+    videos_with_part_watched_zh: undefined,
+    videos_with_part_watched_en: undefined,
+    videos_completed_zh: undefined,
+    videos_completed_en: undefined,
+    hours_studied_zh: undefined,
+    hours_studied_en: undefined,
+    conversations_zh: undefined,
+    conversations_en: undefined,
+    avg_conversation_turns_zh: undefined,
+    avg_conversation_turns_en: undefined,
+    word_status_updates_zh: undefined,
+    word_status_updates_en: undefined,
   } satisfies DailyStats
   const new_row = await sheet.addRow(stats_for_today)
 
@@ -61,24 +74,39 @@ export const POST: RequestHandler = async ( { request }) => {
 
 interface DailyStats {
   date: string;
-  new_channels: number;
-  new_playlists: number;
-  new_videos: number;
-  videos_transcribed: number;
-  videos_translated: number;
+
   total_visitors: number;
   new_users: number;
   total_users: number;
   active_users_within_7_days: number;
   active_users_today: number;
-  inactive_users_within_7_days: number;
-  inactive_users_today: number;
-  videos_added_to_user: number;
-  playlists_added_to_user: number;
-  videos_with_part_watched: number;
-  videos_completed: number;
-  hours_studied: number;
-  conversations: number;
-  avg_conversation_turns: number;
-  word_status_updates: number;
+  inactive_users_within_7_days: string;
+  inactive_users_today: string;
+
+  new_channels_zh: number;
+  new_channels_en: number;
+  new_playlists_zh: number;
+  new_playlists_en: number;
+  new_videos_zh: number;
+  new_videos_en: number;
+  videos_transcribed_zh: number;
+  videos_transcribed_en: number;
+  videos_translated_zh: number;
+  videos_translated_en: number;
+  videos_added_to_user_zh: number;
+  videos_added_to_user_en: number;
+  playlists_added_to_user_zh: number;
+  playlists_added_to_user_en: number;
+  videos_with_part_watched_zh: number;
+  videos_with_part_watched_en: number;
+  videos_completed_zh: number;
+  videos_completed_en: number;
+  hours_studied_zh: number;
+  hours_studied_en: number;
+  conversations_zh: number;
+  conversations_en: number;
+  avg_conversation_turns_zh: number;
+  avg_conversation_turns_en: number;
+  word_status_updates_zh: number;
+  word_status_updates_en: number;
 }
